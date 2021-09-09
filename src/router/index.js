@@ -1,0 +1,175 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
+Vue.use(VueRouter)
+
+const routes = [
+  {
+    path: '/',
+    redirect: 'dashboard',
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/views/dashboard/Dashboard.vue'),
+  },
+  {
+    path: '/sub-category',
+    component: () => import('@/views/subCategory/Index.vue'),
+    children: [
+      {
+        path: 'list',
+        name: 'subCategory',
+        component: () => import('@/views/subCategory/List.vue'),
+        meta: {
+          key: 'sub-category',
+        },
+      },
+      {
+        path: 'add',
+        name: 'subCategoryAdd',
+        component: () => import('@/views/subCategory/Add.vue'),
+        meta: {
+          key: 'sub-category',
+        },
+      },
+      {
+        path: 'list/edit/:id',
+        props: true,
+        name: 'subCategoryEdit',
+        component: () => import('@/views/subCategory/Edit.vue'),
+        meta: {
+          key: 'sub-category',
+        },
+      },
+    ],
+  },
+  {
+    path: '/villa-gallery',
+    component: () => import('@/views/villaGallery/Index.vue'),
+    children: [
+      {
+        path: 'list',
+        name: 'villaGallery',
+        component: () => import('@/views/villaGallery/List.vue'),
+        meta: {
+          key: 'villa-gallery',
+        },
+      },
+      {
+        path: 'add',
+        name: 'villaGalleryAdd',
+        component: () => import('@/views/villaGallery/Add.vue'),
+        meta: {
+          key: 'villa-gallery',
+        },
+      },
+      {
+        path: 'list/edit/:id',
+        props: true,
+        name: 'villaGalleryEdit',
+        component: () => import('@/views/villaGallery/Edit.vue'),
+        meta: {
+          key: 'villa-gallery',
+        },
+      },
+    ],
+  },
+  {
+    path: '/villa-fasilitas',
+    component: () => import('@/views/villaFacility/Index.vue'),
+    children: [
+      {
+        path: 'list',
+        name: 'villaFacility',
+        component: () => import('@/views/villaFacility/List.vue'),
+        meta: {
+          key: 'villa-facility',
+        },
+      },
+      {
+        path: 'add',
+        name: 'villaFacilityAdd',
+        component: () => import('@/views/villaFacility/Add.vue'),
+        meta: {
+          key: 'villa-facility',
+        },
+      },
+      {
+        path: 'list/edit/:id',
+        props: true,
+        name: 'villaFacilityEdit',
+        component: () => import('@/views/villaFacility/Edit.vue'),
+        meta: {
+          key: 'villa-facility',
+        },
+      },
+    ],
+  },
+  {
+    path: '/typography',
+    name: 'typography',
+    component: () => import('@/views/typography/Typography.vue'),
+  },
+  {
+    path: '/icons',
+    name: 'icons',
+    component: () => import('@/views/icons/Icons.vue'),
+  },
+  {
+    path: '/cards',
+    name: 'cards',
+    component: () => import('@/views/cards/Card.vue'),
+  },
+  {
+    path: '/simple-table',
+    name: 'simple-table',
+    component: () => import('@/views/simple-table/SimpleTable.vue'),
+  },
+  {
+    path: '/form-layouts',
+    name: 'form-layouts',
+    component: () => import('@/views/form-layouts/FormLayouts.vue'),
+  },
+  {
+    path: '/pages/account-settings',
+    name: 'pages-account-settings',
+    component: () => import('@/views/pages/account-settings/AccountSettings.vue'),
+  },
+  {
+    path: '/pages/login',
+    name: 'pages-login',
+    component: () => import('@/views/pages/Login.vue'),
+    meta: {
+      layout: 'blank',
+    },
+  },
+  {
+    path: '/pages/register',
+    name: 'pages-register',
+    component: () => import('@/views/pages/Register.vue'),
+    meta: {
+      layout: 'blank',
+    },
+  },
+  {
+    path: '/error-404',
+    name: 'error-404',
+    component: () => import('@/views/Error.vue'),
+    meta: {
+      layout: 'blank',
+    },
+  },
+  {
+    path: '*',
+    redirect: 'error-404',
+  },
+]
+
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes,
+})
+
+export default router
