@@ -43,12 +43,12 @@
         :icon="icons.mdiHomeOutline"
         :nested="false"
       ></nav-menu-link>
-      <nav-menu-link
+      <!-- <nav-menu-link
         title="Account Settings"
         :to="{ name: 'pages-account-settings' }"
         :icon="icons.mdiAccountCogOutline"
         :nested="false"
-      ></nav-menu-link>
+      ></nav-menu-link> -->
       <nav-menu-group
         title="Sub Category"
         :icon="icons.mdiShape"
@@ -103,6 +103,24 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
+      <nav-menu-group
+        title="Villa"
+        :icon="icons.mdiHomeGroup"
+        :active="$route.meta.key === 'villa' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'villa' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'villaAdd' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
       <!-- <nav-menu-group
         title="Pages"
         :icon="icons.mdiFileOutline"
@@ -128,7 +146,7 @@
           target="_blank"
         ></nav-menu-link>
       </nav-menu-group> -->
-      <nav-menu-section-title title="USER INTERFACE"></nav-menu-section-title>
+      <!-- <nav-menu-section-title title="USER INTERFACE"></nav-menu-section-title>
       <nav-menu-link
         title="Typography"
         :to="{ name: 'typography' }"
@@ -158,7 +176,7 @@
         :to="{ name: 'form-layouts' }"
         :icon="icons.mdiFormSelect"
         :nested="false"
-      ></nav-menu-link>
+      ></nav-menu-link> -->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -178,6 +196,7 @@ import {
   mdiPlus,
   mdiImageMultiple,
   mdiHomeCircle,
+  mdiHomeGroup,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -185,6 +204,7 @@ import NavMenuLink from './components/NavMenuLink.vue'
 
 export default {
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     NavMenuSectionTitle,
     NavMenuGroup,
     NavMenuLink,
@@ -210,6 +230,7 @@ export default {
         mdiPlus,
         mdiImageMultiple,
         mdiHomeCircle,
+        mdiHomeGroup,
       },
     }
   },

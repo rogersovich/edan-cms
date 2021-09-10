@@ -107,6 +107,37 @@ const routes = [
     ],
   },
   {
+    path: '/villa',
+    component: () => import('@/views/villa/Index.vue'),
+    children: [
+      {
+        path: 'list',
+        name: 'villa',
+        component: () => import('@/views/villa/List.vue'),
+        meta: {
+          key: 'villa',
+        },
+      },
+      {
+        path: 'add',
+        name: 'villaAdd',
+        component: () => import('@/views/villa/Add.vue'),
+        meta: {
+          key: 'villa',
+        },
+      },
+      {
+        path: 'list/edit/:id',
+        props: true,
+        name: 'villaEdit',
+        component: () => import('@/views/villa/Edit.vue'),
+        meta: {
+          key: 'villa',
+        },
+      },
+    ],
+  },
+  {
     path: '/typography',
     name: 'typography',
     component: () => import('@/views/typography/Typography.vue'),
