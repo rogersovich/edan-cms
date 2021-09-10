@@ -4,22 +4,46 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            <div>
-              List Sub Category
-            </div>
-            <v-spacer></v-spacer>
-            <div>
-              <v-btn
-                color="primary"
-                class="text-none"
-                :to="{ name: 'subCategoryAdd' }"
-              >
-                <v-icon left>
-                  {{ icons.mdiPlus }}
-                </v-icon>
-                Tambah
-              </v-btn>
-            </div>
+            <template v-if="$vuetify.breakpoint.mdAndUp">
+              <div>
+                List Sub Category
+              </div>
+              <v-spacer></v-spacer>
+              <div>
+                <v-btn
+                  color="primary"
+                  class="text-none"
+                  :to="{ name: 'subCategoryAdd' }"
+                >
+                  <v-icon left>
+                    {{ icons.mdiPlus }}
+                  </v-icon>
+                  Tambah
+                </v-btn>
+              </div>
+            </template>
+            <template v-else>
+              <v-row>
+                <v-col cols="12">
+                  <div class="tw-text-center md:tw-text-left">
+                    List Sub Category
+                  </div>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn
+                    block
+                    color="primary"
+                    class="text-none"
+                    :to="{ name: 'subCategoryAdd' }"
+                  >
+                    <v-icon left>
+                      {{ icons.mdiPlus }}
+                    </v-icon>
+                    Tambah
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </template>
           </v-card-title>
           <v-simple-table
             :height="$vuetify.breakpoint.mdAndUp ? 400 : 'auto'"
@@ -49,7 +73,7 @@
                     {{ item.calories }}
                   </td>
                   <td class="text-center">
-                    <div>
+                    <div v-if="$vuetify.breakpoint.mdAndUp">
                       <v-btn
                         icon
                         :to="{ name: 'subCategoryEdit', params: { id: i + 1 } }"
@@ -68,6 +92,56 @@
                         </v-icon>
                       </v-btn>
                     </div>
+                    <div v-else>
+                      <v-menu
+                        transition="slide-y-transition"
+                        left
+                        top
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            class="purple"
+                            color="primary"
+                            dark
+                            icon
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <v-icon>{{ icons.mdiDotsHorizontalCircle }}</v-icon>
+                          </v-btn>
+                        </template>
+                        <v-list>
+                          <v-list-item>
+                            <v-list-item-action>
+                              <v-btn
+                                text
+                                :to="{ name: 'subCategoryEdit', params: { id: i + 1 } }"
+                                color="#FBBF24"
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiPencilBoxMultiple }}
+                                </v-icon>
+                                Ubah
+                              </v-btn>
+                            </v-list-item-action>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-list-item-content>
+                              <v-btn
+                                text
+                                color="#E11D48"
+                                @click="openDialogDelete(item.dessert)"
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiTrashCan }}
+                                </v-icon>
+                                Hapus
+                              </v-btn>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -83,11 +157,11 @@
     >
       <v-card>
         <v-card-title>
-          <div class="tw-text-true-gray-800">
+          <div class="tw-text-true-gray-800 tw-text-base md:tw-text-lg">
             Ingin Menghapus {{ form.want_to_delete }} ?
           </div>
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="tw-mb-3 md:tw-text-base tw-text-sm">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
           standard dummy text ever since the 1500s
         </v-card-text>
@@ -116,7 +190,9 @@
 </template>
 
 <script>
-import { mdiTrashCan, mdiPencilBoxMultiple, mdiPlus } from '@mdi/js'
+import {
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+} from '@mdi/js'
 
 export default {
   data() {
@@ -125,6 +201,7 @@ export default {
         mdiTrashCan,
         mdiPencilBoxMultiple,
         mdiPlus,
+        mdiDotsHorizontalCircle,
       },
       form: {
         want_to_delete: '',

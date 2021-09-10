@@ -11,7 +11,10 @@
       <v-card>
         <v-card-title>
           <v-row align="center">
-            <v-col cols="3">
+            <v-col
+              cols="2"
+              md="3"
+            >
               <div>
                 <v-btn
                   icon
@@ -21,8 +24,11 @@
                 </v-btn>
               </div>
             </v-col>
-            <v-col cols="6">
-              <div class="tw-text-center">
+            <v-col
+              cols="9"
+              md="6"
+            >
+              <div class="tw-text-center tw-text-base md:tw-text-xl">
                 Tambah Villa Gallery
               </div>
             </v-col>
@@ -79,7 +85,8 @@
                     <v-col
                       v-for="(thumb, i) in form.thumbnail"
                       :key="i"
-                      cols="3"
+                      cols="6"
+                      md="3"
                     >
                       <div class="tw-text-center">
                         <v-avatar
@@ -101,7 +108,8 @@
                       </div>
                     </v-col>
                     <v-col
-                      cols="3"
+                      cols="6"
+                      md="3"
                       class="tw-flex tw-items-center tw-justify-center"
                     >
                       <div class="tw-text-center">

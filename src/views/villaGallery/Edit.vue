@@ -12,7 +12,10 @@
         <v-card>
           <v-card-title class="tw-block">
             <v-row align="center">
-              <v-col cols="3">
+              <v-col
+                cols="2"
+                md="3"
+              >
                 <div>
                   <v-btn
                     icon
@@ -22,8 +25,11 @@
                   </v-btn>
                 </div>
               </v-col>
-              <v-col cols="6">
-                <div class="tw-text-center">
+              <v-col
+                cols="9"
+                md="6"
+              >
+                <div class="tw-text-center tw-text-base md:tw-text-xl">
                   Edit Villa Gallery
                 </div>
               </v-col>
@@ -70,7 +76,8 @@
                     <v-col
                       v-for="(item, i) in list.villa_galleries"
                       :key="i"
-                      cols="3"
+                      cols="6"
+                      md="3"
                     >
                       <div class="tw-text-center">
                         <v-avatar
@@ -112,7 +119,8 @@
                       <v-col
                         v-for="(thumb, i) in form.thumbnail_old"
                         :key="i + 'old'"
-                        cols="3"
+                        cols="6"
+                        md="3"
                       >
                         <div class="tw-text-center tw-relative">
                           <v-avatar
@@ -139,7 +147,8 @@
                       <v-col
                         v-for="(thumb, i) in form.thumbnail"
                         :key="i + 'new'"
-                        cols="3"
+                        cols="6"
+                        md="3"
                       >
                         <div class="tw-text-center">
                           <v-avatar
@@ -161,7 +170,8 @@
                         </div>
                       </v-col>
                       <v-col
-                        cols="3"
+                        cols="6"
+                        md="3"
                         class="tw-flex tw-items-center tw-justify-center"
                       >
                         <div class="tw-text-center">
@@ -226,12 +236,12 @@
     >
       <v-card>
         <v-card-title>
-          <div class="tw-text-true-gray-800">
+          <div class="tw-text-true-gray-800 tw-text-base md:tw-text-lg">
             Ingin Menghapus Gambar ini ?
           </div>
         </v-card-title>
         <v-card-text>
-          <div class="tw-mb-3">
+          <div class="tw-mb-3 md:tw-text-base tw-text-sm">
             Jika anda menghapus gambar ini, gambar akan permanen terhapus dan tidak bisa di balikan kembali
           </div>
           <v-img

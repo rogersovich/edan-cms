@@ -11,7 +11,10 @@
       <v-card>
         <v-card-title>
           <v-row align="center">
-            <v-col cols="3">
+            <v-col
+              cols="2"
+              md="3"
+            >
               <div>
                 <v-btn
                   icon
@@ -21,8 +24,11 @@
                 </v-btn>
               </div>
             </v-col>
-            <v-col cols="6">
-              <div class="tw-text-center">
+            <v-col
+              cols="9"
+              md="6"
+            >
+              <div class="tw-text-center tw-text-base md:tw-text-xl">
                 Tambah Sub Category
               </div>
             </v-col>
