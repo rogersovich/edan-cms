@@ -121,6 +121,24 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
+      <nav-menu-group
+        title="Order"
+        :icon="icons.mdiReceipt"
+        :active="$route.meta.key === 'order' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'order' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'orderAdd' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
       <!-- <nav-menu-group
         title="Pages"
         :icon="icons.mdiFileOutline"
@@ -197,6 +215,7 @@ import {
   mdiImageMultiple,
   mdiHomeCircle,
   mdiHomeGroup,
+  mdiReceipt,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -231,6 +250,7 @@ export default {
         mdiImageMultiple,
         mdiHomeCircle,
         mdiHomeGroup,
+        mdiReceipt,
       },
     }
   },

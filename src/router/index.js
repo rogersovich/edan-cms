@@ -138,6 +138,28 @@ const routes = [
     ],
   },
   {
+    path: '/order',
+    component: () => import('@/views/order/Index.vue'),
+    children: [
+      {
+        path: 'list',
+        name: 'order',
+        component: () => import('@/views/order/List.vue'),
+        meta: {
+          key: 'order',
+        },
+      },
+      {
+        path: 'add',
+        name: 'orderAdd',
+        component: () => import('@/views/order/Add.vue'),
+        meta: {
+          key: 'order',
+        },
+      },
+    ],
+  },
+  {
     path: '/typography',
     name: 'typography',
     component: () => import('@/views/typography/Typography.vue'),
