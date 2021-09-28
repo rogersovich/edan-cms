@@ -37,24 +37,35 @@
           <v-card-text>
             <v-form>
               <v-row>
-                <v-col
+                <!-- <v-col
                   cols="12"
                   md="6"
                 >
                   <div>
                     <div class="tw-mb-1.5 subtitle-1">
-                      Villa
+                      Number Payment Method
                     </div>
-                    <v-select
-                      v-model="form.villa_id"
-                      :items="list.villas"
-                      item-value="id"
-                      item-text="title"
-                      placeholder="Pilih Villa"
+                    <v-text-field
+                      v-model="form.number_payment_method"
+                      placeholder="cth. 937392929"
                       outlined
-                      hide-details=""
                       dense
-                    ></v-select>
+                      counter="10"
+                      @input="convertNumberPaymentMethod"
+                    ></v-text-field>
+                  </div>
+                </v-col> -->
+                <v-col cols="12">
+                  <div>
+                    <div class="tw-mb-1.5 subtitle-1">
+                      Title Order
+                    </div>
+                    <v-text-field
+                      v-model="form.title"
+                      placeholder="cth. BOOKING VILLA CBM-DA001 4.000.000"
+                      outlined
+                      dense
+                    ></v-text-field>
                   </div>
                 </v-col>
                 <v-col
@@ -73,24 +84,7 @@
                       placeholder="Pilih Metode Pembayaran"
                       outlined
                       dense
-                      hide-details=""
                     ></v-select>
-                  </div>
-                </v-col>
-                <v-col
-                  cols="12"
-                >
-                  <div>
-                    <div class="tw-mb-1.5 subtitle-1">
-                      Title Order
-                    </div>
-                    <v-text-field
-                      v-model="form.title"
-                      placeholder="cth. BOOKING VILLA CBM-DA001 4.000.000"
-                      outlined
-                      dense
-                      hide-details=""
-                    ></v-text-field>
                   </div>
                 </v-col>
                 <v-col
@@ -106,14 +100,10 @@
                       placeholder="cth. VLR-96837"
                       outlined
                       dense
-                      hide-details=""
                     ></v-text-field>
                   </div>
                 </v-col>
-                <v-col
-                  cols="12"
-                  md="6"
-                >
+                <v-col cols="12">
                   <div>
                     <div class="tw-mb-1.5 subtitle-1">
                       Nomer Telepon
@@ -123,7 +113,6 @@
                       placeholder="cth. 0896289282"
                       outlined
                       dense
-                      hide-details=""
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -140,7 +129,6 @@
                       placeholder="cth. CBM-DA001"
                       outlined
                       dense
-                      hide-details=""
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -157,11 +145,10 @@
                       placeholder="cth. Mawar 1"
                       outlined
                       dense
-                      hide-details=""
                     ></v-text-field>
                   </div>
                 </v-col>
-                <v-col
+                <!-- <v-col
                   cols="12"
                   md="6"
                 >
@@ -174,7 +161,25 @@
                       placeholder="cth. TR-0024367112"
                       outlined
                       dense
-                      hide-details=""
+                      counter="10"
+                      @input="convertTransactionID"
+                    ></v-text-field>
+                  </div>
+                </v-col> -->
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
+                    <div class="tw-mb-1.5 subtitle-1">
+                      Harga Villa
+                    </div>
+                    <v-text-field
+                      v-model="form.grand_total"
+                      placeholder="cth. 400000000"
+                      outlined
+                      dense
+                      @input="sumTotalPrice"
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -187,11 +192,11 @@
                       Total Bayar
                     </div>
                     <v-text-field
-                      v-model="form.grand_total"
+                      v-model="form.total_booking"
                       placeholder="cth. 400000000"
                       outlined
                       dense
-                      hide-details=""
+                      @input="sumTotalPrice"
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -218,7 +223,6 @@
                           readonly
                           outlined
                           dense
-                          hide-details=""
                           v-bind="attrs"
                           v-on="on"
                         ></v-text-field>
@@ -272,7 +276,6 @@
                           dense
                           outlined
                           readonly
-                          hide-details=""
                           v-bind="attrs"
                           v-on="on"
                         ></v-text-field>
@@ -308,7 +311,7 @@
           id="preview-image"
           tile
           class="tw-border-none"
-          height="650"
+          height="700"
         >
           <div class="tw-bg-blue-400 tw-h-48 tw-rounded-b-3xl tw-py-4">
             <v-card-text>
@@ -332,9 +335,6 @@
                     {{ `${convertDate(form.date)} . ${form.time}` }}
                   </div>
                   <v-spacer></v-spacer>
-                  <div class="tw-uppercase">
-                    {{ `${form.payment_method} 07939***22` }}
-                  </div>
                 </div>
                 <v-card-text class="tw-py-3">
                   <div class="tw-flex tw-items-center">
@@ -345,31 +345,26 @@
                         :src="require(`@/assets/images/misc/checked.png`)"
                       ></v-img>
                     </div>
-                    <div class="tw-tracking-wide tw-text-true-gray-500">
-                      Transaksi Berhasil
+                    <div class="tw-flex tw-items-center tw-w-full">
+                      <div class="tw-tracking-wide tw-text-true-gray-500">
+                        Transaksi Berhasil
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        <v-btn
+                          tile
+                          outlined
+                          small
+                          color="#63DC9D"
+                          class="tw-ml-2 text-none tw-tracking-wide"
+                        >
+                          BOOKING VILLA
+                        </v-btn>
+                      </div>
                     </div>
                   </div>
                   <div class="tw-my-3 tw-text-true-gray-700 tw-tracking-wide tw-uppercase">
                     {{ form.title }}
-                  </div>
-                  <div class="tw-flex tw-items-center">
-                    <v-btn
-                      tile
-                      depressed
-                      small
-                      color="#F5F5F5"
-                    >
-                      BOOKING VILLA
-                    </v-btn>
-                    <v-btn
-                      tile
-                      outlined
-                      small
-                      color="#63DC9D"
-                      class="tw-ml-2 text-none tw-tracking-wide"
-                    >
-                      Order berhasil
-                    </v-btn>
                   </div>
                   <div
                     class="tw-flex tw-items-center tw-my-3 tw-bg-blue-100 tw-py-2 tw-px-3 tw-font-medium tw-tracking-wide"
@@ -379,7 +374,7 @@
                     </div>
                     <v-spacer></v-spacer>
                     <div class="tw-text-true-gray-800">
-                      {{ `Rp${uang(form.grand_total)}` }}
+                      {{ `Rp${uang(form.total_booking)}` }}
                     </div>
                   </div>
                   <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pb-3">
@@ -389,6 +384,15 @@
                     <v-spacer></v-spacer>
                     <div class="tw-uppercase">
                       BANK {{ form.payment_method }}
+                    </div>
+                  </div>
+                  <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pb-3">
+                    <div>
+                      Sisa Pembayaran
+                    </div>
+                    <v-spacer></v-spacer>
+                    <div class="tw-uppercase">
+                      {{ `Rp${uang(form.remaining_payment)}` }}
                     </div>
                   </div>
                   <v-divider></v-divider>
@@ -433,28 +437,75 @@
                     </div>
                     <!-- end -->
 
-                    <!-- detail transaksi -->
-                    <div class="tw-text-true-gray-700 tw-font-medium tw-pb-2 tw-pt-4">
-                      Detail Transaksi
-                    </div>
-                    <div class="tw-flex tw-items-center tw-text-true-gray-500">
-                      <div>
-                        ID Transaksi
-                      </div>
-                      <v-spacer></v-spacer>
-                      <div>
-                        {{ form.transaction_id }}
-                      </div>
-                    </div>
-                    <!-- end -->
+                    <!-- <div class="tw-text-true-gray-700 tw-font-medium tw-pb-2">
+                      Informasi
+                    </div> -->
 
                     <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-6">
                       <div>
                         © 2021 Villarian.id
                       </div>
                       <v-spacer></v-spacer>
-                      <div>
-                        Salam Riaholyic
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+              <v-card
+                class="tw-mt-2 tw-pb-2"
+                rounded="sm"
+              >
+                <v-card-text class="tw-py-2 tw-px-2">
+                  <div class="tw-grid tw-grid-cols-2 tw-gap-y-3">
+                    <div class="tw-col-span-1">
+                      <div class="tw-flex tw-items-center">
+                        <v-avatar
+                          tile
+                          size="35"
+                        >
+                          <v-img :src="require('@/assets/images/misc/social-media/instagram.png')"></v-img>
+                        </v-avatar>
+                        <div class="tw-ml-1 tw-text-true-gray-500 tw-text-xs">
+                          @villarian.id
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tw-col-span-1">
+                      <div class="tw-flex tw-items-center">
+                        <v-avatar
+                          tile
+                          size="35"
+                        >
+                          <v-img :src="require('@/assets/images/misc/social-media/facebook.png')"></v-img>
+                        </v-avatar>
+                        <div class="tw-ml-1 tw-text-true-gray-500 tw-text-xs">
+                          villarian id
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tw-col-span-1">
+                      <div class="tw-flex tw-items-center">
+                        <v-avatar
+                          tile
+                          size="35"
+                        >
+                          <v-img :src="require('@/assets/images/misc/social-media/whatsapp.png')"></v-img>
+                        </v-avatar>
+                        <div class="tw-ml-1 tw-text-true-gray-500 tw-text-xs">
+                          +6285159952959
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tw-col-span-1">
+                      <div class="tw-flex tw-items-center">
+                        <v-avatar
+                          tile
+                          size="35"
+                        >
+                          <v-img :src="require('@/assets/images/misc/social-media/email.png')"></v-img>
+                        </v-avatar>
+                        <div class="tw-ml-1 tw-text-true-gray-500 tw-text-xs">
+                          villarian.id@gmail.com
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -490,31 +541,21 @@ export default {
           date: false,
           time: false,
         },
-        villa_id: '',
         title: 'BOOKING VILLA CBM-DA001 4.000.000',
-        grand_total: 0,
+        grand_total: 4000000,
+        total_booking: 1000000,
+        remaining_payment: 3000000,
         payment_method: 'bca',
+        number_payment_method: '',
+        number_payment_method_value: '',
         invoice_number: 'VLR-96837',
         phone_number: '0896272103828',
         villa_code: 'CBM-DA001',
         villa_block: 'Mawar 1',
-        transaction_id: 'TR-0024***112',
+        transaction_id: '',
+        transaction_id_value: '',
       },
       list: {
-        villas: [
-          {
-            id: 1,
-            title: 'Mawar',
-          },
-          {
-            id: 2,
-            title: 'Melati',
-          },
-          {
-            id: 3,
-            title: 'Kamboja',
-          },
-        ],
         payment_method: [
           {
             key: 'bca',
@@ -539,6 +580,21 @@ export default {
   methods: {
     uang(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    convertTransactionID() {
+      if (this.form.transaction_id.length >= 10) {
+        const str = this.form.transaction_id
+        const newStr = str.replace(str.substr(4, 3), '***')
+        this.form.transaction_id_value = `TR-${newStr}`
+      }
+    },
+    convertNumberPaymentMethod() {
+      if (this.form.number_payment_method.length >= 10) {
+        const str = this.form.number_payment_method
+        console.log(str.substr(4, 3))
+        const newStr = str.replace(str.substr(4, 3), '***')
+        this.form.number_payment_method_value = newStr
+      }
     },
     convertToMonth(month) {
       // eslint-disable-next-line radix
@@ -570,8 +626,21 @@ export default {
     openDialogPreviewIcon() {
       this.dialog.preview_icon = !this.dialog.preview_icon
     },
+    sumTotalPrice() {
+      if (this.form.total_booking !== '' || this.form.grand_total !== '') {
+        // eslint-disable-next-line radix
+        const totalBooking = parseInt(this.form.total_booking)
+        // eslint-disable-next-line radix
+        const grandTotal = parseInt(this.form.grand_total)
+        if (grandTotal < totalBooking) {
+          return
+        }
+        const remainingPayment = grandTotal - totalBooking
+        this.form.remaining_payment = remainingPayment
+      }
+    },
     handleSubmit() {
-      toJpeg(document.getElementById('preview-image'), { cacheBust: true, pixelRatio: 7 }).then(dataUrl => {
+      toJpeg(document.getElementById('preview-image'), { cacheBust: true, pixelRatio: 8 }).then(dataUrl => {
         const link = document.createElement('a')
         link.download = 'kwintasi.jpeg'
         link.href = dataUrl
