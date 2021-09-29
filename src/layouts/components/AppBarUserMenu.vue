@@ -139,7 +139,10 @@
       <v-divider class="my-2"></v-divider>
 
       <!-- Logout -->
-      <v-list-item link>
+      <v-list-item
+        link
+        @click="handleLogout()"
+      >
         <v-list-item-icon class="me-2">
           <v-icon size="22">
             {{ icons.mdiLogoutVariant }}
@@ -164,9 +167,16 @@ import {
   mdiHelpCircleOutline,
   mdiLogoutVariant,
 } from '@mdi/js'
+import { logout } from '@/api/auth'
 
 export default {
   setup() {
+    async function handleLogout() {
+      await logout()
+      await this.$store.dispatch('auth/removeCurrentUser')
+      this.$router.push({ name: 'pages-login' })
+    }
+
     return {
       icons: {
         mdiAccountOutline,
@@ -178,6 +188,9 @@ export default {
         mdiHelpCircleOutline,
         mdiLogoutVariant,
       },
+
+      // method
+      handleLogout,
     }
   },
 }

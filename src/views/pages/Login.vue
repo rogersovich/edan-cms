@@ -42,28 +42,34 @@
               label="Email"
               placeholder="john@example.com"
               hide-details
-              class="mb-3"
+              :class="errorForm.email ?'tw-mb-0' : 'mb-3'"
             ></v-text-field>
+            <div
+              v-if="errorForm.email"
+              class="tw-text-xs tw-text-red-500 tw-mt-1.5 tw-mb-3 tw-tracking-wide"
+            >
+              {{ errorForm.email[0] }}
+            </div>
 
             <v-text-field
               v-model="password"
               outlined
               :type="isPasswordVisible ? 'text' : 'password'"
               label="Password"
-              placeholder="············"
+              placeholder="*********"
               :append-icon="isPasswordVisible ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
               hide-details
               @click:append="isPasswordVisible = !isPasswordVisible"
             ></v-text-field>
+            <div
+              v-if="errorForm.password"
+              class="tw-text-xs tw-text-red-500 tw-mt-1.5 tw-mb-3 tw-tracking-wide"
+            >
+              {{ errorForm.password[0] }}
+            </div>
 
-            <div class="d-flex align-center justify-space-between flex-wrap">
-              <v-checkbox
-                label="Remember Me"
-                hide-details
-                class="me-3 mt-1"
-              >
-              </v-checkbox>
-
+            <div class="d-flex align-center justify-space-between flex-wrap tw-mt-2">
+              <div></div>
               <!-- forgot link -->
               <a
                 href="javascript:void(0)"
@@ -77,6 +83,7 @@
               block
               color="primary"
               class="mt-6"
+              @click="handleLogin()"
             >
               Login
             </v-btn>
@@ -145,12 +152,14 @@
 // eslint-disable-next-line object-curly-newline
 import { mdiFacebook, mdiTwitter, mdiGithub, mdiGoogle, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
+import { login } from '@/api/auth'
 
 export default {
   setup() {
     const isPasswordVisible = ref(false)
     const email = ref('')
     const password = ref('')
+    const errorForm = ref({})
     const socialLink = [
       {
         icon: mdiFacebook,
@@ -174,11 +183,35 @@ export default {
       },
     ]
 
+    async function handleLogin() {
+      const form = {
+        email: email.value,
+        password: password.value,
+      }
+
+      const data = await login(form)
+      if (data.status === 200) {
+        errorForm.value = {}
+        await this.$store.dispatch('auth/saveAuth', {
+          token: data.data.access_token,
+          profile: data.data.user,
+        })
+
+        this.$router.push({ name: 'dashboard' })
+      } else {
+        errorForm.value = data.data.errors
+      }
+    }
+
     return {
       isPasswordVisible,
       email,
       password,
       socialLink,
+      errorForm,
+
+      // method
+      handleLogin,
 
       icons: {
         mdiEyeOutline,

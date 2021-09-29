@@ -1,0 +1,21 @@
+import axios from 'axios'
+import store from '../store'
+
+const api = axios.create({
+  baseURL: process.env.VUE_APP_API,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+})
+
+api.interceptors.request.use(config => {
+  // Do something before request is sent
+  const authKey = store.state.auth.token
+  // eslint-disable-next-line no-param-reassign
+  config.headers.Authorization = `bearer ${authKey}`
+
+  return config
+})
+
+export default api

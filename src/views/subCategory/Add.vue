@@ -35,17 +35,21 @@
           </v-row>
         </v-card-title>
         <v-card-text>
-          <v-form>
+          <v-form @submit.prevent="handleSubmit">
             <v-text-field
               v-model="form.title"
               label="Title"
               outlined
+              autofocus
               dense
               placeholder="Masukan Title disini"
             ></v-text-field>
 
             <div class="text-right">
-              <v-btn color="primary">
+              <v-btn
+                type="submit"
+                color="primary"
+              >
                 Submit
               </v-btn>
             </div>
@@ -58,6 +62,7 @@
 
 <script>
 import { mdiArrowLeft } from '@mdi/js'
+import { storeData } from '@/api/subCategory'
 
 export default {
   data() {
@@ -69,6 +74,14 @@ export default {
         title: '',
       },
     }
+  },
+  methods: {
+    async handleSubmit() {
+      const data = await storeData({
+        title: this.form.title,
+      })
+      if (data.status === 200) this.$router.push({ name: 'subCategory' })
+    },
   },
 }
 </script>
