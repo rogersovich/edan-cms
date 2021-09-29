@@ -6,6 +6,16 @@
       justify="center"
     >
       <v-col
+        v-if="Object.keys(list.villas).length === 0 && Object.keys(list.villaFacility).length === 0"
+        cols="12"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          type="card"
+        ></v-skeleton-loader>
+      </v-col>
+      <v-col
+        v-else
         cols="12"
         md="6"
       >
@@ -19,7 +29,7 @@
                 <div>
                   <v-btn
                     icon
-                    @click="$router.go(-1)"
+                    :to="{ name: 'villaFacility' }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -36,7 +46,7 @@
             </v-row>
           </v-card-title>
           <v-card-text>
-            <v-form>
+            <v-form @submit.prevent="handleSubmit">
               <div>
                 <div class="tw-mb-1.5 subtitle-1">
                   Villa
@@ -45,7 +55,7 @@
                   v-model="form.villa_id"
                   :items="list.villas"
                   item-value="id"
-                  item-text="title"
+                  item-text="code"
                   placeholder="Pilih Villa"
                   outlined
                   dense
@@ -101,7 +111,10 @@
                 </div>
               </div>
               <div class="text-right tw-mt-5">
-                <v-btn color="primary">
+                <v-btn
+                  color="primary"
+                  type="submit"
+                >
                   Submit
                 </v-btn>
               </div>
@@ -147,6 +160,8 @@
 
 <script>
 import { mdiArrowLeft, mdiEye, mdiWindowClose } from '@mdi/js'
+import { allDataWithoutPaginate } from '@/api/villa'
+import { detailData, updateData } from '@/api/villaFacility'
 
 export default {
   data() {
@@ -159,33 +174,46 @@ export default {
       dialog: {
         preview_icon: false,
       },
-      form: {
-        title: 'Kolam Renang',
-        villa_id: 2,
-        icon: 'https://ik.imagekit.io/1akf8cdsyg/bootstrap-icon_W0x965yzg.svg?updatedAt=1624035124879',
-        value: 6,
-      },
       list: {
-        villas: [
-          {
-            id: 1,
-            title: 'Mawar',
-          },
-          {
-            id: 2,
-            title: 'Melati',
-          },
-          {
-            id: 3,
-            title: 'Kamboja',
-          },
-        ],
+        villas: [],
+        villaFacility: {},
       },
     }
+  },
+  computed: {
+    form: {
+      get() {
+        return this.list.villaFacility
+      },
+    },
+  },
+  async mounted() {
+    await this.getAllDataVilla()
+    await this.getDetailData()
   },
   methods: {
     openDialogPreviewIcon() {
       this.dialog.preview_icon = !this.dialog.preview_icon
+    },
+    async getAllDataVilla() {
+      const { data } = await allDataWithoutPaginate()
+      this.list.villas = data
+    },
+    async getDetailData() {
+      const data = await detailData({ id: this.$route.params.id })
+
+      if (Object.keys(data.data).length > 0) this.list.villaFacility = data.data
+      else this.$router.push({ name: 'villaFacility' })
+    },
+    async handleSubmit() {
+      const data = await updateData({
+        title: this.form.title,
+        villa_id: this.form.villa_id,
+        icon: this.form.icon,
+        value: this.form.value,
+        id: this.form.id,
+      })
+      if (data.status === 200) this.$router.push({ name: 'villaFacility' })
     },
   },
 }

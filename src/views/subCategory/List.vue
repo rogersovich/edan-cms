@@ -112,7 +112,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'subCategoryEdit', params: { id: i + 1 } }"
+                                :to="{ name: 'subCategoryEdit', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -127,7 +127,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete(item.dessert)"
+                                @click="openDialogDelete({id: item.id, name: item.title})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -215,6 +215,7 @@ import {
 import SecureLS from 'secure-ls'
 import { allData, deleteData } from '@/api/subCategory'
 
+// eslint-disable-next-line no-unused-vars
 const ls = new SecureLS({ isCompression: false })
 
 export default {
@@ -240,7 +241,7 @@ export default {
     }
   },
   mounted() {
-    console.log(ls.get('vuex'))
+    // console.log(ls.get('vuex'))
     this.getAllData()
   },
   methods: {
@@ -254,10 +255,15 @@ export default {
       this.dialog.delete = !this.dialog.delete
     },
     async getAllData() {
-      const { data } = await allData({ page: this.current_page })
-      this.current_page = data.current_page
-      this.total_page = data.last_page
-      this.list.sub_categories = data.data
+      const data = await allData({ page: this.current_page })
+      if (data.status === 401) {
+        await this.$store.dispatch('auth/removeCurrentUser')
+        this.$router.push({ name: 'pages-login' })
+      } else {
+        this.current_page = data.data.current_page
+        this.total_page = data.data.last_page
+        this.list.sub_categories = data.data.data
+      }
     },
     async handlePagination() {
       await this.getAllData()
