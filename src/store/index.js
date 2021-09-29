@@ -17,6 +17,7 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
+      path: ['auth.token', 'auth.profile'],
       storage: {
         getItem: key => ls.get(key),
         setItem: (key, value) => ls.set(key, value),
