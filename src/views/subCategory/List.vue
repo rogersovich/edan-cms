@@ -7,7 +7,7 @@
       >
         <v-card>
           <v-card-title>
-            <template v-if="$vuetify.breakpoint.mdAndUp">
+            <template v-if="$vuetify.breakpoint.smAndUp">
               <div>
                 List Sub Category
               </div>
@@ -50,7 +50,7 @@
           </v-card-title>
           <v-simple-table
             height="auto"
-            :fixed-header="$vuetify.breakpoint.mdAndUp"
+            :fixed-header="$vuetify.breakpoint.smAndUp"
           >
             <template v-slot:default>
               <thead>
@@ -144,7 +144,7 @@
               </tbody>
             </template>
           </v-simple-table>
-          <v-card-text>
+          <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"

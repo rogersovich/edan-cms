@@ -181,7 +181,7 @@
             </template>
           </v-simple-table>
 
-          <v-card-text>
+          <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"

@@ -1,17 +1,20 @@
 <template>
   <div>
     <v-row class="match-height">
-      <v-col cols="12">
+      <v-col
+        v-if=" Object.keys(list.villa_galleries).length > 0"
+        cols="12"
+      >
         <v-card>
           <v-card-title>
-            <template v-if="$vuetify.breakpoint.mdAndUp">
+            <template v-if="$vuetify.breakpoint.smAndUp">
               <div>List Villa Gallery</div>
               <v-spacer></v-spacer>
               <div>
                 <v-btn
                   color="primary"
                   class="text-none"
-                  :to="{name: 'villaGalleryAdd'}"
+                  :to="{ name: 'villaGalleryAdd' }"
                 >
                   <v-icon left>
                     {{ icons.mdiPlus }}
@@ -44,14 +47,14 @@
             </template>
           </v-card-title>
           <v-simple-table
-            :height="$vuetify.breakpoint.mdAndUp ? 400 : 'auto'"
-            :fixed-header="$vuetify.breakpoint.mdAndUp"
+            height="auto"
+            :fixed-header="$vuetify.breakpoint.smAndUp"
           >
             <template v-slot:default>
               <thead>
                 <tr>
                   <th class="text-uppercase">
-                    Villa (villa_id)
+                    Villa
                   </th>
                   <th class="text-center text-uppercase">
                     Image
@@ -63,10 +66,10 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, i) in list.sub_categories"
+                  v-for="(item, i) in list.villa_galleries"
                   :key="i"
                 >
-                  <td>{{ item.dessert }}</td>
+                  <td>{{ item.villa.code }}</td>
                   <td class="text-center">
                     <v-avatar
                       size="100"
@@ -74,27 +77,23 @@
                     >
                       <v-img
                         contain
-                        src="https://ik.imagekit.io/1akf8cdsyg/villa-1_Fxh92jz0eB.jpg?updatedAt=1630601351002"
+                        :src="`http://127.0.0.1:8000/storage/${item.image}`"
                       ></v-img>
                     </v-avatar>
                   </td>
                   <td class="text-center">
-                    <div v-if="$vuetify.breakpoint.mdAndUp">
+                    <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
                         color="primary"
-                        @click="
-                          openDialogViewImage(
-                            'https://ik.imagekit.io/1akf8cdsyg/villa-1_Fxh92jz0eB.jpg?updatedAt=1630601351002',
-                          )
-                        "
+                        @click="openDialogViewImage(`http://127.0.0.1:8000/storage/${item.image}`)"
                       >
                         <v-icon>{{ icons.mdiEye }}</v-icon>
                       </v-btn>
                       <v-btn
                         icon
                         class="tw-mx-2"
-                        :to="{ name: 'villaGalleryEdit', params: { id: i + 1 } }"
+                        :to="{ name: 'villaGalleryEdit', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
@@ -102,7 +101,7 @@
                       <v-btn
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete(item.dessert)"
+                        @click="openDialogDelete({id: item.id, name: item.villa.code})"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -132,7 +131,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'villaGalleryEdit', params: { id: i + 1 } }"
+                                :to="{ name: 'villaGalleryEdit', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -147,7 +146,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete(item.dessert)"
+                                @click="openDialogDelete({id: item.id, name: item.villa.code})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -163,7 +162,7 @@
                                 color="primary"
                                 @click="
                                   openDialogViewImage(
-                                    'https://ik.imagekit.io/1akf8cdsyg/villa-1_Fxh92jz0eB.jpg?updatedAt=1630601351002',
+                                    `http://127.0.0.1:8000/storage/${item.image}`,
                                   )
                                 "
                               >
@@ -182,9 +181,32 @@
               </tbody>
             </template>
           </v-simple-table>
+          <v-card-text class="tw-mt-4">
+            <div>
+              <v-pagination
+                v-model="current_page"
+                :length="total_page"
+                @input="handlePagination"
+              ></v-pagination>
+            </div>
+          </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          type="table"
+          :types="{
+            'table-row': 'table-cell@4',
+            'table-tbody': 'table-row-divider@4'
+          }"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
+
     <v-dialog
       v-model="dialog.preview_image"
       max-width="480"
@@ -201,7 +223,7 @@
       <v-card>
         <v-card-title>
           <div class="tw-text-true-gray-800 tw-text-base md:tw-text-lg">
-            Ingin Menghapus {{ form.want_to_delete }} ?
+            Ingin Menghapus Gambar dari Villa {{ form.want_to_delete.name }} ?
           </div>
         </v-card-title>
         <v-card-text class="tw-mb-3 md:tw-text-base tw-text-sm">
@@ -221,7 +243,7 @@
             <v-btn
               class="text-none"
               color="primary"
-              @click="handleDeleteItem"
+              @click="handleDeleteItem(form.want_to_delete.id)"
             >
               Ya, Hapus
             </v-btn>
@@ -236,6 +258,7 @@
 import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiEye, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
+import { allData, deleteData } from '@/api/villaGallery'
 
 export default {
   data() {
@@ -247,6 +270,8 @@ export default {
         mdiPlus,
         mdiDotsHorizontalCircle,
       },
+      current_page: 1,
+      total_page: 0,
       form: {
         want_to_delete: '',
         preview_image: '',
@@ -256,73 +281,12 @@ export default {
         preview_image: false,
       },
       list: {
-        sub_categories: [
-          {
-            dessert: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Ice cream sandwich',
-            calories: 237,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Eclair',
-            calories: 262,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Cupcake',
-            calories: 305,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Gingerbread',
-            calories: 356,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Cupcake',
-            calories: 305,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Gingerbread',
-            calories: 356,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Cupcake',
-            calories: 305,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-          {
-            dessert: 'Gingerbread',
-            calories: 356,
-            fat: 6,
-            carbs: 24,
-            protein: 4,
-          },
-        ],
+        villa_galleries: [],
       },
     }
+  },
+  mounted() {
+    this.getAllData()
   },
   methods: {
     openDialogDelete(params) {
@@ -333,8 +297,24 @@ export default {
       this.form.preview_image = image
       this.dialog.preview_image = !this.dialog.preview_image
     },
-    handleDeleteItem() {
-      console.log('deleted item')
+    async handleDeleteItem(id) {
+      await deleteData({ id })
+      await this.getAllData()
+      this.dialog.delete = !this.dialog.delete
+    },
+    async getAllData() {
+      const data = await allData({ page: this.current_page })
+      if (data.status === 401) {
+        await this.$store.dispatch('auth/removeCurrentUser')
+        this.$router.push({ name: 'pages-login' })
+      } else {
+        this.current_page = data.data.current_page
+        this.total_page = data.data.last_page
+        this.list.villa_galleries = data.data.data
+      }
+    },
+    async handlePagination() {
+      await this.getAllData()
     },
   },
 }

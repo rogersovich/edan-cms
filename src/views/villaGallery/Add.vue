@@ -35,7 +35,7 @@
           </v-row>
         </v-card-title>
         <v-card-text>
-          <v-form>
+          <v-form @submit.prevent="handleSubmit">
             <div>
               <div class="tw-mb-1.5 subtitle-1">
                 Villa
@@ -44,7 +44,7 @@
                 v-model="form.villa_id"
                 :items="list.villas"
                 item-value="id"
-                item-text="title"
+                item-text="code"
                 placeholder="Pilih Villa"
                 outlined
                 dense
@@ -157,9 +157,19 @@
                 </div>
               </div>
               <!-- end -->
+
+              <div
+                v-if="form_error !== ''"
+                class="tw-text-red-500"
+              >
+                {{ form_error.image[0] }}
+              </div>
             </div>
             <div class="text-right tw-mt-5">
-              <v-btn color="primary">
+              <v-btn
+                color="primary"
+                type="submit"
+              >
                 Submit
               </v-btn>
             </div>
@@ -174,6 +184,9 @@
 import FileUpload from 'vue-upload-component'
 import { mdiArrowLeft, mdiCloudUploadOutline, mdiPlus } from '@mdi/js'
 
+import { storeData } from '@/api/villaGallery'
+import { allDataWithoutPaginate } from '@/api/villa'
+
 export default {
   components: {
     FileUpload,
@@ -187,26 +200,16 @@ export default {
       },
       form: {
         villa_id: '',
-        image: [],
         thumbnail: [],
       },
       list: {
-        villas: [
-          {
-            id: 1,
-            title: 'Mawar',
-          },
-          {
-            id: 2,
-            title: 'Melati',
-          },
-          {
-            id: 3,
-            title: 'Kamboja',
-          },
-        ],
+        villas: [],
       },
+      form_error: '',
     }
+  },
+  mounted() {
+    this.getAllDataVilla()
   },
   methods: {
     removeItem(file) {
@@ -231,6 +234,29 @@ export default {
         if (URL && URL.createObjectURL) {
           // eslint-disable-next-line no-param-reassign
           newFile.url = URL.createObjectURL(newFile.file)
+        }
+      }
+    },
+    async getAllDataVilla() {
+      const { data } = await allDataWithoutPaginate()
+      this.list.villas = data
+    },
+    async handleSubmit() {
+      try {
+        await storeData({
+          image: this.form.thumbnail[0].file,
+          villa_id: this.form.villa_id,
+        })
+        this.form_error = ''
+        this.$router.push({ name: 'villaGallery' })
+      } catch (error) {
+        if (error.response.status === 403) {
+          console.log(error.response.status)
+        } else if (error.response.status === 422) {
+          this.form_error = error.response.data.error
+        } else if (error.response.status === 401) {
+          await this.$store.dispatch('auth/removeCurrentUser')
+          this.$router.push({ name: 'pages-login' })
         }
       }
     },
