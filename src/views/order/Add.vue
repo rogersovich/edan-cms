@@ -103,7 +103,26 @@
                     ></v-text-field>
                   </div>
                 </v-col>
-                <v-col cols="12">
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
+                    <div class="tw-mb-1.5 subtitle-1">
+                      Nama Penerima
+                    </div>
+                    <v-text-field
+                      v-model="form.name"
+                      placeholder="cth. Dimas Roger"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
                   <div>
                     <div class="tw-mb-1.5 subtitle-1">
                       Nomer Telepon
@@ -403,6 +422,15 @@
                     </div>
                     <div class="tw-flex tw-items-center tw-text-true-gray-500">
                       <div>
+                        Nama Penerima
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        {{ form.name }}
+                      </div>
+                    </div>
+                    <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
+                      <div>
                         Nomer Invoice
                       </div>
                       <v-spacer></v-spacer>
@@ -436,10 +464,6 @@
                       <div>Blok {{ form.villa_block }}</div>
                     </div>
                     <!-- end -->
-
-                    <!-- <div class="tw-text-true-gray-700 tw-font-medium tw-pb-2">
-                      Informasi
-                    </div> -->
 
                     <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-6">
                       <div>
@@ -554,6 +578,7 @@ export default {
         villa_block: 'Mawar 1',
         transaction_id: '',
         transaction_id_value: '',
+        name: '',
       },
       list: {
         payment_method: [
