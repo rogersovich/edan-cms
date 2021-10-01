@@ -212,11 +212,7 @@
 import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
-import SecureLS from 'secure-ls'
 import { allData, deleteData } from '@/api/subCategory'
-
-// eslint-disable-next-line no-unused-vars
-const ls = new SecureLS({ isCompression: false })
 
 export default {
   data() {
@@ -241,7 +237,6 @@ export default {
     }
   },
   mounted() {
-    // console.log(ls.get('vuex'))
     this.getAllData()
   },
   methods: {

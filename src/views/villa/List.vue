@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-row class="match-height">
-      <v-col cols="12">
+      <v-col
+        v-if=" Object.keys(list.villas).length > 0"
+        cols="12"
+      >
         <v-card>
           <v-card-title>
             <template v-if="$vuetify.breakpoint.mdAndUp">
@@ -46,7 +49,7 @@
             </template>
           </v-card-title>
           <v-simple-table
-            :height="$vuetify.breakpoint.mdAndUp ? 400 : 'auto'"
+            height="auto"
             :fixed-header="$vuetify.breakpoint.mdAndUp"
           >
             <template v-slot:default>
@@ -85,10 +88,10 @@
                       size="50"
                       tile
                     >
-                      <v-img :src="item.thumbnail"></v-img>
+                      <v-img :src="`http://127.0.0.1:8000/storage/${item.thumbnail}`"></v-img>
                     </v-avatar>
                   </td>
-                  <td>{{ item.sub_category }}</td>
+                  <td>{{ item.sub_category.title }}</td>
                   <td>
                     {{ item.code }}
                   </td>
@@ -118,7 +121,14 @@
                     <div v-if="$vuetify.breakpoint.mdAndUp">
                       <v-btn
                         icon
-                        :to="{ name: 'villaEdit', params: { id: i + 1 } }"
+                        color="primary"
+                        @click="openDialogViewImage(`http://127.0.0.1:8000/storage/${item.thumbnail}`)"
+                      >
+                        <v-icon>{{ icons.mdiEye }}</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        :to="{ name: 'villaEdit', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
@@ -127,7 +137,7 @@
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete(item.title)"
+                        @click="openDialogDelete({id: item.id, name: item.code})"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -157,7 +167,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'villaEdit', params: { id: i + 1 } }"
+                                :to="{ name: 'villaEdit', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -172,7 +182,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete(item.title)"
+                                @click="openDialogDelete({id: item.id, name: item.code})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -180,6 +190,24 @@
                                 Hapus
                               </v-btn>
                             </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item>
+                            <v-list-item-action>
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="
+                                  openDialogViewImage(
+                                    `http://127.0.0.1:8000/storage/${item.thumbnail}`,
+                                  )
+                                "
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiEye }}
+                                </v-icon>
+                                Preview
+                              </v-btn>
+                            </v-list-item-action>
                           </v-list-item>
                         </v-list>
                       </v-menu>
@@ -191,7 +219,29 @@
           </v-simple-table>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          type="table"
+          :types="{
+            'table-row': 'table-cell@4',
+            'table-tbody': 'table-row-divider@4'
+          }"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
+
+    <v-dialog
+      v-model="dialog.preview_image"
+      max-width="480"
+    >
+      <v-card>
+        <v-img :src="form.preview_image"></v-img>
+      </v-card>
+    </v-dialog>
 
     <v-dialog
       v-model="dialog.delete"
@@ -200,7 +250,7 @@
       <v-card>
         <v-card-title>
           <div class="tw-text-true-gray-800 tw-text-base md:tw-text-lg">
-            Ingin Menghapus {{ form.want_to_delete }} ?
+            Ingin Menghapus {{ form.want_to_delete.name }} ?
           </div>
         </v-card-title>
         <v-card-text class="tw-mb-3 md:tw-text-base tw-text-sm">
@@ -220,7 +270,7 @@
             <v-btn
               class="text-none"
               color="primary"
-              @click="handleDeleteItem"
+              @click="handleDeleteItem(form.want_to_delete.id)"
             >
               Ya, Hapus
             </v-btn>
@@ -233,8 +283,9 @@
 
 <script>
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiEye, mdiDotsHorizontalCircle,
 } from '@mdi/js'
+import { allData, deleteData } from '@/api/villa'
 
 export default {
   data() {
@@ -244,47 +295,56 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+        mdiEye,
       },
+      current_page: 1,
+      total_page: 0,
       form: {
         want_to_delete: '',
+        preview_image: '',
       },
       dialog: {
         delete: false,
+        preview_image: false,
       },
       list: {
-        villas: [
-          {
-            title: 'Mawar 1',
-            sub_category: 'Mawar',
-            thumbnail: 'https://ik.imagekit.io/1akf8cdsyg/bootstrap-icon_W0x965yzg.svg?updatedAt=1624035124879',
-            sub_district: 'Cibereum',
-            price: 4000000,
-            code: 'CBM-DA0001',
-            is_recommendation: true,
-          },
-          {
-            title: 'Melati 1',
-            sub_category: 'Melati',
-            thumbnail: 'https://ik.imagekit.io/1akf8cdsyg/bootstrap-icon_W0x965yzg.svg?updatedAt=1624035124879',
-            sub_district: 'Cibogo',
-            price: 4000000,
-            code: 'CBO-DA0001',
-            is_recommendation: false,
-          },
-        ],
+        villas: [],
       },
     }
   },
+  mounted() {
+    this.getAllData()
+  },
   methods: {
+    uang(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
     openDialogDelete(params) {
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
     },
-    handleDeleteItem() {
-      console.log('deleted item')
+    openDialogViewImage(image) {
+      this.form.preview_image = image
+      this.dialog.preview_image = !this.dialog.preview_image
     },
-    uang(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    async handleDeleteItem(id) {
+      await deleteData({ id })
+      await this.getAllData()
+      this.dialog.delete = !this.dialog.delete
+    },
+    async getAllData() {
+      const data = await allData({ page: this.current_page })
+      if (data.status === 401) {
+        await this.$store.dispatch('auth/removeCurrentUser')
+        this.$router.push({ name: 'pages-login' })
+      } else {
+        this.current_page = data.data.current_page
+        this.total_page = data.data.last_page
+        this.list.villas = data.data.data
+      }
+    },
+    async handlePagination() {
+      await this.getAllData()
     },
   },
 }

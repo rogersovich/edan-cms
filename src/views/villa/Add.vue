@@ -19,7 +19,7 @@
                 <div>
                   <v-btn
                     icon
-                    @click="$router.go(-1)"
+                    :to="{ name: 'villa' }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -36,11 +36,9 @@
             </v-row>
           </v-card-title>
           <v-card-text>
-            <v-form>
+            <v-form @submit.prevent="handleSubmit">
               <v-row>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <div class="subtitle-1 tw-mb-1.5">
                     Thumbnail Villa
                   </div>
@@ -67,6 +65,7 @@
                     </div>
                     <div>
                       <v-btn
+                        v-if="form.thumbnail.length === 0"
                         color="primary"
                         class="me-3"
                       >
@@ -75,6 +74,19 @@
                             {{ icons.mdiCloudUploadOutline }}
                           </v-icon>
                           <span class="d-none d-sm-block">Upload</span>
+                        </label>
+                      </v-btn>
+
+                      <v-btn
+                        v-else
+                        color="warning"
+                        class="me-3"
+                      >
+                        <label for="file">
+                          <v-icon class="d-sm-none">
+                            {{ icons.mdiCloudUploadOutline }}
+                          </v-icon>
+                          <span class="d-none d-sm-block">Ubah</span>
                         </label>
                       </v-btn>
 
@@ -183,12 +195,26 @@
                   md="6"
                 >
                   <div>
+                    <div class="subtitle-1 tw-mb-1.5">
+                      Code
+                    </div>
+                    <v-text-field
+                      v-model="form.code"
+                      outlined
+                      dense
+                      placeholder="cth. CMB-DA001"
+                    ></v-text-field>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
                     <div class="subtitle-1">
                       Villa Rekomendasi
                     </div>
-                    <v-switch
-                      v-model="form.is_recommendation"
-                    >
+                    <v-switch v-model="form.is_recommendation">
                       <template v-slot:label>
                         <span v-if="form.is_recommendation">
                           Ya, Rekomendasi
@@ -211,9 +237,7 @@
                     <quill-editor
                       v-model="form.description"
                       :class="
-                        errors.length > 0
-                          ? 'tw-border-solid tw-border tw-border-red-500'
-                          : 'border-default-editor'
+                        errors.length > 0 ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
                       "
                     ></quill-editor>
                   </div>
@@ -221,7 +245,10 @@
               </v-row>
 
               <div class="text-right tw-mt-5">
-                <v-btn color="primary">
+                <v-btn
+                  color="primary"
+                  type="submit"
+                >
                   Submit
                 </v-btn>
               </div>
@@ -266,9 +293,13 @@
 
 <script>
 import FileUpload from 'vue-upload-component'
+
 import {
   mdiArrowLeft, mdiEye, mdiWindowClose, mdiCloudUploadOutline,
 } from '@mdi/js'
+
+import { storeData } from '@/api/villa'
+import { listAll } from '@/api/subCategory'
 import QuillEditor from '@/components/QuillEditor.vue'
 
 export default {
@@ -295,27 +326,23 @@ export default {
         description: '',
         whatsapp_number: '',
         sub_district: '',
+        code: '',
         is_recommendation: false,
       },
       list: {
-        sub_categories: [
-          {
-            id: 1,
-            title: 'Mawar',
-          },
-          {
-            id: 2,
-            title: 'Melati',
-          },
-          {
-            id: 3,
-            title: 'Kamboja',
-          },
-        ],
+        sub_categories: [],
       },
+      form_error: '',
     }
   },
+  mounted() {
+    this.getListSubCategory()
+  },
   methods: {
+    async getListSubCategory() {
+      const { data } = await listAll()
+      this.list.sub_categories = data
+    },
     openDialogPreviewThumbnail() {
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
     },
@@ -344,6 +371,31 @@ export default {
         }
       }
     },
+    async handleSubmit() {
+      try {
+        await storeData({
+          sub_category_id: this.form.sub_category_id,
+          thumbnail: this.form.thumbnail[0].file,
+          description: this.form.description,
+          whatsapp_number: this.form.whatsapp_number,
+          sub_district: this.form.sub_district,
+          price: this.form.price,
+          code: this.form.code,
+          is_recommendation: this.form.is_recommendation === true ? 1 : 0,
+        })
+        this.form_error = ''
+        this.$router.push({ name: 'villa' })
+      } catch (error) {
+        if (error.response.status === 403) {
+          console.log(error.response.status)
+        } else if (error.response.status === 422) {
+          this.form_error = error.response.data.error
+        } else if (error.response.status === 401) {
+          await this.$store.dispatch('auth/removeCurrentUser')
+          this.$router.push({ name: 'pages-login' })
+        }
+      }
+    },
   },
 }
 </script>
@@ -355,11 +407,10 @@ export default {
 }
 
 * >>> .v-text-field.v-text-field--enclosed .v-text-field__details {
- margin-bottom: 0px !important;
+  margin-bottom: 0px !important;
 }
 
 .border-default-editor {
   border: 1px #d1d5db solid;
 }
-
 </style>

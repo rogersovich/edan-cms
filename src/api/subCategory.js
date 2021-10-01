@@ -28,3 +28,8 @@ export const deleteData = payload => api
   .delete(`/sub-categories/${payload.id}`)
   .then(response => response)
   .catch(error => error.response)
+
+export const listAll = () => api
+  .get('/villarian/category/list-all')
+  .then(response => response)
+  .catch(error => error.response)
