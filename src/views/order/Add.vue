@@ -225,7 +225,110 @@
                 >
                   <div>
                     <div class="tw-mb-1.5 subtitle-1">
-                      Tanggal
+                      Tanggal Sewa (Dari)
+                    </div>
+                    <v-menu
+                      ref="datePickerRentalFrom"
+                      v-model="form.menu.from_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="form.rental_date.from"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="form.rental_date.from"
+                          readonly
+                          outlined
+                          dense
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="form.rental_date.from"
+                        no-title
+                        scrollable
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="form.menu.from_date = false"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="$refs.datePickerRentalFrom.save(form.rental_date.from)"
+                        >
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
+                    <div class="tw-mb-1.5 subtitle-1">
+                      Tanggal Sewa (Sampai)
+                    </div>
+                    <v-menu
+                      ref="datePickerRentalTo"
+                      v-model="form.menu.to_date"
+                      :close-on-content-click="false"
+                      :return-value.sync="form.rental_date.to"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="form.rental_date.to"
+                          readonly
+                          outlined
+                          dense
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="form.rental_date.to"
+                        no-title
+                        scrollable
+                        :min="form.rental_date.from"
+                      >
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="form.menu.to_date = false"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="$refs.datePickerRentalTo.save(form.rental_date.to)"
+                        >
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
+                    <div class="tw-mb-1.5 subtitle-1">
+                      Tanggal Di buat
                     </div>
                     <v-menu
                       ref="datePicker"
@@ -330,7 +433,7 @@
           id="preview-image"
           tile
           class="tw-border-none"
-          height="740"
+          height="760"
         >
           <div class="tw-bg-blue-400 tw-h-48 tw-rounded-b-3xl tw-py-4">
             <v-card-text>
@@ -431,20 +534,15 @@
                     </div>
                     <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
                       <div>
-                        Nomer Invoice
+                        Tanggal Sewa
                       </div>
                       <v-spacer></v-spacer>
                       <div>
-                        {{ form.invoice_number }}
-                      </div>
-                    </div>
-                    <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
-                      <div>
-                        Nomer HP
-                      </div>
-                      <v-spacer></v-spacer>
-                      <div>
-                        {{ form.phone_number }}
+                        {{
+                          convertDate(form.rental_date.from) === convertDate(form.rental_date.to)
+                            ? convertDate(form.rental_date.from)
+                            : `${convertDate(form.rental_date.from)} - ${convertDate(form.rental_date.to)}`
+                        }}
                       </div>
                     </div>
                     <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
@@ -462,6 +560,24 @@
                       </div>
                       <v-spacer></v-spacer>
                       <div>Blok {{ form.villa_block }}</div>
+                    </div>
+                    <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
+                      <div>
+                        Nomer HP
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        {{ form.phone_number }}
+                      </div>
+                    </div>
+                    <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pt-2">
+                      <div>
+                        Nomer Invoice
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        {{ form.invoice_number }}
+                      </div>
                     </div>
                     <!-- end -->
 
@@ -564,6 +680,8 @@ export default {
         menu: {
           date: false,
           time: false,
+          from_date: false,
+          to_date: false,
         },
         title: 'BOOKING VILLA TULIP 1 - CBM-DA001',
         grand_total: 4000000,
@@ -579,6 +697,10 @@ export default {
         transaction_id: '',
         transaction_id_value: '',
         name: 'Dimas Roger',
+        rental_date: {
+          to: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+          from: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+        },
       },
       list: {
         payment_method: [
