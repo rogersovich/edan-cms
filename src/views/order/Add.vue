@@ -330,7 +330,7 @@
           id="preview-image"
           tile
           class="tw-border-none"
-          height="700"
+          height="740"
         >
           <div class="tw-bg-blue-400 tw-h-48 tw-rounded-b-3xl tw-py-4">
             <v-card-text>
@@ -393,7 +393,7 @@
                     </div>
                     <v-spacer></v-spacer>
                     <div class="tw-text-true-gray-800">
-                      {{ `Rp${uang(form.total_booking)}` }}
+                      {{ `Rp ${uang(form.total_booking)}` }}
                     </div>
                   </div>
                   <div class="tw-flex tw-items-center tw-text-true-gray-500 tw-pb-3">
@@ -410,8 +410,8 @@
                       Sisa Pembayaran
                     </div>
                     <v-spacer></v-spacer>
-                    <div class="tw-uppercase">
-                      {{ `Rp${uang(form.remaining_payment)}` }}
+                    <div>
+                      {{ `Rp ${uang(form.remaining_payment)}` }}
                     </div>
                   </div>
                   <v-divider></v-divider>
@@ -565,7 +565,7 @@ export default {
           date: false,
           time: false,
         },
-        title: 'BOOKING VILLA CBM-DA001 4.000.000',
+        title: 'BOOKING VILLA TULIP 1 - CBM-DA001',
         grand_total: 4000000,
         total_booking: 1000000,
         remaining_payment: 3000000,
@@ -575,10 +575,10 @@ export default {
         invoice_number: 'VLR-96837',
         phone_number: '0896272103828',
         villa_code: 'CBM-DA001',
-        villa_block: 'Mawar 1',
+        villa_block: 'Mawar',
         transaction_id: '',
         transaction_id_value: '',
-        name: '',
+        name: 'Dimas Roger',
       },
       list: {
         payment_method: [
@@ -605,6 +605,11 @@ export default {
   methods: {
     uang(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    convertToSlug(Text) {
+      return Text.toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '')
     },
     convertTransactionID() {
       if (this.form.transaction_id.length >= 10) {
@@ -639,7 +644,7 @@ export default {
         'December',
       ]
 
-      return monthNames[data]
+      return monthNames[data - 1]
     },
     convertDate(date) {
       const data = date.split('-')
@@ -667,7 +672,7 @@ export default {
     handleSubmit() {
       toJpeg(document.getElementById('preview-image'), { cacheBust: true, pixelRatio: 8 }).then(dataUrl => {
         const link = document.createElement('a')
-        link.download = 'kwintasi.jpeg'
+        link.download = `kwintasi-${this.convertToSlug(this.form.name)}.jpeg`
         link.href = dataUrl
         link.click()
       })
