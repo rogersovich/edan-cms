@@ -15,14 +15,13 @@ export default {
     VueEditor,
   },
   props: {
-    value: {
+    title: {
       type: String,
       default: '',
     },
   },
   data() {
     return {
-      content: this.value,
       customToolbar: [
         ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }],
@@ -32,9 +31,22 @@ export default {
       ],
     }
   },
+  computed: {
+    content: {
+      // getter
+      get() {
+        return this.title
+      },
+
+      // setter
+      set(newValue) {
+        this.handleInput(newValue)
+      },
+    },
+  },
   methods: {
-    handleInput() {
-      this.$emit('input', this.content)
+    handleInput(newValue) {
+      this.$emit('update:title', newValue)
     },
   },
 }
@@ -42,7 +54,7 @@ export default {
 
 <style scoped>
 * >>> .quillWrapper .ql-snow .ql-active .ql-stroke {
-  stroke-width: 1.8px
+  stroke-width: 1.8px;
 }
 
 * >>> .ql-container.ql-snow {

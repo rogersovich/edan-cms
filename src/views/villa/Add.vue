@@ -124,8 +124,8 @@
                   <!-- end -->
                 </v-col>
                 <v-col
-                  cols="12"
-                  md="6"
+                  cols="6"
+                  md="3"
                 >
                   <div>
                     <div class="subtitle-1 tw-mb-1.5">
@@ -140,6 +140,22 @@
                       outlined
                       dense
                     ></v-select>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="6"
+                  md="3"
+                >
+                  <div>
+                    <div class="subtitle-1 tw-mb-1.5">
+                      Blok Villa Value
+                    </div>
+                    <v-text-field
+                      v-model="form.sub_category_value"
+                      outlined
+                      dense
+                      placeholder="Masukin Blok Villa *eg: 1"
+                    ></v-text-field>
                   </div>
                 </v-col>
                 <v-col
@@ -235,7 +251,7 @@
                       Deskripsi
                     </div>
                     <quill-editor
-                      v-model="form.description"
+                      :title.sync="form.description"
                       :class="
                         errors.length > 0 ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
                       "
@@ -322,6 +338,7 @@ export default {
       form: {
         price: '',
         sub_category_id: '',
+        sub_category_value: '',
         thumbnail: [],
         description: '',
         whatsapp_number: '',
@@ -379,13 +396,16 @@ export default {
           description: this.form.description,
           whatsapp_number: this.form.whatsapp_number,
           sub_district: this.form.sub_district,
+          sub_category_value: this.form.sub_category_value,
           price: this.form.price,
           code: this.form.code,
           is_recommendation: this.form.is_recommendation === true ? 1 : 0,
         })
+
         this.form_error = ''
         this.$router.push({ name: 'villa' })
       } catch (error) {
+        console.log(error)
         if (error.response.status === 403) {
           console.log(error.response.status)
         } else if (error.response.status === 422) {

@@ -77,13 +77,13 @@
                   v-for="(item, i) in list.villa_facilities"
                   :key="i"
                 >
-                  <td>{{ item.villa.code }}</td>
+                  <td>{{ `${item.villa.sub_category.title} ${item.villa.sub_category_value}` }}</td>
                   <td class="text-center tw-py-2">
                     <v-avatar
                       size="50"
                       tile
                     >
-                      <v-img src="https://ik.imagekit.io/1akf8cdsyg/queen_P45idLmIK.png?updatedAt=1629479242697"></v-img>
+                      <v-img :src="item.icon"></v-img>
                     </v-avatar>
                   </td>
                   <td>{{ item.title }}</td>

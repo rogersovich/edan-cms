@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: process.env.VUE_APP_API,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json, multipart/form-data',
   },
 })
 

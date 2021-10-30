@@ -44,7 +44,7 @@
                 v-model="form.villa_id"
                 :items="list.villas"
                 item-value="id"
-                item-text="code"
+                :item-text="item => `${item.sub_category.title} ${item.sub_category_value}`"
                 placeholder="Pilih Villa"
                 outlined
                 dense
@@ -162,7 +162,8 @@
                 v-if="form_error !== ''"
                 class="tw-text-red-500"
               >
-                {{ form_error.image[0] }}
+                <!-- {{ form_error }} -->
+                Size Gambar tidak boleh lebih dari 2 Mb
               </div>
             </div>
             <div class="text-right tw-mt-5">
@@ -243,15 +244,19 @@ export default {
     },
     async handleSubmit() {
       try {
-        await storeData({
-          image: this.form.thumbnail[0].file,
-          villa_id: this.form.villa_id,
+        const formData = new FormData()
+        this.form.thumbnail.forEach((item, i) => {
+          formData.append(`image[${i}]`, item.file)
         })
+        formData.append('villa_id', this.form.villa_id)
+
+        await storeData(formData)
         this.form_error = ''
+
         this.$router.push({ name: 'villaGallery' })
       } catch (error) {
         if (error.response.status === 403) {
-          console.log(error.response.status)
+          console.log(error.response.data)
         } else if (error.response.status === 422) {
           this.form_error = error.response.data.error
         } else if (error.response.status === 401) {

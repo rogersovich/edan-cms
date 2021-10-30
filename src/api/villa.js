@@ -12,30 +12,28 @@ export const storeData = async payload => {
   bodyFormData.append('description', payload.description)
   bodyFormData.append('whatsapp_number', payload.whatsapp_number)
   bodyFormData.append('sub_district', payload.sub_district)
+  bodyFormData.append('sub_category_value', payload.sub_category_value)
   bodyFormData.append('price', payload.price)
   bodyFormData.append('code', payload.code)
   bodyFormData.append('is_recommendation', payload.is_recommendation)
 
-  await api.post('/villas', bodyFormData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  await api.post('/villas', bodyFormData)
 }
 
-export const updateData = payload => api
-  .put(`/villas/${payload.id}`, {
-    sub_category_id: payload.sub_category_id,
-    thumbnail: payload.thumbnail,
-    description: payload.description,
-    whatsapp_number: payload.whatsapp_number,
-    sub_district: payload.sub_district,
-    price: payload.price,
-    code: payload.code,
-    is_recommendation: payload.is_recommendation,
-  })
-  .then(response => response)
-  .catch(error => error.response)
+export const updateData = async payload => {
+  const bodyFormData = new FormData()
+  bodyFormData.append('_method', 'put')
+  bodyFormData.append('sub_category_id', payload.sub_category_id)
+  bodyFormData.append('thumbnail', payload.thumbnail)
+  bodyFormData.append('image_new', payload.image_new)
+  bodyFormData.append('description', payload.description)
+  bodyFormData.append('whatsapp_number', payload.whatsapp_number)
+  bodyFormData.append('sub_district', payload.sub_district)
+  bodyFormData.append('sub_category_value', payload.sub_category_value)
+  bodyFormData.append('price', payload.price)
+  bodyFormData.append('is_recommendation', payload.is_recommendation)
+  await api.post(`/villas/${payload.id}`, bodyFormData)
+}
 
 export const detailData = payload => api
   .get(`/villas/${payload.id}`)

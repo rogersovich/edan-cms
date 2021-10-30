@@ -1,16 +1,8 @@
 import api from './api'
 
 export const storeData = async payload => {
-  const bodyFormData = new FormData()
-  bodyFormData.append('image', payload.image)
-  bodyFormData.append('villa_id', payload.villa_id)
-
   await api
-    .post('/villa-galeries', bodyFormData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    .post('/villa-galeries', payload)
 }
 
 export const updateData = payload => api

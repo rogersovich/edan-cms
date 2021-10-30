@@ -69,7 +69,7 @@
                   v-for="(item, i) in list.villa_galleries"
                   :key="i"
                 >
-                  <td>{{ item.villa.code }}</td>
+                  <td>{{ `${item.villa.sub_category.title} ${item.villa.sub_category_value}` }}</td>
                   <td class="text-center">
                     <v-avatar
                       size="100"

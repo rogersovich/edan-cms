@@ -36,18 +36,16 @@
             </v-row>
           </v-card-title>
           <v-card-text>
-            <v-form>
+            <v-form @submit.prevent="handleSubmit">
               <v-row>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <div class="subtitle-1 tw-mb-1.5">
                     Thumbnail Villa
                   </div>
                   <div class="tw-flex">
                     <div>
                       <v-avatar
-                        v-if="form.thumbnail.length === 0 && form.thumbnail_old === ''"
+                        v-if="form.image_new.length === 0 && form.thumbnail === ''"
                         rounded
                         size="120"
                         class="me-6"
@@ -63,12 +61,12 @@
                         @click="openDialogPreviewThumbnail"
                       >
                         <v-img
-                          v-if="form.thumbnail.length > 0"
-                          :src="form.thumbnail[0].url"
+                          v-if="form.image_new.length > 0"
+                          :src="form.image_new[0].url"
                         ></v-img>
                         <v-img
                           v-else
-                          :src="form.thumbnail_old"
+                          :src="`http://127.0.0.1:8000/storage/${form.thumbnail}`"
                         ></v-img>
                       </v-avatar>
                     </div>
@@ -81,15 +79,15 @@
                           <v-icon class="d-sm-none">
                             {{ icons.mdiCloudUploadOutline }}
                           </v-icon>
-                          <span class="d-none d-sm-block">Upload</span>
+                          <span class="d-none d-sm-block">Ubah</span>
                         </label>
                       </v-btn>
 
                       <v-btn
-                        v-if="form.thumbnail.length > 0"
+                        v-if="form.image_new.length > 0"
                         color="error"
                         outlined
-                        @click="removeItem(form.thumbnail[0])"
+                        @click="removeItem(form.image_new[0])"
                       >
                         Reset
                       </v-btn>
@@ -106,7 +104,7 @@
                     >
                       <file-upload
                         ref="uploadThumbnail"
-                        v-model="form.thumbnail"
+                        v-model="form.image_new"
                         :multiple="false"
                         :drop="false"
                         @input-filter="inputFilter"
@@ -190,12 +188,26 @@
                   md="6"
                 >
                   <div>
+                    <div class="subtitle-1 tw-mb-1.5">
+                      Blok Value
+                    </div>
+                    <v-text-field
+                      v-model="form.sub_category_value"
+                      outlined
+                      dense
+                      placeholder="cth. 1"
+                    ></v-text-field>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div>
                     <div class="subtitle-1">
                       Villa Rekomendasi
                     </div>
-                    <v-switch
-                      v-model="form.is_recommendation"
-                    >
+                    <v-switch v-model="form.is_recommendation">
                       <template v-slot:label>
                         <span v-if="form.is_recommendation">
                           Ya, Rekomendasi
@@ -216,18 +228,19 @@
                       Deskripsi
                     </div>
                     <quill-editor
-                      v-model="form.description"
                       :class="
-                        errors.length > 0
-                          ? 'tw-border-solid tw-border tw-border-red-500'
-                          : 'border-default-editor'
+                        errors.length > 0 ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
                       "
+                      :title.sync="form.description"
                     ></quill-editor>
                   </div>
                 </v-col>
               </v-row>
               <div class="text-right tw-mt-5">
-                <v-btn color="primary">
+                <v-btn
+                  type="submit"
+                  color="primary"
+                >
                   Submit
                 </v-btn>
               </div>
@@ -238,7 +251,6 @@
     </v-row>
 
     <v-dialog
-      v-if="form.thumbnail.length > 0"
       v-model="dialog.preview_thumbnail"
       max-width="480"
     >
@@ -261,8 +273,14 @@
         </v-card-title>
         <v-card-text>
           <v-img
+            v-if="form.image_new.length > 0"
             contain
-            :src="form.thumbnail[0].url"
+            :src="form.image_new[0].url"
+          ></v-img>
+          <v-img
+            v-else
+            contain
+            :src="`http://127.0.0.1:8000/storage/${form.thumbnail}`"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -276,6 +294,8 @@ import {
   mdiArrowLeft, mdiEye, mdiWindowClose, mdiCloudUploadOutline,
 } from '@mdi/js'
 import QuillEditor from '@/components/QuillEditor.vue'
+import { detailData, updateData } from '@/api/villa'
+import { listAll } from '@/api/subCategory'
 
 export default {
   components: {
@@ -296,36 +316,32 @@ export default {
         preview_thumbnail: false,
       },
       form: {
-        price: 4000000,
-        sub_category_id: 2,
-        thumbnail: [],
+        price: '',
+        sub_category_id: 1,
+        image_new: [],
+        thumbnail: '',
         thumbnail_old: 'https://ik.imagekit.io/1akf8cdsyg/bootstrap-icon_W0x965yzg.svg?updatedAt=1624035124879',
-        description: '<p>roger disini </p>',
-        whatsapp_number: '089627210822',
-        sub_district: 'Cibereum',
+        description: '',
+        whatsapp_number: '',
+        sub_district: '',
         is_recommendation: false,
+        sub_category_value: '',
       },
       list: {
-        sub_categories: [
-          {
-            id: 1,
-            title: 'Mawar',
-          },
-          {
-            id: 2,
-            title: 'Melati',
-          },
-          {
-            id: 3,
-            title: 'Kamboja',
-          },
-        ],
+        sub_categories: [],
       },
+      form_error: '',
     }
+  },
+  async mounted() {
+    await this.getListAllCategory()
+    await this.getDetailData()
   },
   methods: {
     openDialogPreviewThumbnail() {
-      this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
+      if (this.form.image_new > 0 || this.form.thumbnail !== '') {
+        this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
+      }
     },
     removeItem(file) {
       this.$refs.uploadThumbnail.remove(file)
@@ -349,6 +365,60 @@ export default {
         if (URL && URL.createObjectURL) {
           // eslint-disable-next-line no-param-reassign
           newFile.url = URL.createObjectURL(newFile.file)
+        }
+      }
+    },
+    async getListAllCategory() {
+      const { data } = await listAll()
+      this.list.sub_categories = data
+    },
+    async getDetailData() {
+      const { id } = this.$route.params
+      const { data } = await detailData({ id })
+
+      // fill data
+      this.form.price = data.price
+      this.form.sub_category_id = data.sub_category_id
+      this.form.thumbnail = data.thumbnail
+      this.form.description = data.description
+      this.form.whatsapp_number = data.whatsapp_number
+      this.form.sub_district = data.sub_district
+      this.form.is_recommendation = data.is_recommendation
+      this.form.sub_category_value = data.sub_category_value
+    },
+    changeValueDesc(value) {
+      this.form.description = value
+    },
+    async handleSubmit() {
+      const { id } = this.$route.params
+      // eslint-disable-next-line radix
+      const subCategory = parseInt(this.form.sub_category_id)
+      try {
+        await updateData({
+          sub_category_id: subCategory,
+          thumbnail: this.form.thumbnail,
+          image_new: this.form.image_new.length > 0 ? this.form.image_new[0].file : [],
+          description: this.form.description,
+          whatsapp_number: this.form.whatsapp_number,
+          sub_district: this.form.sub_district,
+          sub_category_value: this.form.sub_category_value,
+          price: this.form.price,
+          is_recommendation: this.form.is_recommendation,
+          id,
+        })
+
+        this.form_error = ''
+
+        this.$router.push({ name: 'villa' })
+      } catch (error) {
+        console.log(error)
+        if (error.response.status === 403) {
+          console.log(error.response.status)
+        } else if (error.response.status === 422) {
+          this.form_error = error.response.data.error
+        } else if (error.response.status === 401) {
+          await this.$store.dispatch('auth/removeCurrentUser')
+          this.$router.push({ name: 'pages-login' })
         }
       }
     },
