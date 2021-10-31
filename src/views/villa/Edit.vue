@@ -411,7 +411,6 @@ export default {
 
         this.$router.push({ name: 'villa' })
       } catch (error) {
-        console.log(error)
         if (error.response.status === 403) {
           console.log(error.response.status)
         } else if (error.response.status === 422) {
