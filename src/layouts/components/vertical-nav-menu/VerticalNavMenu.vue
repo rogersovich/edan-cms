@@ -109,6 +109,27 @@
       </nav-menu-group>
       <!-- end -->
 
+      <!-- content  -->
+      <nav-menu-group
+        title="Content"
+        :icon="icons.mdiShapeOutline"
+        :active="$route.meta.key === 'content-edan' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'listContentEdan' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'addContentEdan' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
+      <!-- end -->
+
       <!-- <nav-menu-group
         title="Sub Category"
         :icon="icons.mdiShape"

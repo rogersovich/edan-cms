@@ -1,19 +1,33 @@
 <template>
   <div>
     <v-row class="match-height">
-      <v-col cols="12">
+      <v-col
+        v-if=" Object.keys(list.contents).length === 0"
+        cols="12"
+      >
         <v-card>
           <v-card-title>
-            <template v-if="$vuetify.breakpoint.mdAndUp">
+            <template v-if="$vuetify.breakpoint.smAndUp">
               <div>
-                List Order Villa
+                List Content
               </div>
               <v-spacer></v-spacer>
-              <div>
+              <div class="tw-flex tw-items-center">
+                <div class="tw-mr-4">
+                  <v-text-field
+                    v-model="form.query_search"
+                    label="Search"
+                    outlined
+                    hide-details=""
+                    dense
+                    placeholder="Search By Name"
+                    @keydown.enter="handleSearch"
+                  ></v-text-field>
+                </div>
                 <v-btn
                   color="primary"
                   class="text-none"
-                  :to="{ name: 'orderAdd' }"
+                  :to="{ name: 'addContentEdan' }"
                 >
                   <v-icon left>
                     {{ icons.mdiPlus }}
@@ -26,15 +40,26 @@
               <v-row>
                 <v-col cols="12">
                   <div class="tw-text-center md:tw-text-left">
-                    List Order Villa
+                    List Content
                   </div>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="form.query_search"
+                    label="Search"
+                    outlined
+                    hide-details=""
+                    dense
+                    placeholder="Search By Name"
+                    @keydown.enter="handleSearch"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-btn
                     block
                     color="primary"
                     class="text-none"
-                    :to="{ name: 'orderAdd' }"
+                    :to="{ name: 'addContentEdan' }"
                   >
                     <v-icon left>
                       {{ icons.mdiPlus }}
@@ -46,26 +71,23 @@
             </template>
           </v-card-title>
           <v-simple-table
-            :height="$vuetify.breakpoint.mdAndUp ? 400 : 'auto'"
-            :fixed-header="$vuetify.breakpoint.mdAndUp"
+            height="auto"
+            :fixed-header="$vuetify.breakpoint.smAndUp"
           >
             <template v-slot:default>
               <thead>
                 <tr>
                   <th class="text-uppercase">
-                    Order ID
+                    Thumbnail
                   </th>
                   <th class="text-uppercase">
-                    Tanggal & Waktu
+                    Judul
                   </th>
                   <th class="text-uppercase">
-                    Title
+                    Category
                   </th>
                   <th class="text-uppercase">
-                    Tipe Order
-                  </th>
-                  <th class="text-uppercase">
-                    Method Pembayaran
+                    Create By
                   </th>
                   <th class="text-center">
                     Action
@@ -74,23 +96,24 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, i) in list.orders"
+                  v-for="(item, i) in list.contents"
                   :key="i"
                 >
-                  <td>{{ item.transaction_detail.id }}</td>
-                  <td>
-                    {{ `${item.date} . ${item.time}` }}
-                  </td>
                   <td>{{ item.title }}</td>
-                  <td>{{ item.type }}</td>
-                  <td>{{ item.payment_method }}</td>
                   <td class="text-center">
-                    <div v-if="$vuetify.breakpoint.mdAndUp">
+                    <div v-if="$vuetify.breakpoint.smAndUp">
+                      <v-btn
+                        icon
+                        :to="{ name: 'editContentEdan', params: { id: item.id } }"
+                        color="#FBBF24"
+                      >
+                        <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
+                      </v-btn>
                       <v-btn
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete(item.villa_id)"
+                        @click="openDialogDelete({id: item.id, name: item.title})"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -117,11 +140,25 @@
                         </template>
                         <v-list>
                           <v-list-item>
+                            <v-list-item-action>
+                              <v-btn
+                                text
+                                :to="{ name: 'editContentEdan', params: { id: item.id } }"
+                                color="#FBBF24"
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiPencilBoxMultiple }}
+                                </v-icon>
+                                Ubah
+                              </v-btn>
+                            </v-list-item-action>
+                          </v-list-item>
+                          <v-list-item>
                             <v-list-item-content>
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete(item.villa_id)"
+                                @click="openDialogDelete({id: item.id, name: item.title})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -138,7 +175,29 @@
               </tbody>
             </template>
           </v-simple-table>
+          <v-card-text class="tw-mt-4">
+            <div class="text-center">
+              <v-pagination
+                v-model="current_page"
+                :length="total_page"
+                @input="handlePagination"
+              ></v-pagination>
+            </div>
+          </v-card-text>
         </v-card>
+      </v-col>
+      <v-col
+        v-else
+        cols="12"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          type="table"
+          :types="{
+            'table-row': 'table-cell@4',
+            'table-tbody': 'table-row-divider@4'
+          }"
+        ></v-skeleton-loader>
       </v-col>
     </v-row>
 
@@ -149,7 +208,7 @@
       <v-card>
         <v-card-title>
           <div class="tw-text-true-gray-800 tw-text-base md:tw-text-lg">
-            Ingin Menghapus {{ form.want_to_delete }} ?
+            Yakin Ingin Menghapus {{ form.want_to_delete.name }} ?
           </div>
         </v-card-title>
         <v-card-text class="tw-mb-3 md:tw-text-base tw-text-sm">
@@ -169,7 +228,7 @@
             <v-btn
               class="text-none"
               color="primary"
-              @click="handleDeleteItem"
+              @click="handleDeleteItem(form.want_to_delete.id)"
             >
               Ya, Hapus
             </v-btn>
@@ -185,6 +244,8 @@ import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
 
+// import { allData, deleteData } from '@/api/subCategory'
+
 export default {
   data() {
     return {
@@ -194,42 +255,53 @@ export default {
         mdiPlus,
         mdiDotsHorizontalCircle,
       },
+      current_page: 1,
+      total_page: 0,
       form: {
         want_to_delete: '',
+        query_search: '',
       },
       dialog: {
         delete: false,
       },
       list: {
-        orders: [
-          {
-            date: '30 Agustus 2002',
-            time: '19:30',
-            title: 'BOOKING VILLA CBM-DA001',
-            type: 'booking-villa',
-            total_payment: 4000000,
-            payment_method: 'BANK BCA',
-            order_detail: {
-              invoice_number: 'SPL-5678765',
-              phone_number: '089627210822',
-              villa_code: 'CBM-DA001',
-              villa_blok: 'Mawar',
-            },
-            transaction_detail: {
-              id: '5445**844',
-            },
-          },
-        ],
+        contents: [],
       },
     }
   },
+  mounted() {
+    // this.getAllData()
+  },
   methods: {
     openDialogDelete(params) {
-      this.form.want_to_delete = params
-      this.dialog.delete = !this.dialog.delete
+      console.log(params)
+
+      // this.form.want_to_delete = params
+      // this.dialog.delete = !this.dialog.delete
     },
-    handleDeleteItem() {
-      console.log('deleted item')
+    handleSearch(event) {
+      event.preventDefault()
+      console.log(this.form.query_search)
+    },
+
+    // async handleDeleteItem(id) {
+    //   await deleteData({ id })
+    //   await this.getAllData()
+    //   this.dialog.delete = !this.dialog.delete
+    // },
+    // async getAllData() {
+    //   const data = await allData({ page: this.current_page })
+    //   if (data.status === 401) {
+    //     await this.$store.dispatch('auth/removeCurrentUser')
+    //     this.$router.push({ name: 'pages-login' })
+    //   } else {
+    //     this.current_page = data.data.current_page
+    //     this.total_page = data.data.last_page
+    //     this.list.contents = data.data.data
+    //   }
+    // },
+    async handlePagination() {
+      // await this.getAllData()
     },
   },
 }

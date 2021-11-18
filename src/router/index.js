@@ -134,6 +134,40 @@ const routes = [
     ],
   },
   {
+    path: '/content',
+    component: () => import('@/views/content/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listContentEdan' },
+      },
+      {
+        path: 'list',
+        name: 'listContentEdan',
+        component: () => import('@/views/content/List.vue'),
+        meta: {
+          key: 'content',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addContentEdan',
+        component: () => import('@/views/content/Add.vue'),
+        meta: {
+          key: 'content',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editContentEdan',
+        component: () => import('@/views/content/Edit.vue'),
+        meta: {
+          key: 'content',
+        },
+      },
+    ],
+  },
+  {
     path: '/login',
     name: 'pages-login',
     component: () => import('@/views/pages/Login.vue'),
