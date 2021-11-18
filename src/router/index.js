@@ -16,6 +16,10 @@ const routes = [
     component: () => import('@/views/dashboard/Dashboard.vue'),
   },
   {
+    path: '/admin-edan',
+    component: () => import('@/views/admin/Index.vue'),
+  },
+  {
     path: '/sub-category',
     component: () => import('@/views/subCategory/Index.vue'),
     children: [
