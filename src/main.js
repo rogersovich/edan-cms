@@ -1,5 +1,6 @@
 import '@/plugins/vue-composition-api'
-import '@/styles/styles.scss'
+
+// import '@/styles/styles.scss'
 import './index.css'
 import Vue from 'vue'
 import App from './App.vue'
