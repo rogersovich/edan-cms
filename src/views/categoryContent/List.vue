@@ -2,14 +2,14 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if="Object.keys(list.users).length === 0"
+        v-if=" Object.keys(list.category_contents).length === 0"
         cols="12"
       >
         <v-card>
           <v-card-title>
             <template v-if="$vuetify.breakpoint.smAndUp">
               <div>
-                List User
+                List Category Content
               </div>
               <v-spacer></v-spacer>
               <div class="tw-flex tw-items-center">
@@ -24,34 +24,10 @@
                     @keydown.enter="handleSearch"
                   ></v-text-field>
                 </div>
-                <v-menu offset-y>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      outlined
-                      class="text-none tw-tracking-wide tw-text-white tw-font-medium"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      Filter By
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item-group>
-                      <v-list-item
-                        v-for="(item, index) in list.filters"
-                        :key="index"
-                        @change="handleFilter(item.key)"
-                      >
-                        <v-list-item-title>{{ item.text }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-menu>
                 <v-btn
                   color="primary"
-                  class="text-none tw-ml-3"
-                  :to="{ name: 'addUserEdan' }"
+                  class="text-none"
+                  :to="{ name: 'addCategoryContentEdan' }"
                 >
                   <v-icon left>
                     {{ icons.mdiPlus }}
@@ -64,55 +40,26 @@
               <v-row>
                 <v-col cols="12">
                   <div class="tw-text-center md:tw-text-left">
-                    List User
+                    List Category Content
                   </div>
                 </v-col>
                 <v-col cols="12">
-                  <div>
-                    <v-text-field
-                      v-model="form.query_search"
-                      label="Search"
-                      outlined
-                      hide-details=""
-                      dense
-                      placeholder="Search By Name"
-                      @keydown.enter="handleSearch"
-                    ></v-text-field>
-                  </div>
-                </v-col>
-                <v-col cols="12">
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        color="primary"
-                        outlined
-                        block
-                        class="text-none tw-tracking-wide tw-text-white tw-font-medium"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        Filter By
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item-group>
-                        <v-list-item
-                          v-for="(item, index) in list.filters"
-                          :key="index"
-                          @change="handleFilter(item.key)"
-                        >
-                          <v-list-item-title>{{ item.text }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list-item-group>
-                    </v-list>
-                  </v-menu>
+                  <v-text-field
+                    v-model="form.query_search"
+                    label="Search"
+                    outlined
+                    hide-details=""
+                    dense
+                    placeholder="Search By Name"
+                    @keydown.enter="handleSearch"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-btn
                     block
                     color="primary"
                     class="text-none"
-                    :to="{ name: 'addUserEdan' }"
+                    :to="{ name: 'addCategoryContentEdan' }"
                   >
                     <v-icon left>
                       {{ icons.mdiPlus }}
@@ -131,16 +78,10 @@
               <thead>
                 <tr>
                   <th class="text-uppercase">
-                    Photo
+                    Nama Kategori
                   </th>
                   <th class="text-uppercase">
-                    Nama Lengkap & Username
-                  </th>
-                  <th class="text-uppercase">
-                    Email
-                  </th>
-                  <th class="text-uppercase">
-                    Register Date & Account Type
+                    Create By
                   </th>
                   <th class="text-center">
                     Action
@@ -149,7 +90,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, i) in list.users"
+                  v-for="(item, i) in list.category_contents"
                   :key="i"
                 >
                   <td>{{ item.title }}</td>
@@ -157,7 +98,7 @@
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
-                        :to="{ name: 'editUserEdan', params: { id: item.id } }"
+                        :to="{ name: 'editCategoryContentEdan', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
@@ -166,7 +107,7 @@
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete({ id: item.id, name: item.title })"
+                        @click="openDialogDelete({id: item.id, name: item.title})"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -196,7 +137,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'editUserEdan', params: { id: item.id } }"
+                                :to="{ name: 'editCategoryContentEdan', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -211,7 +152,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete({ id: item.id, name: item.title })"
+                                @click="openDialogDelete({id: item.id, name: item.title})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -248,7 +189,7 @@
           type="table"
           :types="{
             'table-row': 'table-cell@4',
-            'table-tbody': 'table-row-divider@4',
+            'table-tbody': 'table-row-divider@4'
           }"
         ></v-skeleton-loader>
       </v-col>
@@ -318,31 +259,7 @@ export default {
         delete: false,
       },
       list: {
-        users: [],
-        filters: [
-          {
-            text: 'Filter: By User Type',
-            key: 'user-type',
-          },
-          {
-            text: 'Filter: By Register Date',
-            key: 'register-date',
-          },
-          {
-            text: 'Filter: By A-Z',
-            key: 'a-z',
-          },
-
-          {
-            text: 'Filter: By Domisi Province',
-            key: 'domisi-provice',
-          },
-          {
-            text: 'Filter: By Domisi Kota/Kab',
-            key: 'domisi-city',
-          },
-
-        ],
+        category_contents: [],
       },
     }
   },
@@ -355,9 +272,6 @@ export default {
 
       // this.form.want_to_delete = params
       // this.dialog.delete = !this.dialog.delete
-    },
-    handleFilter(filterType) {
-      console.log(filterType)
     },
     handleSearch(event) {
       event.preventDefault()
@@ -377,7 +291,7 @@ export default {
     //   } else {
     //     this.current_page = data.data.current_page
     //     this.total_page = data.data.last_page
-    //     this.list.users = data.data.data
+    //     this.list.category_contents = data.data.data
     //   }
     // },
     async handlePagination() {

@@ -100,147 +100,35 @@ const routes = [
     ],
   },
   {
-    path: '/sub-category',
-    component: () => import('@/views/subCategory/Index.vue'),
+    path: '/category-content',
+    component: () => import('@/views/categoryContent/Index.vue'),
     children: [
       {
+        path: '',
+        redirect: { name: 'listCategoryContentEdan' },
+      },
+      {
         path: 'list',
-        name: 'subCategory',
-        component: () => import('@/views/subCategory/List.vue'),
+        name: 'listCategoryContentEdan',
+        component: () => import('@/views/categoryContent/List.vue'),
         meta: {
-          key: 'sub-category',
+          key: 'category-content-edan',
         },
       },
       {
         path: 'add',
-        name: 'subCategoryAdd',
-        component: () => import('@/views/subCategory/Add.vue'),
+        name: 'addCategoryContentEdan',
+        component: () => import('@/views/categoryContent/Add.vue'),
         meta: {
-          key: 'sub-category',
+          key: 'category-content-edan',
         },
       },
       {
-        path: 'list/edit/:id',
-        props: true,
-        name: 'subCategoryEdit',
-        component: () => import('@/views/subCategory/Edit.vue'),
+        path: 'edit/:id',
+        name: 'editCategoryContentEdan',
+        component: () => import('@/views/categoryContent/Edit.vue'),
         meta: {
-          key: 'sub-category',
-        },
-      },
-    ],
-  },
-  {
-    path: '/villa-gallery',
-    component: () => import('@/views/villaGallery/Index.vue'),
-    children: [
-      {
-        path: 'list',
-        name: 'villaGallery',
-        component: () => import('@/views/villaGallery/List.vue'),
-        meta: {
-          key: 'villa-gallery',
-        },
-      },
-      {
-        path: 'add',
-        name: 'villaGalleryAdd',
-        component: () => import('@/views/villaGallery/Add.vue'),
-        meta: {
-          key: 'villa-gallery',
-        },
-      },
-      {
-        path: 'list/edit/:id',
-        props: true,
-        name: 'villaGalleryEdit',
-        component: () => import('@/views/villaGallery/Edit.vue'),
-        meta: {
-          key: 'villa-gallery',
-        },
-      },
-    ],
-  },
-  {
-    path: '/villa-fasilitas',
-    component: () => import('@/views/villaFacility/Index.vue'),
-    children: [
-      {
-        path: 'list',
-        name: 'villaFacility',
-        component: () => import('@/views/villaFacility/List.vue'),
-        meta: {
-          key: 'villa-facility',
-        },
-      },
-      {
-        path: 'add',
-        name: 'villaFacilityAdd',
-        component: () => import('@/views/villaFacility/Add.vue'),
-        meta: {
-          key: 'villa-facility',
-        },
-      },
-      {
-        path: 'list/edit/:id',
-        props: true,
-        name: 'villaFacilityEdit',
-        component: () => import('@/views/villaFacility/Edit.vue'),
-        meta: {
-          key: 'villa-facility',
-        },
-      },
-    ],
-  },
-  {
-    path: '/villa',
-    component: () => import('@/views/villa/Index.vue'),
-    children: [
-      {
-        path: 'list',
-        name: 'villa',
-        component: () => import('@/views/villa/List.vue'),
-        meta: {
-          key: 'villa',
-        },
-      },
-      {
-        path: 'add',
-        name: 'villaAdd',
-        component: () => import('@/views/villa/Add.vue'),
-        meta: {
-          key: 'villa',
-        },
-      },
-      {
-        path: 'list/edit/:id',
-        props: true,
-        name: 'villaEdit',
-        component: () => import('@/views/villa/Edit.vue'),
-        meta: {
-          key: 'villa',
-        },
-      },
-    ],
-  },
-  {
-    path: '/order',
-    component: () => import('@/views/order/Index.vue'),
-    children: [
-      {
-        path: 'list',
-        name: 'order',
-        component: () => import('@/views/order/List.vue'),
-        meta: {
-          key: 'order',
-        },
-      },
-      {
-        path: 'add',
-        name: 'orderAdd',
-        component: () => import('@/views/order/Add.vue'),
-        meta: {
-          key: 'order',
+          key: 'category-content-edan',
         },
       },
     ],

@@ -88,6 +88,27 @@
       </nav-menu-group>
       <!-- end -->
 
+      <!-- category content  -->
+      <nav-menu-group
+        title="Kategori Content"
+        :icon="icons.mdiShapeOutline"
+        :active="$route.meta.key === 'category-content-edan' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'listCategoryContentEdan' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'addCategoryContentEdan' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
+      <!-- end -->
+
       <!-- <nav-menu-group
         title="Sub Category"
         :icon="icons.mdiShape"
@@ -256,6 +277,7 @@ import {
   mdiHomeGroup,
   mdiReceipt,
   mdiAccountGroupOutline,
+  mdiShapeOutline,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -292,6 +314,7 @@ export default {
         mdiHomeGroup,
         mdiReceipt,
         mdiAccountGroupOutline,
+        mdiShapeOutline,
       },
     }
   },

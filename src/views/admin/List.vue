@@ -12,7 +12,18 @@
                 List Admin
               </div>
               <v-spacer></v-spacer>
-              <div>
+              <div class="tw-flex tw-items-center">
+                <div class="tw-mr-4">
+                  <v-text-field
+                    v-model="form.query_search"
+                    label="Search"
+                    outlined
+                    hide-details=""
+                    dense
+                    placeholder="Search By Name"
+                    @keydown.enter="handleSearch"
+                  ></v-text-field>
+                </div>
                 <v-btn
                   color="primary"
                   class="text-none"
@@ -31,6 +42,17 @@
                   <div class="tw-text-center md:tw-text-left">
                     List Admin
                   </div>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="form.query_search"
+                    label="Search"
+                    outlined
+                    hide-details=""
+                    dense
+                    placeholder="Search By Name"
+                    @keydown.enter="handleSearch"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12">
                   <v-btn
@@ -228,6 +250,7 @@ export default {
       total_page: 0,
       form: {
         want_to_delete: '',
+        query_search: '',
       },
       dialog: {
         delete: false,
@@ -246,6 +269,10 @@ export default {
 
       // this.form.want_to_delete = params
       // this.dialog.delete = !this.dialog.delete
+    },
+    handleSearch(event) {
+      event.preventDefault()
+      console.log(this.form.query_search)
     },
 
     // async handleDeleteItem(id) {
