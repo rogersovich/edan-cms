@@ -25,7 +25,7 @@
         ></v-img>
         <v-slide-x-transition>
           <h2 class="app-title text--primary">
-            MATERIO
+            Nama Aplikasi
           </h2>
         </v-slide-x-transition>
       </router-link>
@@ -43,13 +43,46 @@
         :icon="icons.mdiHomeOutline"
         :nested="false"
       ></nav-menu-link>
-      <nav-menu-link
-        title="Admin Edan"
-        :to="{ name: 'listAdminEdan' }"
-        :icon="icons.mdiAccountCogOutline"
-        :nested="false"
-      ></nav-menu-link>
+
       <nav-menu-group
+        title="Admin Edan"
+        :icon="icons.mdiAccountCogOutline"
+        :active="$route.meta.key === 'admin-edan' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'listAdminEdan' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'addAdminEdan' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
+
+      <nav-menu-group
+        title="User Edan"
+        :icon="icons.mdiAccountGroupOutline"
+        :active="$route.meta.key === 'user-edan' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'listUserEdan' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'addUserEdan' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
+
+      <!-- <nav-menu-group
         title="Sub Category"
         :icon="icons.mdiShape"
         :active="$route.meta.key === 'sub-category' ? true : false"
@@ -66,7 +99,7 @@
           :icon="icons.mdiPlus"
           :nested="true"
         ></nav-menu-link>
-      </nav-menu-group>
+      </nav-menu-group> -->
       <nav-menu-group
         title="Villa Gallery"
         :icon="icons.mdiImageMultiple"
@@ -216,6 +249,7 @@ import {
   mdiHomeCircle,
   mdiHomeGroup,
   mdiReceipt,
+  mdiAccountGroupOutline,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -251,6 +285,7 @@ export default {
         mdiHomeCircle,
         mdiHomeGroup,
         mdiReceipt,
+        mdiAccountGroupOutline,
       },
     }
   },

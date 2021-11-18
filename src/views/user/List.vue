@@ -2,21 +2,45 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if=" Object.keys(list.admins).length === 0"
+        v-if="Object.keys(list.users).length === 0"
         cols="12"
       >
         <v-card>
           <v-card-title>
             <template v-if="$vuetify.breakpoint.smAndUp">
               <div>
-                List Admin
+                List User
               </div>
               <v-spacer></v-spacer>
               <div>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      outlined
+                      class="text-none tw-tracking-wide tw-text-white tw-font-medium"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Filter By
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item-group>
+                      <v-list-item
+                        v-for="(item, index) in list.filters"
+                        :key="index"
+                        @change="handleFilter(item.key)"
+                      >
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-menu>
                 <v-btn
                   color="primary"
-                  class="text-none"
-                  :to="{ name: 'addAdminEdan' }"
+                  class="text-none tw-ml-3"
+                  :to="{ name: 'addUserEdan' }"
                 >
                   <v-icon left>
                     {{ icons.mdiPlus }}
@@ -29,7 +53,7 @@
               <v-row>
                 <v-col cols="12">
                   <div class="tw-text-center md:tw-text-left">
-                    List Admin
+                    List User
                   </div>
                 </v-col>
                 <v-col cols="12">
@@ -37,7 +61,7 @@
                     block
                     color="primary"
                     class="text-none"
-                    :to="{ name: 'addAdminEdan' }"
+                    :to="{ name: 'addUserEdan' }"
                   >
                     <v-icon left>
                       {{ icons.mdiPlus }}
@@ -56,7 +80,16 @@
               <thead>
                 <tr>
                   <th class="text-uppercase">
-                    Username
+                    Photo
+                  </th>
+                  <th class="text-uppercase">
+                    Nama Lengkap & Username
+                  </th>
+                  <th class="text-uppercase">
+                    Email
+                  </th>
+                  <th class="text-uppercase">
+                    Register Date & Account Type
                   </th>
                   <th class="text-center">
                     Action
@@ -65,7 +98,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, i) in list.admins"
+                  v-for="(item, i) in list.users"
                   :key="i"
                 >
                   <td>{{ item.title }}</td>
@@ -73,7 +106,7 @@
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
-                        :to="{ name: 'editAdminEdan', params: { id: item.id } }"
+                        :to="{ name: 'editUserEdan', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
@@ -82,7 +115,7 @@
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete({id: item.id, name: item.title})"
+                        @click="openDialogDelete({ id: item.id, name: item.title })"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -112,7 +145,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'editAdminEdan', params: { id: item.id } }"
+                                :to="{ name: 'editUserEdan', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -127,7 +160,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete({id: item.id, name: item.title})"
+                                @click="openDialogDelete({ id: item.id, name: item.title })"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -164,7 +197,7 @@
           type="table"
           :types="{
             'table-row': 'table-cell@4',
-            'table-tbody': 'table-row-divider@4'
+            'table-tbody': 'table-row-divider@4',
           }"
         ></v-skeleton-loader>
       </v-col>
@@ -233,7 +266,31 @@ export default {
         delete: false,
       },
       list: {
-        admins: [],
+        users: [],
+        filters: [
+          {
+            text: 'Filter: By User Type',
+            key: 'user-type',
+          },
+          {
+            text: 'Filter: By Register Date',
+            key: 'register-date',
+          },
+          {
+            text: 'Filter: By A-Z',
+            key: 'a-z',
+          },
+
+          {
+            text: 'Filter: By Domisi Province',
+            key: 'domisi-provice',
+          },
+          {
+            text: 'Filter: By Domisi Kota/Kab',
+            key: 'domisi-city',
+          },
+
+        ],
       },
     }
   },
@@ -246,6 +303,9 @@ export default {
 
       // this.form.want_to_delete = params
       // this.dialog.delete = !this.dialog.delete
+    },
+    handleFilter(filterType) {
+      console.log(filterType)
     },
 
     // async handleDeleteItem(id) {
@@ -261,7 +321,7 @@ export default {
     //   } else {
     //     this.current_page = data.data.current_page
     //     this.total_page = data.data.last_page
-    //     this.list.admins = data.data.data
+    //     this.list.users = data.data.data
     //   }
     // },
     async handlePagination() {

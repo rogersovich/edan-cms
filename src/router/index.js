@@ -28,7 +28,7 @@ const routes = [
         name: 'listAdminEdan',
         component: () => import('@/views/admin/List.vue'),
         meta: {
-          key: 'list',
+          key: 'admin-edan',
         },
       },
       {
@@ -36,7 +36,7 @@ const routes = [
         name: 'addAdminEdan',
         component: () => import('@/views/admin/Add.vue'),
         meta: {
-          key: 'add',
+          key: 'admin-edan',
         },
       },
       {
@@ -44,7 +44,57 @@ const routes = [
         name: 'editAdminEdan',
         component: () => import('@/views/admin/Edit.vue'),
         meta: {
-          key: 'edit',
+          key: 'admin-edan',
+        },
+      },
+    ],
+  },
+  {
+    path: '/user-edan',
+    component: () => import('@/views/user/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listUserEdan' },
+      },
+      {
+        path: 'list',
+        name: 'listUserEdan',
+        component: () => import('@/views/user/List.vue'),
+        meta: {
+          key: 'user-edan',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addUserEdan',
+        component: () => import('@/views/user/Add.vue'),
+        meta: {
+          key: 'user-edan',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editUserEdan',
+        component: () => import('@/views/user/Edit.vue'),
+        meta: {
+          key: 'user-edan',
+        },
+      },
+      {
+        path: 'change-password/:id',
+        name: 'changePassUserEdan',
+        component: () => import('@/views/user/ChangePassword.vue'),
+        meta: {
+          key: 'user-edan',
+        },
+      },
+      {
+        path: 'detail/:id',
+        name: 'detailUserEdan',
+        component: () => import('@/views/user/Show.vue'),
+        meta: {
+          key: 'user-edan',
         },
       },
     ],
