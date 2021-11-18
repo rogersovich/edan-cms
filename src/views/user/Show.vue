@@ -39,6 +39,7 @@
             <v-form @submit.prevent="handleSubmit">
               <v-row>
                 <v-col
+                  v-if="!$vuetify.breakpoint.mobile"
                   cols="12"
                 >
                   <div class="tw-text-base tw-mb-2 tw-text-gray-600">
@@ -47,14 +48,15 @@
                   <div class="tw-flex">
                     <div>
                       <v-avatar
-
                         v-ripple
                         rounded
                         size="250"
                         class="me-6 tw-cursor-pointer"
                         @click="openDialogPreviewThumbnail"
                       >
-                        <v-img src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"></v-img>
+                        <v-img
+                          src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
+                        ></v-img>
                       </v-avatar>
                     </div>
                     <v-row>
@@ -87,7 +89,7 @@
                           <div>
                             <v-btn
                               text
-                              :to="{name: 'changePassUserEdan', params: {id: '1'}}"
+                              :to="{ name: 'changePassUserEdan', params: { id: '1' } }"
                               color="#6B7280"
                               class="text-none tw-tracking-wide"
                             >
@@ -109,7 +111,9 @@
                               tile
                               size="35"
                             >
-                              <v-img src="https://ik.imagekit.io/1akf8cdsyg/dollar_Ch4x29K-1.svg?updatedAt=1629888786486"></v-img>
+                              <v-img
+                                src="https://ik.imagekit.io/1akf8cdsyg/dollar_Ch4x29K-1.svg?updatedAt=1629888786486"
+                              ></v-img>
                             </v-avatar>
                             <div class="tw-ml-4 tw-text-base tw-font-medium tw-text-gray-700">
                               Point : {{ form.my_point }}
@@ -120,7 +124,9 @@
                               tile
                               size="35"
                             >
-                              <v-img src="https://ik.imagekit.io/1akf8cdsyg/dollar_Ch4x29K-1.svg?updatedAt=1629888786486"></v-img>
+                              <v-img
+                                src="https://ik.imagekit.io/1akf8cdsyg/dollar_Ch4x29K-1.svg?updatedAt=1629888786486"
+                              ></v-img>
                             </v-avatar>
                             <div class="tw-ml-4 tw-text-base tw-font-medium tw-text-gray-700">
                               Koin : {{ form.my_koin }}
@@ -201,7 +207,200 @@
                         </div>
                       </v-col>
                     </v-row>
-                    <div>
+                    <div></div>
+                  </div>
+                </v-col>
+                <v-col
+                  v-else
+                  cols="12"
+                >
+                  <v-row>
+                    <v-col cols="12">
+                      <div class="tw-text-base tw-mb-2 tw-text-gray-600">
+                        Profile User
+                      </div>
+                      <div>
+                        <v-avatar
+                          v-ripple
+                          rounded
+                          width="100%"
+                          height="100%"
+                          class="me-6 tw-cursor-pointer"
+                        >
+                          <v-img
+                            src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
+                          ></v-img>
+                        </v-avatar>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-flex tw-items-center">
+                        <div class="tw-capitalize tw-text-2xl tw-font-semibold tw-text-gray-800 ">
+                          {{ form.fullname }}
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-flex tw-items-center">
+                        <div>
+                          <v-chip
+                            label
+                            class="ma-2 tw-font-medium"
+                            color="primary"
+                          >
+                            Number Verified
+                          </v-chip>
+                        </div>
+                        <div>
+                          <v-chip
+                            label
+                            class="ma-2 tw-font-medium"
+                            color="secondary"
+                          >
+                            Email Not Verified
+                          </v-chip>
+                        </div>
+                      </div>
+                      <div class="tw-mt-2">
+                        <v-btn
+                          text
+                          block
+                          :to="{ name: 'changePassUserEdan', params: { id: '1' } }"
+                          color="#6B7280"
+                          class="text-none tw-tracking-wide"
+                        >
+                          Change Password
+                          <v-icon right>
+                            {{ icons.mdiLock }}
+                          </v-icon>
+                        </v-btn>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            Username :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            {{ form.username }}
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            Provinsi :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            Jawa Barat
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            Email :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            {{ form.email }}
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            Kota/Kab :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            Kota Bogor
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            No Whatsapp :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            {{ form.no_wa }}
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                    <v-col cols="12">
+                      <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                        <div class="tw-col-span-4">
+                          <div class="tw-text-sm">
+                            Kecamatan :
+                          </div>
+                        </div>
+                        <div class="tw-col-span-8">
+                          <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                            Ciawi
+                          </div>
+                        </div>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12">
+                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                    <div class="tw-col-span-4">
+                      <div class="tw-text-sm">
+                        Tanggal Lahir :
+                      </div>
+                    </div>
+                    <div class="tw-col-span-8">
+                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                        {{ form.tgl_lahir }}
+                      </div>
+                    </div>
+                  </div>
+                </v-col>
+                <v-col cols="12">
+                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                    <div class="tw-col-span-4">
+                      <div class="tw-text-sm">
+                        Tempat Lahir :
+                      </div>
+                    </div>
+                    <div class="tw-col-span-8">
+                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                        {{ form.tempat_lahir }}
+                      </div>
+                    </div>
+                  </div>
+                </v-col>
+                <v-col cols="12">
+                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
+                    <div class="tw-col-span-4">
+                      <div class="tw-text-sm">
+                        Tipe Akun :
+                      </div>
+                    </div>
+                    <div class="tw-col-span-8">
+                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
+                        {{ form.oauth_type }}
+                      </div>
                     </div>
                   </div>
                 </v-col>
