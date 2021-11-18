@@ -16,7 +16,7 @@
                 <v-btn
                   color="primary"
                   class="text-none"
-                  :to="{ name: 'subCategoryAdd' }"
+                  :to="{ name: 'addAdminEdan' }"
                 >
                   <v-icon left>
                     {{ icons.mdiPlus }}
@@ -37,7 +37,7 @@
                     block
                     color="primary"
                     class="text-none"
-                    :to="{ name: 'subCategoryAdd' }"
+                    :to="{ name: 'addAdminEdan' }"
                   >
                     <v-icon left>
                       {{ icons.mdiPlus }}
@@ -56,7 +56,7 @@
               <thead>
                 <tr>
                   <th class="text-uppercase">
-                    Title
+                    Username
                   </th>
                   <th class="text-center">
                     Action
@@ -73,7 +73,7 @@
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
-                        :to="{ name: 'subCategoryEdit', params: { id: item.id } }"
+                        :to="{ name: 'editAdminEdan', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
@@ -112,7 +112,7 @@
                             <v-list-item-action>
                               <v-btn
                                 text
-                                :to="{ name: 'subCategoryEdit', params: { id: item.id } }"
+                                :to="{ name: 'editAdminEdan', params: { id: item.id } }"
                                 color="#FBBF24"
                               >
                                 <v-icon left>
@@ -264,9 +264,9 @@ export default {
     //     this.list.admins = data.data.data
     //   }
     // },
-    // async handlePagination() {
-    //   await this.getAllData()
-    // },
+    async handlePagination() {
+      // await this.getAllData()
+    },
   },
 }
 </script>

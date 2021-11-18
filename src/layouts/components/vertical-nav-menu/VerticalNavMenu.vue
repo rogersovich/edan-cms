@@ -43,12 +43,12 @@
         :icon="icons.mdiHomeOutline"
         :nested="false"
       ></nav-menu-link>
-      <!-- <nav-menu-link
-        title="Account Settings"
-        :to="{ name: 'pages-account-settings' }"
+      <nav-menu-link
+        title="Admin Edan"
+        :to="{ name: 'listAdminEdan' }"
         :icon="icons.mdiAccountCogOutline"
         :nested="false"
-      ></nav-menu-link> -->
+      ></nav-menu-link>
       <nav-menu-group
         title="Sub Category"
         :icon="icons.mdiShape"

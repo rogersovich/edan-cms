@@ -18,6 +18,36 @@ const routes = [
   {
     path: '/admin-edan',
     component: () => import('@/views/admin/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listAdminEdan' },
+      },
+      {
+        path: 'list',
+        name: 'listAdminEdan',
+        component: () => import('@/views/admin/List.vue'),
+        meta: {
+          key: 'list',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addAdminEdan',
+        component: () => import('@/views/admin/Add.vue'),
+        meta: {
+          key: 'add',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editAdminEdan',
+        component: () => import('@/views/admin/Edit.vue'),
+        meta: {
+          key: 'edit',
+        },
+      },
+    ],
   },
   {
     path: '/sub-category',
