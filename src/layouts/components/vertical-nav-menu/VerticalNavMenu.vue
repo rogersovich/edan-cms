@@ -37,13 +37,16 @@
       shaped
       class="vertical-nav-menu-items pr-5"
     >
+      <!-- dashboard  -->
       <nav-menu-link
         title="Dashboard"
         :to="{ name: 'dashboard' }"
         :icon="icons.mdiHomeOutline"
         :nested="false"
       ></nav-menu-link>
+      <!-- end -->
 
+      <!-- admin  -->
       <nav-menu-group
         title="Admin Edan"
         :icon="icons.mdiAccountCogOutline"
@@ -62,7 +65,9 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
+      <!-- end -->
 
+      <!-- user -->
       <nav-menu-group
         title="User Edan"
         :icon="icons.mdiAccountGroupOutline"
@@ -81,6 +86,7 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
+      <!-- end -->
 
       <!-- <nav-menu-group
         title="Sub Category"
@@ -100,7 +106,7 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group> -->
-      <nav-menu-group
+      <!-- <nav-menu-group
         title="Villa Gallery"
         :icon="icons.mdiImageMultiple"
         :active="$route.meta.key === 'villa-gallery' ? true : false"
@@ -171,7 +177,7 @@
           :icon="icons.mdiPlus"
           :nested="true"
         ></nav-menu-link>
-      </nav-menu-group>
+      </nav-menu-group> -->
       <!-- <nav-menu-group
         title="Pages"
         :icon="icons.mdiFileOutline"
