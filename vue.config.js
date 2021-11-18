@@ -22,7 +22,7 @@ module.exports = {
     index: {
       // entry for the page
       entry: 'src/main.js',
-      title: 'Villarian',
+      title: 'Edan CMS',
     },
   },
 }
