@@ -108,7 +108,7 @@
                         Allowed JPG, GIF or PNG. Max size of 800K
                       </p>
                       <div
-                        v-if="error_form.profile_img.legth === 0"
+                        v-if="error_form.profile_img !== ''"
                         class="tw-text-red-500 tw-text-sm"
                       >
                         {{ error_form.profile_img }}

@@ -24,9 +24,33 @@
                     @keydown.enter="handleSearch"
                   ></v-text-field>
                 </div>
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      outlined
+                      class="text-none tw-tracking-wide tw-text-white tw-font-medium"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Filter By
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item-group>
+                      <v-list-item
+                        v-for="(item, index) in list.filters"
+                        :key="index"
+                        @change="handleFilter(item.key)"
+                      >
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-menu>
                 <v-btn
                   color="primary"
-                  class="text-none"
+                  class="text-none tw-ml-3"
                   :to="{ name: 'addContentEdan' }"
                 >
                   <v-icon left>
@@ -53,6 +77,33 @@
                     placeholder="Search By Name"
                     @keydown.enter="handleSearch"
                   ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        color="primary"
+                        outlined
+                        block
+                        class="text-none tw-tracking-wide tw-text-white tw-font-medium"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        Filter By
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item-group>
+                        <v-list-item
+                          v-for="(item, index) in list.filters"
+                          :key="index"
+                          @change="handleFilter(item.key)"
+                        >
+                          <v-list-item-title>{{ item.text }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
+                  </v-menu>
                 </v-col>
                 <v-col cols="12">
                   <v-btn
@@ -266,6 +317,21 @@ export default {
       },
       list: {
         contents: [],
+        filters: [
+          {
+            text: 'Filter: By Publish Date',
+            key: 'publish-date',
+          },
+          {
+            text: 'Filter: By Newest/Older',
+            key: 'newest-or-older',
+          },
+          {
+            text: 'Filter: By Category',
+            key: 'categori',
+          },
+
+        ],
       },
     }
   },
@@ -278,6 +344,9 @@ export default {
 
       // this.form.want_to_delete = params
       // this.dialog.delete = !this.dialog.delete
+    },
+    handleFilter(filterType) {
+      console.log(filterType)
     },
     handleSearch(event) {
       event.preventDefault()

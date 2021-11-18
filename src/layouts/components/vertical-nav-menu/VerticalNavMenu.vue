@@ -113,7 +113,7 @@
       <nav-menu-group
         title="Content"
         :icon="icons.mdiShapeOutline"
-        :active="$route.meta.key === 'content-edan' ? true : false"
+        :active="$route.meta.key === 'content' ? true : false"
       >
         <nav-menu-link
           title="List"
