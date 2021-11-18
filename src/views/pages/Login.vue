@@ -8,25 +8,16 @@
             to="/"
             class="d-flex align-center"
           >
-            <v-img
-              :src="require('@/assets/images/logos/logo.svg')"
-              max-height="30px"
-              max-width="30px"
-              alt="logo"
-              contain
-              class="me-3 "
-            ></v-img>
-
             <h2 class="text-2xl font-weight-semibold">
-              Materio
+              Admin Login
             </h2>
           </router-link>
         </v-card-title>
 
         <!-- title -->
         <v-card-text>
-          <p class="text-2xl font-weight-semibold text--primary mb-2">
-            Welcome to Materio! 👋🏻
+          <p class="text-2xl font-weight-semibold tw-text-center text--primary mb-2">
+            Welcome to Nama Aplikasi!
           </p>
           <p class="mb-2">
             Please sign-in to your account and start the adventure
@@ -37,18 +28,18 @@
         <v-card-text>
           <v-form>
             <v-text-field
-              v-model="email"
+              v-model="username"
               outlined
-              label="Email"
-              placeholder="john@example.com"
+              label="Username"
+              placeholder="yourusername"
               hide-details
-              :class="errorForm.email ?'tw-mb-0' : 'mb-3'"
+              :class="errorForm.username ? 'tw-mb-0' : 'mb-3'"
             ></v-text-field>
             <div
-              v-if="errorForm.email"
+              v-if="errorForm.username"
               class="tw-text-xs tw-text-red-500 tw-mt-1.5 tw-mb-3 tw-tracking-wide"
             >
-              {{ errorForm.email[0] }}
+              {{ errorForm.username[0] }}
             </div>
 
             <v-text-field
@@ -74,9 +65,7 @@
               <a
                 href="javascript:void(0)"
                 class="mt-1"
-              >
-                Forgot Password?
-              </a>
+              > Forgot Password? </a>
             </div>
 
             <v-btn
@@ -89,37 +78,6 @@
             </v-btn>
           </v-form>
         </v-card-text>
-
-        <!-- create new account  -->
-        <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
-          <span class="me-2">
-            New on our platform?
-          </span>
-          <router-link :to="{name:'pages-register'}">
-            Create an account
-          </router-link>
-        </v-card-text>
-
-        <!-- divider -->
-        <v-card-text class="d-flex align-center mt-2">
-          <v-divider></v-divider>
-          <span class="mx-5">or</span>
-          <v-divider></v-divider>
-        </v-card-text>
-
-        <!-- social links -->
-        <v-card-actions class="d-flex justify-center">
-          <v-btn
-            v-for="link in socialLink"
-            :key="link.icon"
-            icon
-            class="ms-1"
-          >
-            <v-icon :color="$vuetify.theme.dark ? link.colorInDark : link.color">
-              {{ link.icon }}
-            </v-icon>
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </div>
 
@@ -127,8 +85,8 @@
     <img
       class="auth-mask-bg"
       height="173"
-      :src="require(`@/assets/images/misc/mask-${$vuetify.theme.dark ? 'dark':'light'}.png`)"
-    >
+      :src="require(`@/assets/images/misc/mask-${$vuetify.theme.dark ? 'dark' : 'light'}.png`)"
+    />
 
     <!-- tree -->
     <v-img
@@ -149,74 +107,56 @@
 </template>
 
 <script>
+import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 // eslint-disable-next-line object-curly-newline
-import { mdiFacebook, mdiTwitter, mdiGithub, mdiGoogle, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
-import { login } from '@/api/auth'
+
+// import { login } from '@/api/auth'
 
 export default {
   setup() {
     const isPasswordVisible = ref(false)
-    const email = ref('')
+    const username = ref('')
     const password = ref('')
     const errorForm = ref({})
-    const socialLink = [
-      {
-        icon: mdiFacebook,
-        color: '#4267b2',
-        colorInDark: '#4267b2',
-      },
-      {
-        icon: mdiTwitter,
-        color: '#1da1f2',
-        colorInDark: '#1da1f2',
-      },
-      {
-        icon: mdiGithub,
-        color: '#272727',
-        colorInDark: '#fff',
-      },
-      {
-        icon: mdiGoogle,
-        color: '#db4437',
-        colorInDark: '#db4437',
-      },
-    ]
 
     async function handleLogin() {
       const form = {
-        email: email.value,
+        username: username.value,
         password: password.value,
       }
 
-      const data = await login(form)
-      if (data.status === 200) {
-        errorForm.value = {}
-        await this.$store.dispatch('auth/saveAuth', {
-          token: data.data.access_token,
-          profile: data.data.user,
-        })
+      console.log(form)
+      this.$router.push({ name: 'dashboard' })
 
-        this.$router.push({ name: 'dashboard' })
-      } else {
-        errorForm.value = data.data.errors
-      }
+      // const data = await login(form)
+      // if (data.status === 200) {
+      //   errorForm.value = {}
+      //   await this.$store.dispatch('auth/saveAuth', {
+      //     token: data.data.access_token,
+      //     profile: data.data.user,
+      //   })
+
+      //   this.$router.push({ name: 'dashboard' })
+      // } else {
+      //   errorForm.value = data.data.errors
+      // }
     }
 
     return {
       isPasswordVisible,
-      email,
+      username,
       password,
-      socialLink,
       errorForm,
-
-      // method
-      handleLogin,
 
       icons: {
         mdiEyeOutline,
         mdiEyeOffOutline,
       },
+
+      // method
+      handleLogin,
+
     }
   },
 }

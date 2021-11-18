@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from '../store'
+
+// import store from '../store'
 
 Vue.use(VueRouter)
 
@@ -191,7 +192,7 @@ const routes = [
     component: () => import('@/views/pages/account-settings/AccountSettings.vue'),
   },
   {
-    path: '/pages/login',
+    path: '/login',
     name: 'pages-login',
     component: () => import('@/views/pages/Login.vue'),
     meta: {
@@ -236,15 +237,16 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // const { checkLogin } = to.meta
-  const { token } = store.state.auth
+  // const { token } = store.state.auth
 
-  if (to.name !== 'pages-login' && token === '') {
-    next({ name: 'pages-login' })
-  } else if (to.name === 'pages-login' && token !== '') {
-    next({ name: 'dashboard' })
-  } else {
-    next()
-  }
+  // if (to.name !== 'pages-login' && token === '') {
+  //   next({ name: 'pages-login' })
+  // } else if (to.name === 'pages-login' && token !== '') {
+  //   next({ name: 'dashboard' })
+  // } else {
+  //   next()
+  // }
+  next()
 })
 
 export default router
