@@ -61,7 +61,7 @@
                           class="me-3"
                         >
                           <label
-                            for="file"
+                            for="file-thumbnail"
                             class="tw-cursor-pointer"
                           >
                             <v-icon class="d-sm-none">
@@ -76,7 +76,7 @@
                         v-ripple
                         rounded
                         width="100%"
-                        height="auto"
+                        height="300"
                         class="me-6 tw-cursor-pointer"
                         @click="openDialogPreviewThumbnail"
                       >
@@ -91,7 +91,7 @@
                           block
                           class="me-3"
                         >
-                          <label for="file">
+                          <label for="file-thumbnail tw-cursor-pointer">
                             <v-icon class="d-sm-none">
                               {{ icons.mdiCloudUploadOutline }}
                             </v-icon>
@@ -133,6 +133,7 @@
                           v-model="form.thumbnail"
                           :multiple="false"
                           :drop="false"
+                          input-id="file-thumbnail"
                           @input-filter="inputFilter"
                         >
                           <i class="fa fa-plus"></i>
@@ -146,6 +147,154 @@
                 <v-col
                   cols="12"
                   md="6"
+                >
+                  <div>
+                    <div class="tw-flex tw-items-center tw-mb-1.5">
+                      <div class="subtitle-1 tw-text-gray-600">
+                        Thumbnail Konten Detail
+                      </div>
+                      <v-spacer></v-spacer>
+                      <div>
+                        <v-btn
+                          small
+                          color="primary"
+                          class="text-none tw-tracking-wide tw-font-medium"
+                          @click="changeTypeThumbnailDetail"
+                        >
+                          Ubah Jadi
+                          <span
+                            v-if="form.type_thumbnail_detail === 'Photo'"
+                            class="tw-ml-0.5"
+                          >
+                            Video </span>
+                          <span
+                            v-else
+                            class="tw-ml-0.5"
+                          >
+                            Photo
+                          </span>
+                        </v-btn>
+                      </div>
+                    </div>
+
+                    <template v-if="form.type_thumbnail_detail === 'Photo'">
+                      <div>
+                        <div
+                          v-if="form.thumbnail_detail.length === 0"
+                          class="tw-w-full tw-bg-gray-100 tw-rounded-md tw-h-56 tw-flex tw-items-center tw-justify-center"
+                        >
+                          <v-btn
+                            v-if="form.thumbnail_detail.length === 0"
+                            color="primary"
+                            outlined
+                            class="me-3"
+                          >
+                            <label
+                              for="file-thumbnail-detail"
+                              class="tw-cursor-pointer"
+                            >
+                              <v-icon class="d-sm-none">
+                                {{ icons.mdiCloudUploadOutline }}
+                              </v-icon>
+                              <span class="d-none d-sm-block">Upload</span>
+                            </label>
+                          </v-btn>
+                        </div>
+                        <v-avatar
+                          v-else
+                          v-ripple
+                          rounded
+                          width="100%"
+                          height="300"
+                          class="me-6 tw-cursor-pointer"
+                          @click="openDialogPreviewThumbnailDetail"
+                        >
+                          <v-img :src="form.thumbnail_detail[0].url"></v-img>
+                        </v-avatar>
+                      </div>
+                      <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
+                        <div class="tw-col-span-6">
+                          <v-btn
+                            v-if="form.thumbnail_detail.length > 0"
+                            color="warning"
+                            block
+                            class="me-3"
+                          >
+                            <label for="file-thumbnail-detail tw-cursor-pointer">
+                              <v-icon class="d-sm-none">
+                                {{ icons.mdiCloudUploadOutline }}
+                              </v-icon>
+                              <span class="d-none d-sm-block">Ubah</span>
+                            </label>
+                          </v-btn>
+                        </div>
+                        <div class="tw-col-span-6">
+                          <v-btn
+                            v-if="form.thumbnail_detail.length > 0"
+                            color="error"
+                            block
+                            outlined
+                            @click="removeItemDetail(form.thumbnail_detail[0])"
+                          >
+                            Reset
+                          </v-btn>
+                        </div>
+                        <div class="tw-col-span-12">
+                          <p class="tw-text-xs mt-4 tw-mb-2">
+                            Allowed JPG, GIF or PNG. Max size of 800K
+                          </p>
+                          <div
+                            v-if="error_form.thumbnail_detail !== ''"
+                            class="tw-text-red-500 tw-text-sm"
+                          >
+                            {{ error_form.thumbnail_detail }}
+                          </div>
+                        </div>
+                      </div>
+                      <!-- input upload -->
+                      <div>
+                        <div
+                          depressed
+                          class="tw-shadow-md tw-hidden"
+                        >
+                          <file-upload
+                            ref="uploadThumbnailDetail"
+                            v-model="form.thumbnail_detail"
+                            input-id="file-thumbnail-detail"
+                            :multiple="false"
+                            :drop="false"
+                            @input-filter="inputFilter"
+                          >
+                            <i class="fa fa-plus"></i>
+                            Select files
+                          </file-upload>
+                        </div>
+                      </div>
+                    <!-- end -->
+                    </template>
+                    <template v-else>
+                      <div class="tw-mt-6">
+                        <validation-provider
+                          v-slot="{ errors }"
+                          name="Video Url"
+                          rules="required"
+                        >
+                          <div>
+                            <v-text-field
+                              v-model="form.video_detail"
+                              label="Video Url"
+                              outlined
+                              :error-messages="errors"
+                              placeholder="Your Video Url"
+                            ></v-text-field>
+                          </div>
+                        </validation-provider>
+                      </div>
+                    </template>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
                 >
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
@@ -234,8 +383,9 @@
                     <v-btn
                       block
                       outlined
+                      :disabled="!checkIfFormFilledAtLeastOne()"
                       color="primary"
-                      @click="handleSaveToDraft"
+                      @click="handleSaveToDraft({click_button: 1})"
                     >
                       Save As Draft
                     </v-btn>
@@ -292,6 +442,37 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-if="form.thumbnail_detail.length > 0"
+      v-model="dialog.preview_thumbnail_detail"
+      max-width="480"
+    >
+      <v-card>
+        <v-card-title>
+          <div class="tw-text-true-gray-800">
+            Preview thumbnail gambar
+          </div>
+          <v-spacer></v-spacer>
+          <div>
+            <v-btn
+              icon
+              @click="dialog.preview_thumbnail_detail = !dialog.preview_thumbnail_detail"
+            >
+              <v-icon>
+                {{ icons.mdiWindowClose }}
+              </v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <v-img
+            contain
+            :src="form.thumbnail_detail[0].url"
+          ></v-img>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </validation-observer>
 </template>
 
@@ -330,17 +511,23 @@ export default {
       error_form: {
         thumbnail: '',
         description: '',
+        thumbnail_detail: '',
       },
       dialog: {
         preview_thumbnail: false,
+        preview_thumbnail_detail: false,
       },
       form: {
         title: '',
         thumbnail: [],
+        thumbnail_detail: [],
+        video_detail: '',
         category: '',
         description: '',
         create_by: 'dimas roger',
         is_feature: 'feature',
+        type_thumbnail_detail: 'Photo',
+        is_published: 0,
       },
       list: {
         categories: [
@@ -356,12 +543,21 @@ export default {
       },
     }
   },
+  destroyed() {
+    this.handleSaveToDraft()
+  },
   methods: {
     openDialogPreviewThumbnail() {
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
     },
+    openDialogPreviewThumbnailDetail() {
+      this.dialog.preview_thumbnail_detail = !this.dialog.preview_thumbnail_detail
+    },
     removeItem(file) {
       this.$refs.uploadThumbnail.remove(file)
+    },
+    removeItemDetail(file) {
+      this.$refs.uploadThumbnailDetail.remove(file)
     },
     // eslint-disable-next-line consistent-return
     inputFilter(newFile, oldFile, prevent) {
@@ -385,40 +581,59 @@ export default {
         }
       }
     },
-    handleSaveToDraft() {
-      this.$refs.formSubmit.validate().then(async success => {
-        this.error_form.thumbnail = ''
-        this.error_form.description = ''
-        if (this.form.thumbnail.length === 0) {
-          this.error_form.thumbnail = 'Gambar Harus di isi Dulu!'
+    changeTypeThumbnailDetail() {
+      if (this.form.type_thumbnail_detail === 'Photo') {
+        this.form.type_thumbnail_detail = 'Video'
+      } else {
+        this.form.type_thumbnail_detail = 'Photo'
+      }
+    },
+    checkIfFormFilledAtLeastOne() {
+      let check = false
+      if (this.form.title !== '') {
+        check = true
+      } else if (this.form.thumbnail.length > 0) {
+        check = true
+      } else if (this.form.thumbnail_detail.length > 0 || this.form.video_detail !== '') {
+        check = true
+      } else if (this.form.category !== '') {
+        check = true
+      } else if (this.form.description !== '') {
+        check = true
+      } else {
+        check = false
+      }
 
-          return
+      return check
+    },
+    handleSaveToDraft(button) {
+      const check = this.checkIfFormFilledAtLeastOne()
+      if (check) {
+        if (typeof button === 'undefined') {
+          this.form.is_published = 0
+
+          console.log(this.form)
+        } else {
+          this.$router.push({ name: 'listContentEdan' })
+          this.form.is_published = 0
+
+          console.log(this.form)
         }
-
-        if (this.form.description === '') {
-          this.error_form.thumbnail = 'Isi Konten Harus di isi Dulu!'
-
-          return
-        }
-        if (!success) {
-          return
-        }
-
-        console.log(this.form)
-        this.$router.push({ name: 'listContentEdan' })
-
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
-      })
+      }
     },
     handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         this.error_form.thumbnail = ''
         this.error_form.description = ''
+        this.error_form.thumbnail_detail = ''
         if (this.form.thumbnail.length === 0) {
           this.error_form.thumbnail = 'Gambar Harus di isi Dulu!'
+
+          return
+        }
+
+        if (this.form.thumbnail.length === 0) {
+          this.error_form.thumbnail_detail = 'Gambar Detail Harus di isi Dulu!'
 
           return
         }
@@ -432,6 +647,7 @@ export default {
           return
         }
 
+        this.form.is_published = 1
         console.log(this.form)
         this.$router.push({ name: 'listContentEdan' })
 

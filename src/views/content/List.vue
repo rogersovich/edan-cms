@@ -24,30 +24,71 @@
                     @keydown.enter="handleSearch"
                   ></v-text-field>
                 </div>
-                <v-menu offset-y>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      outlined
-                      class="text-none tw-tracking-wide tw-text-white tw-font-medium"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      Filter By
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item-group>
-                      <v-list-item
-                        v-for="(item, index) in list.filters"
-                        :key="index"
-                        @change="handleFilter(item.key)"
-                      >
-                        <v-list-item-title>{{ item.text }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-menu>
+                <div>
+                  <v-btn
+                    color="primary"
+                    outlined
+                    class="text-none tw-tracking-wide tw-text-white tw-font-medium"
+                    @click="showMenuFilter"
+                  >
+                    Filter By
+                  </v-btn>
+                  <v-menu
+                    v-model="menu.filter"
+                    offset-y
+                    absolute
+                    :position-x="x"
+                    :position-y="y"
+                    :close-on-content-click="false"
+                  >
+                    <v-list>
+                      <v-list-item-group>
+                        <template v-for="item in list.filters">
+                          <v-list-item
+                            v-if="item.key !== 'categori'"
+                            :key="item.key"
+                            @change="handleFilter(item.key)"
+                          >
+                            <v-list-item-title>{{ item.text }}</v-list-item-title>
+                          </v-list-item>
+
+                          <v-list-group
+                            v-else
+                            :key="item.key"
+                            sub-group
+                            class="tw-block"
+                          >
+                            <template #activator>
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  {{ item.text }}
+                                </v-list-item-title>
+                              </v-list-item-content>
+                            </template>
+                            <template v-for="category in list.categories">
+                              <v-list-item
+                                :key="category.key"
+                                @change="handleFilter(category.key)"
+                              >
+                                <v-list-item-title>{{ category.text }}</v-list-item-title>
+                              </v-list-item>
+                            </template>
+                          </v-list-group>
+                        </template>
+                        <v-list-item class="tw-mt-2">
+                          <v-btn
+                            block
+                            small
+                            color="primary"
+                            @click="handleSubmitFilter"
+                          >
+                            Simpan
+                          </v-btn>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
+                  </v-menu>
+                </div>
                 <v-btn
                   color="primary"
                   class="text-none tw-ml-3"
@@ -308,13 +349,19 @@ export default {
       },
       current_page: 1,
       total_page: 0,
+      menu: {
+        filter: false,
+      },
       form: {
         want_to_delete: '',
         query_search: '',
+        filter_by: '',
       },
       dialog: {
         delete: false,
       },
+      x: 0,
+      y: 0,
       list: {
         contents: [],
         filters: [
@@ -332,6 +379,16 @@ export default {
           },
 
         ],
+        categories: [
+          {
+            text: 'Info',
+            key: 'info',
+          },
+          {
+            text: 'Edukasi',
+            key: 'edukasi',
+          },
+        ],
       },
     }
   },
@@ -340,17 +397,30 @@ export default {
   },
   methods: {
     openDialogDelete(params) {
-      console.log(params)
+      this.form.filter_by = params
 
       // this.form.want_to_delete = params
       // this.dialog.delete = !this.dialog.delete
     },
+    showMenuFilter(e) {
+      e.preventDefault()
+      this.menu.filter = false
+      this.x = e.clientX - 30
+      this.y = e.clientY + 20
+      this.$nextTick(() => {
+        this.menu.filter = true
+      })
+    },
     handleFilter(filterType) {
-      console.log(filterType)
+      this.form.filter_by = filterType
     },
     handleSearch(event) {
       event.preventDefault()
       console.log(this.form.query_search)
+    },
+    handleSubmitFilter() {
+      console.log(this.form.filter_by)
+      this.menu.filter = !this.menu.filter
     },
 
     // async handleDeleteItem(id) {
@@ -376,4 +446,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+* >>> .v-list-group--sub-group .v-list-group__header {
+  padding-left: 10px !important;
+}
+</style>
