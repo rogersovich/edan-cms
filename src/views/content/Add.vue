@@ -91,7 +91,10 @@
                           block
                           class="me-3"
                         >
-                          <label for="file-thumbnail tw-cursor-pointer">
+                          <label
+                            for="file-thumbnail"
+                            class="tw-cursor-pointer tw-w-full"
+                          >
                             <v-icon class="d-sm-none">
                               {{ icons.mdiCloudUploadOutline }}
                             </v-icon>
@@ -220,7 +223,10 @@
                             block
                             class="me-3"
                           >
-                            <label for="file-thumbnail-detail tw-cursor-pointer">
+                            <label
+                              for="file-thumbnail-detail"
+                              class="tw-cursor-pointer tw-w-full"
+                            >
                               <v-icon class="d-sm-none">
                                 {{ icons.mdiCloudUploadOutline }}
                               </v-icon>
@@ -369,7 +375,7 @@
                     <quill-editor
                       :title.sync="form.description"
                       :class="
-                        error_form.thumbnail !== '' ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
+                        error_form.description !== '' ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
                       "
                     ></quill-editor>
                   </div>
