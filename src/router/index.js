@@ -168,6 +168,40 @@ const routes = [
     ],
   },
   {
+    path: '/banner',
+    component: () => import('@/views/banner/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listBanner' },
+      },
+      {
+        path: 'list',
+        name: 'listBanner',
+        component: () => import('@/views/banner/List.vue'),
+        meta: {
+          key: 'banner',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addBanner',
+        component: () => import('@/views/banner/Add.vue'),
+        meta: {
+          key: 'banner',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editBanner',
+        component: () => import('@/views/banner/Edit.vue'),
+        meta: {
+          key: 'banner',
+        },
+      },
+    ],
+  },
+  {
     path: '/login',
     name: 'pages-login',
     component: () => import('@/views/pages/Login.vue'),

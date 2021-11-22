@@ -112,7 +112,7 @@
       <!-- content  -->
       <nav-menu-group
         title="Content"
-        :icon="icons.mdiShapeOutline"
+        :icon="icons.mdiTableOfContents"
         :active="$route.meta.key === 'content' ? true : false"
       >
         <nav-menu-link
@@ -124,6 +124,27 @@
         <nav-menu-link
           title="Add"
           :to="{ name: 'addContentEdan' }"
+          :icon="icons.mdiPlus"
+          :nested="true"
+        ></nav-menu-link>
+      </nav-menu-group>
+      <!-- end -->
+
+      <!-- banner  -->
+      <nav-menu-group
+        title="Banner"
+        :icon="icons.mdiImageArea"
+        :active="$route.meta.key === 'banner' ? true : false"
+      >
+        <nav-menu-link
+          title="List"
+          :to="{ name: 'listBanner' }"
+          :icon="icons.mdiTable"
+          :nested="true"
+        ></nav-menu-link>
+        <nav-menu-link
+          title="Add"
+          :to="{ name: 'addBanner' }"
           :icon="icons.mdiPlus"
           :nested="true"
         ></nav-menu-link>
@@ -299,6 +320,8 @@ import {
   mdiReceipt,
   mdiAccountGroupOutline,
   mdiShapeOutline,
+  mdiTableOfContents,
+  mdiImageArea,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -336,6 +359,8 @@ export default {
         mdiReceipt,
         mdiAccountGroupOutline,
         mdiShapeOutline,
+        mdiTableOfContents,
+        mdiImageArea,
       },
     }
   },

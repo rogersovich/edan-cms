@@ -9,7 +9,11 @@ const ls = new SecureLS({ isCompression: false })
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    dummy: {
+      user: 'Kucing Kita',
+    },
+  },
   mutations: {},
   actions: {},
   modules: {
