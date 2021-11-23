@@ -7,7 +7,7 @@
     >
       <v-col
         cols="12"
-        md="12"
+        md="8"
       >
         <v-card>
           <v-card-title>
@@ -40,7 +40,6 @@
               <v-row>
                 <v-col
                   cols="12"
-                  md="6"
                 >
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
@@ -48,9 +47,7 @@
                     </div>
 
                     <div>
-                      <div
-                        v-if="form_new.image.length === 0"
-                      >
+                      <div v-if="form_new.image.length === 0">
                         <v-avatar
                           v-ripple
                           rounded
@@ -98,7 +95,6 @@
                         class="tw-col-span-6"
                       >
                         <v-btn
-
                           color="error"
                           block
                           outlined
@@ -111,18 +107,12 @@
                         <p class="tw-text-xs mt-4 tw-mb-2">
                           Allowed JPG, GIF or PNG. Max size of 2MB
                         </p>
+
                         <div
-                          v-if="error_form.image !== ''"
-                          class="tw-text-red-500 tw-text-sm"
-                        >
-                          {{ error_form.image }}
-                        </div>
-                        <div
-                          v-else-if="form_new.image.length > 0"
+                          v-if="form_new.image.length > 0"
                           class="tw-text-red-500 tw-text-sm"
                         >
                           <span v-if="form_new.image[0].error !== ''">
-
                             {{ form_new.image[0].error }}
                           </span>
                         </div>
@@ -139,7 +129,6 @@
                           v-model="form_new.image"
                           :multiple="false"
                           :drop="false"
-                          :size="10000"
                           accept="image/png,image/gif,image/jpeg,image/webp"
                           input-id="file-image"
                           @input-filter="inputFilter"
@@ -257,9 +246,6 @@ export default {
         mdiCloudUploadOutline,
         mdiWindowClose,
       },
-      error_form: {
-        image: '',
-      },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -322,8 +308,10 @@ export default {
     },
     handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
-        if (this.form_new.image[0].error !== '' && this.form_new.image.length > 0) {
-          return
+        if (this.form_new.image.length > 0) {
+          if (this.form_new.image[0].error !== '' && this.form_new.image.length > 0) {
+            return
+          }
         }
 
         if (!success) {
@@ -333,7 +321,7 @@ export default {
         // this.form.create_by = this.$store.state.dummy.user
         console.log(this.form)
 
-        // this.$router.push({ name: 'listBanner' })
+        this.$router.push({ name: 'listBanner' })
 
         // const data = await storeData({
         //   username: this.form.username,

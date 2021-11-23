@@ -6,11 +6,21 @@
       justify="center"
     >
       <v-col
+        v-if="Object.keys(educationCategory).length === 0"
+        cols="12"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          type="card"
+        ></v-skeleton-loader>
+      </v-col>
+      <v-col
+        v-else
         cols="12"
         md="8"
       >
         <v-card>
-          <v-card-title>
+          <v-card-title class="tw-block">
             <v-row align="center">
               <v-col
                 cols="2"
@@ -18,8 +28,9 @@
               >
                 <div>
                   <v-btn
+                    exact
                     icon
-                    :to="{ name: 'listBanner' }"
+                    :to="{ name: 'listEducationCategory' }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -27,46 +38,89 @@
               </v-col>
               <v-col
                 cols="9"
-                md="7"
+                md="6"
               >
                 <div class="tw-text-center tw-text-base md:tw-text-xl">
-                  Tambah Banner
+                  Edit Edukasi Kategori
                 </div>
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-3">
             <v-form @submit.prevent="handleSubmit">
-              <v-row>
-                <v-col
-                  cols="12"
-                >
+              <v-row dense>
+                <v-col cols="12">
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Category name"
+                    rules="required"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.category_name"
+                        label="Category name"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Your Category name"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Urutan"
+                    rules="required"
+                  >
+                    <div class="tw-mb-5">
+                      <v-select
+                        v-model="form.order"
+                        label="Urutan"
+                        outlined
+                        :error-messages="errors"
+                        :items="list.orders"
+                        item-value="order"
+                        :item-text="item => item.category_name + '-' + item.order"
+                      ></v-select>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Deskripsi"
+                    rules="required"
+                  >
+                    <div>
+                      <v-textarea
+                        v-model="form.description"
+                        label="Deskripsi"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Masukan Deskripsi"
+                      ></v-textarea>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
                       Gambar Banner
                     </div>
-
                     <div>
                       <div
-                        v-if="form.image.length === 0"
-                        class="tw-w-full tw-bg-gray-100 tw-rounded-md tw-h-56 tw-flex tw-items-center tw-justify-center"
+                        v-if="form_new.image.length === 0"
                       >
-                        <v-btn
-                          v-if="form.image.length === 0"
-                          color="primary"
-                          outlined
-                          class="me-3"
+                        <v-avatar
+                          v-ripple
+                          rounded
+                          width="100%"
+                          height="300"
+                          class="me-6 tw-cursor-pointer"
+                          @click="openDialogPreviewImage(form.image)"
                         >
-                          <label
-                            for="file-image"
-                            class="tw-cursor-pointer"
-                          >
-                            <v-icon class="d-sm-none">
-                              {{ icons.mdiCloudUploadOutline }}
-                            </v-icon>
-                            <span class="d-none d-sm-block">Pilih Gambar/GIF</span>
-                          </label>
-                        </v-btn>
+                          <v-img :src="form.image"></v-img>
+                        </v-avatar>
                       </div>
                       <v-avatar
                         v-else
@@ -75,15 +129,15 @@
                         width="100%"
                         height="300"
                         class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewImage"
+                        @click="openDialogPreviewImage(form_new.image[0].url)"
                       >
-                        <v-img :src="form.image[0].url"></v-img>
+                        <v-img :src="form_new.image[0].url"></v-img>
                       </v-avatar>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
-                      <div class="tw-col-span-6">
+                      <div :class="form_new.image.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
                         <v-btn
-                          v-if="form.image.length > 0"
+                          v-if="form.image.length !== ''"
                           color="warning"
                           block
                           class="me-3"
@@ -99,13 +153,15 @@
                           </label>
                         </v-btn>
                       </div>
-                      <div class="tw-col-span-6">
+                      <div
+                        v-if="form_new.image.length > 0"
+                        class="tw-col-span-6"
+                      >
                         <v-btn
-                          v-if="form.image.length > 0"
                           color="error"
                           block
                           outlined
-                          @click="removeItem(form.image[0])"
+                          @click="removeItem(form_new.image[0])"
                         >
                           Reset
                         </v-btn>
@@ -115,18 +171,11 @@
                           Allowed JPG, GIF or PNG. Max size of 2MB
                         </p>
                         <div
-                          v-if="error_form.image !== ''"
+                          v-if="form_new.image.length > 0"
                           class="tw-text-red-500 tw-text-sm"
                         >
-                          {{ error_form.image }}
-                        </div>
-                        <div
-                          v-else-if="form.image.length > 0"
-                          class="tw-text-red-500 tw-text-sm"
-                        >
-                          <span v-if="form.image[0].error !== ''">
-
-                            {{ form.image[0].error }}
+                          <span v-if="form_new.image[0].error !== ''">
+                            {{ form_new.image[0].error }}
                           </span>
                         </div>
                       </div>
@@ -140,7 +189,7 @@
                       >
                         <file-upload
                           ref="uploadImage"
-                          v-model="form.image"
+                          v-model="form_new.image"
                           :multiple="false"
                           :drop="false"
                           accept="image/png,image/gif,image/jpeg,image/webp"
@@ -155,39 +204,16 @@
                     <!-- end -->
                   </div>
                 </v-col>
-                <v-col
-                  cols="12"
-                  md="12"
-                >
-                  <validation-provider
-                    v-slot="{ errors }"
-                    name="Url Target"
-                    rules="required"
-                  >
-                    <div>
-                      <v-text-field
-                        v-model="form.url_target"
-                        label="Url Target"
-                        outlined
-                        :error-messages="errors"
-                        placeholder="Your Url Target"
-                      ></v-text-field>
-                    </div>
-                  </validation-provider>
-                </v-col>
 
-                <v-col
-                  cols="12"
-                  md="12"
-                >
+                <v-col cols="12">
                   <div class="text-right">
                     <v-btn
                       :width="$vuetify.breakpoint.mobile ? 'auto' : 180"
                       :block="$vuetify.breakpoint.mobile"
-                      type="submit"
                       color="primary"
+                      type="submit"
                     >
-                      Submit
+                      Update
                     </v-btn>
                   </div>
                 </v-col>
@@ -199,7 +225,6 @@
     </v-row>
 
     <v-dialog
-      v-if="form.image.length > 0"
       v-model="dialog.preview_image"
       max-width="480"
     >
@@ -223,7 +248,7 @@
         <v-card-text>
           <v-img
             contain
-            :src="form.image[0].url"
+            :src="preview_image"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -233,11 +258,11 @@
 
 <script>
 import FileUpload from 'vue-upload-component'
+import { mdiArrowLeft, mdiWindowClose, mdiCloudUploadOutline } from '@mdi/js'
 import { required } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
-import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
 
 setInteractionMode('eager')
 
@@ -246,7 +271,7 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
+// import { detailData, updateData } from '@/api/subCategory'
 
 export default {
   components: {
@@ -258,25 +283,63 @@ export default {
     return {
       icons: {
         mdiArrowLeft,
-        mdiCloudUploadOutline,
         mdiWindowClose,
+        mdiCloudUploadOutline,
       },
-      error_form: {
-        image: '',
-      },
+      preview_image: '',
       dialog: {
         preview_image: false,
       },
-      form: {
-        url_target: '',
+      form_new: {
         image: [],
-        create_by: '',
       },
-      list: {},
+      educationCategory: {
+        category_name: 'edukasi',
+        description: 'blablabla deskripsi dehh',
+        image: 'https://ik.imagekit.io/1akf8cdsyg/default-image.jpg?updatedAt=1603090451561',
+        order: 1,
+        create_by: 'dimas roger',
+      },
+      list: {
+        orders: [
+          {
+            id: 1,
+            order: 1,
+            category_name: 'A',
+          },
+          {
+            id: 2,
+            order: 2,
+            category_name: 'B',
+          },
+          {
+            id: 3,
+            order: 3,
+            category_name: 'C',
+          },
+        ],
+      },
     }
   },
+  computed: {
+    form: {
+      get() {
+        return this.educationCategory
+      },
+    },
+  },
+  mounted() {
+    // this.getDetailData()
+  },
   methods: {
-    openDialogPreviewImage() {
+    // async getDetailData() {
+    //   const data = await detailData({ id: this.$route.params.id })
+
+    //   if (Object.keys(data.data).length > 0) this.subCategory = data.data
+    //   else this.$router.push({ name: 'subCategory' })
+    // },
+    openDialogPreviewImage(image) {
+      this.preview_image = image
       this.dialog.preview_image = !this.dialog.preview_image
     },
     removeItem(file) {
@@ -312,18 +375,10 @@ export default {
         }
       }
     },
-    handleSubmit() {
+    async handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
-        this.error_form.image = ''
-
-        if (this.form.image.length === 0) {
-          this.error_form.image = 'Gambar Harus di isi Dulu!'
-
-          return
-        }
-
-        if (this.form.image.length > 0) {
-          if (this.form.image[0].error !== '' && this.form.image.length > 0) {
+        if (this.form_new.image.length > 0) {
+          if (this.form_new.image[0].error !== '' && this.form_new.image.length > 0) {
             return
           }
         }
@@ -332,23 +387,19 @@ export default {
           return
         }
 
-        this.form.create_by = this.$store.state.dummy.user
         console.log(this.form)
+        console.log(this.form_new)
+        this.$router.push({ name: 'listEducationCategory' })
 
-        this.$router.push({ name: 'listBanner' })
-
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+      // const data = await updateData({
+      //   title: this.form.title,
+      //   id: this.form.id,
+      // })
+      // if (data.status === 200) this.$router.push({ name: 'subCategory' })
       })
     },
   },
 }
 </script>
 
-<style scoped>
-.border-default-editor {
-  border: 1px #d1d5db solid;
-}
-</style>
+<style></style>

@@ -201,6 +201,44 @@ const routes = [
       },
     ],
   },
+
+  // education category
+  {
+    path: '/education-category',
+    component: () => import('@/views/education/educationCategory/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listEducationCategory' },
+      },
+      {
+        path: 'list',
+        name: 'listEducationCategory',
+        component: () => import('@/views/education/educationCategory/List.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addEducationCategory',
+        component: () => import('@/views/education/educationCategory/Add.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editEducationCategory',
+        component: () => import('@/views/education/educationCategory/Edit.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+    ],
+  },
+
+  // end
   {
     path: '/login',
     name: 'pages-login',

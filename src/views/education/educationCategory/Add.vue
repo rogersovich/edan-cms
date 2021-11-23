@@ -14,12 +14,12 @@
             <v-row align="center">
               <v-col
                 cols="2"
-                md="3"
+                md="2"
               >
                 <div>
                   <v-btn
                     icon
-                    :to="{ name: 'listBanner' }"
+                    :to="{ name: 'listEducationCategory' }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -27,25 +27,56 @@
               </v-col>
               <v-col
                 cols="9"
-                md="7"
+                md="8"
               >
                 <div class="tw-text-center tw-text-base md:tw-text-xl">
-                  Tambah Banner
+                  Tambah Edukasi Kategori
                 </div>
               </v-col>
             </v-row>
           </v-card-title>
           <v-card-text>
             <v-form @submit.prevent="handleSubmit">
-              <v-row>
-                <v-col
-                  cols="12"
-                >
+              <v-row dense>
+                <v-col cols="12">
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Nama Kategori"
+                    rules="required"
+                  >
+                    <div>
+                      <v-text-field
+                        v-model="form.category_name"
+                        label="Nama Kategori"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Masukan Nama Kategori"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Deskripsi"
+                    rules="required"
+                  >
+                    <div>
+                      <v-textarea
+                        v-model="form.description"
+                        label="Deskripsi"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Masukan Deskripsi"
+                      ></v-textarea>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
                       Gambar Banner
                     </div>
-
                     <div>
                       <div
                         v-if="form.image.length === 0"
@@ -75,7 +106,7 @@
                         width="100%"
                         height="300"
                         class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewImage"
+                        @click="openDialogPreviewImage(form.image[0].url)"
                       >
                         <v-img :src="form.image[0].url"></v-img>
                       </v-avatar>
@@ -125,7 +156,6 @@
                           class="tw-text-red-500 tw-text-sm"
                         >
                           <span v-if="form.image[0].error !== ''">
-
                             {{ form.image[0].error }}
                           </span>
                         </div>
@@ -155,31 +185,7 @@
                     <!-- end -->
                   </div>
                 </v-col>
-                <v-col
-                  cols="12"
-                  md="12"
-                >
-                  <validation-provider
-                    v-slot="{ errors }"
-                    name="Url Target"
-                    rules="required"
-                  >
-                    <div>
-                      <v-text-field
-                        v-model="form.url_target"
-                        label="Url Target"
-                        outlined
-                        :error-messages="errors"
-                        placeholder="Your Url Target"
-                      ></v-text-field>
-                    </div>
-                  </validation-provider>
-                </v-col>
-
-                <v-col
-                  cols="12"
-                  md="12"
-                >
+                <v-col cols="12">
                   <div class="text-right">
                     <v-btn
                       :width="$vuetify.breakpoint.mobile ? 'auto' : 180"
@@ -199,7 +205,6 @@
     </v-row>
 
     <v-dialog
-      v-if="form.image.length > 0"
       v-model="dialog.preview_image"
       max-width="480"
     >
@@ -223,7 +228,7 @@
         <v-card-text>
           <v-img
             contain
-            :src="form.image[0].url"
+            :src="preview_image"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -237,7 +242,9 @@ import { required } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
-import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
+import {
+  mdiArrowLeft, mdiWindowClose,
+} from '@mdi/js'
 
 setInteractionMode('eager')
 
@@ -258,25 +265,27 @@ export default {
     return {
       icons: {
         mdiArrowLeft,
-        mdiCloudUploadOutline,
         mdiWindowClose,
       },
       error_form: {
         image: '',
       },
+      preview_image: '',
       dialog: {
         preview_image: false,
       },
       form: {
-        url_target: '',
+        category_name: '',
+        description: '',
         image: [],
-        create_by: '',
+        order: 1,
+        create_by: 'dimas roger',
       },
-      list: {},
     }
   },
   methods: {
-    openDialogPreviewImage() {
+    openDialogPreviewImage(image) {
+      this.preview_image = image
       this.dialog.preview_image = !this.dialog.preview_image
     },
     removeItem(file) {
@@ -312,7 +321,7 @@ export default {
         }
       }
     },
-    handleSubmit() {
+    async handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         this.error_form.image = ''
 
@@ -334,8 +343,7 @@ export default {
 
         this.form.create_by = this.$store.state.dummy.user
         console.log(this.form)
-
-        this.$router.push({ name: 'listBanner' })
+        this.$router.push({ name: 'listEducationCategory' })
 
         // const data = await storeData({
         //   username: this.form.username,
@@ -347,8 +355,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.border-default-editor {
-  border: 1px #d1d5db solid;
-}
-</style>
+<style></style>

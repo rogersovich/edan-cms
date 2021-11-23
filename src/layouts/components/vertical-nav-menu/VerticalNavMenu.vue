@@ -151,152 +151,20 @@
       </nav-menu-group>
       <!-- end -->
 
-      <!-- <nav-menu-group
-        title="Sub Category"
-        :icon="icons.mdiShape"
-        :active="$route.meta.key === 'sub-category' ? true : false"
+      <!-- education  -->
+      <nav-menu-group
+        title="Edukasi"
+        :icon="icons.mdiBookEducationOutline"
+        :active="$route.meta.key === 'education' ? true : false"
       >
         <nav-menu-link
-          title="List"
-          :to="{ name: 'subCategory' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'subCategoryAdd' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group> -->
-      <!-- <nav-menu-group
-        title="Villa Gallery"
-        :icon="icons.mdiImageMultiple"
-        :active="$route.meta.key === 'villa-gallery' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'villaGallery' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'villaGalleryAdd' }"
-          :icon="icons.mdiPlus"
+          title="Kategori"
+          :to="{ name: 'listEducationCategory' }"
+          :icon="icons.mdiShapeOutline"
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
-      <nav-menu-group
-        title="Villa Fasilitas"
-        :icon="icons.mdiHomeCircle"
-        :active="$route.meta.key === 'villa-facility' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'villaFacility' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'villaFacilityAdd' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
-      <nav-menu-group
-        title="Villa"
-        :icon="icons.mdiHomeGroup"
-        :active="$route.meta.key === 'villa' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'villa' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'villaAdd' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
-      <nav-menu-group
-        title="Order"
-        :icon="icons.mdiReceipt"
-        :active="$route.meta.key === 'order' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'order' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'orderAdd' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group> -->
-      <!-- <nav-menu-group
-        title="Pages"
-        :icon="icons.mdiFileOutline"
-      >
-        <nav-menu-link
-          title="Typography"
-          :to="{ name: 'typography' }"
-          :icon="icons.mdiAlphaTBoxOutline"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Login"
-          :to="{ name: 'pages-login' }"
-          target="_blank"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Register"
-          :to="{ name: 'pages-register' }"
-          target="_blank"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Error"
-          :to="{ name: 'error-404' }"
-          target="_blank"
-        ></nav-menu-link>
-      </nav-menu-group> -->
-      <!-- <nav-menu-section-title title="USER INTERFACE"></nav-menu-section-title>
-      <nav-menu-link
-        title="Typography"
-        :to="{ name: 'typography' }"
-        :icon="icons.mdiAlphaTBoxOutline"
-        :nested="false"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Icons"
-        :to="{ name: 'icons' }"
-        :icon="icons.mdiEyeOutline"
-        :nested="false"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Cards"
-        :to="{ name: 'cards' }"
-        :icon="icons.mdiCreditCardOutline"
-        :nested="false"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Tables"
-        :to="{ name: 'simple-table' }"
-        :icon="icons.mdiTable"
-        :nested="false"
-      ></nav-menu-link>
-      <nav-menu-link
-        title="Form Layouts"
-        :to="{ name: 'form-layouts' }"
-        :icon="icons.mdiFormSelect"
-        :nested="false"
-      ></nav-menu-link> -->
+      <!-- end -->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -322,6 +190,7 @@ import {
   mdiShapeOutline,
   mdiTableOfContents,
   mdiImageArea,
+  mdiBookEducationOutline,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -361,6 +230,7 @@ export default {
         mdiShapeOutline,
         mdiTableOfContents,
         mdiImageArea,
+        mdiBookEducationOutline,
       },
     }
   },
