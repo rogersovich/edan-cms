@@ -88,43 +88,22 @@
       </nav-menu-group>
       <!-- end -->
 
-      <!-- category content  -->
-      <nav-menu-group
-        title="Kategori Content"
-        :icon="icons.mdiShapeOutline"
-        :active="$route.meta.key === 'category-content-edan' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'listCategoryContentEdan' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'addCategoryContentEdan' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
-      <!-- end -->
-
       <!-- content  -->
       <nav-menu-group
-        title="Content"
-        :icon="icons.mdiTableOfContents"
-        :active="$route.meta.key === 'content' ? true : false"
+        title="Artikel"
+        :icon="icons.mdiNewspaper"
+        :active="$route.meta.key === 'article' ? true : false"
       >
         <nav-menu-link
-          title="List"
-          :to="{ name: 'listContentEdan' }"
-          :icon="icons.mdiTable"
+          title="Kategori"
+          :to="{ name: 'listCategoryContentEdan' }"
+          :icon="icons.mdiShapeOutline"
           :nested="true"
         ></nav-menu-link>
         <nav-menu-link
-          title="Add"
-          :to="{ name: 'addContentEdan' }"
-          :icon="icons.mdiPlus"
+          title="Konten"
+          :to="{ name: 'listContentEdan' }"
+          :icon="icons.mdiTableOfContents"
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
@@ -204,6 +183,7 @@ import {
   mdiImageArea,
   mdiBookEducationOutline,
   mdiNoteTextOutline,
+  mdiNewspaper,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -245,6 +225,7 @@ export default {
         mdiImageArea,
         mdiBookEducationOutline,
         mdiNoteTextOutline,
+        mdiNewspaper,
       },
     }
   },

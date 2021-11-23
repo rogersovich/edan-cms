@@ -112,7 +112,7 @@ const routes = [
         name: 'listCategoryContentEdan',
         component: () => import('@/views/categoryContent/List.vue'),
         meta: {
-          key: 'category-content-edan',
+          key: 'article',
         },
       },
       {
@@ -120,7 +120,7 @@ const routes = [
         name: 'addCategoryContentEdan',
         component: () => import('@/views/categoryContent/Add.vue'),
         meta: {
-          key: 'category-content-edan',
+          key: 'article',
         },
       },
       {
@@ -128,7 +128,7 @@ const routes = [
         name: 'editCategoryContentEdan',
         component: () => import('@/views/categoryContent/Edit.vue'),
         meta: {
-          key: 'category-content-edan',
+          key: 'article',
         },
       },
     ],
@@ -146,7 +146,7 @@ const routes = [
         name: 'listContentEdan',
         component: () => import('@/views/content/List.vue'),
         meta: {
-          key: 'content',
+          key: 'article',
         },
       },
       {
@@ -154,7 +154,7 @@ const routes = [
         name: 'addContentEdan',
         component: () => import('@/views/content/Add.vue'),
         meta: {
-          key: 'content',
+          key: 'article',
         },
       },
       {
@@ -162,7 +162,7 @@ const routes = [
         name: 'editContentEdan',
         component: () => import('@/views/content/Edit.vue'),
         meta: {
-          key: 'content',
+          key: 'article',
         },
       },
     ],
