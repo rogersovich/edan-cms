@@ -31,7 +31,7 @@
     </v-app-bar>
 
     <v-main>
-      <div class="app-content-container boxed-container pa-6">
+      <div class="app-content-container boxed-container md:tw-p-6 tw-p-3">
         <slot></slot>
       </div>
     </v-main>

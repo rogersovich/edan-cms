@@ -163,6 +163,12 @@
           :icon="icons.mdiShapeOutline"
           :nested="true"
         ></nav-menu-link>
+        <nav-menu-link
+          title="Konten"
+          :to="{ name: 'listEducationContent' }"
+          :icon="icons.mdiTableOfContents"
+          :nested="true"
+        ></nav-menu-link>
       </nav-menu-group>
       <!-- end -->
     </v-list>
