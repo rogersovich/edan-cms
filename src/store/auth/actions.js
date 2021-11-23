@@ -10,7 +10,3 @@ export const removeCurrentUser = ({ commit }) => {
   commit('REMOVE_TOKEN')
   commit('REMOVE_PROFILE')
 }
-
-export const setLoading = ({ commit }) => {
-  commit('SET_LOADING')
-}

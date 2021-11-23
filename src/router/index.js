@@ -1,18 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
-// import store from '../store'
+import store from '../store'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect: 'dashboard',
+    redirect: { name: 'Dashboard' },
   },
   {
     path: '/dashboard',
-    name: 'dashboard',
+    name: 'Dashboard',
     component: () => import('@/views/dashboard/Dashboard.vue'),
   },
   {
@@ -315,7 +314,7 @@ const routes = [
   // end
   {
     path: '/login',
-    name: 'pages-login',
+    name: 'Login',
     component: () => import('@/views/pages/Login.vue'),
     meta: {
       layout: 'blank',
@@ -358,16 +357,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // const { checkLogin } = to.meta
-  // const { token } = store.state.auth
+  const { token } = store.state.auth
 
-  // if (to.name !== 'pages-login' && token === '') {
-  //   next({ name: 'pages-login' })
-  // } else if (to.name === 'pages-login' && token !== '') {
-  //   next({ name: 'dashboard' })
-  // } else {
-  //   next()
-  // }
+  if (to.name !== 'Login' && token === '') {
+    next({ name: 'Login' })
+  } else if (to.name === 'Login' && token !== '') {
+    next({ name: 'Dashboard' })
+  } else {
+    next()
+  }
   next()
 })
 

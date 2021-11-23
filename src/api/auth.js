@@ -1,7 +1,7 @@
 import api from './api'
 
 export const login = payload => api
-  .post('/login', {
+  .post('admin/login', {
     email: payload.email,
     password: payload.password,
   })

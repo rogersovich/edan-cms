@@ -1,10 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-import SecureLS from 'secure-ls'
+import Cookies from 'js-cookie'
 import auth from './auth'
-
-const ls = new SecureLS({ isCompression: false })
 
 Vue.use(Vuex)
 
@@ -21,11 +19,12 @@ export default new Vuex.Store({
   },
   plugins: [
     createPersistedState({
-      path: ['auth.token', 'auth.profile'],
+      key: 'aksaraww',
+      path: ['auth'],
       storage: {
-        getItem: key => ls.get(key),
-        setItem: (key, value) => ls.set(key, value),
-        removeItem: key => ls.remove(key),
+        getItem: key => Cookies.get(key),
+        setItem: (key, value) => Cookies.set(key, value, { expires: 1 }),
+        removeItem: key => Cookies.remove(key),
       },
     }),
   ],
