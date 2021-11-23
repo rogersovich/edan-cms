@@ -276,6 +276,43 @@ const routes = [
   },
 
   // end
+  // education material
+  {
+    path: '/education-material',
+    component: () => import('@/views/education/educationMaterial/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listEducationMaterial' },
+      },
+      {
+        path: 'list',
+        name: 'listEducationMaterial',
+        component: () => import('@/views/education/educationMaterial/List.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addEducationMaterial',
+        component: () => import('@/views/education/educationMaterial/Add.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editEducationMaterial',
+        component: () => import('@/views/education/educationMaterial/Edit.vue'),
+        meta: {
+          key: 'education',
+        },
+      },
+    ],
+  },
+
+  // end
   {
     path: '/login',
     name: 'pages-login',

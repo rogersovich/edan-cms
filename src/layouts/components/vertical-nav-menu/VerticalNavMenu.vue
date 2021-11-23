@@ -169,6 +169,12 @@
           :icon="icons.mdiTableOfContents"
           :nested="true"
         ></nav-menu-link>
+        <nav-menu-link
+          title="Materi"
+          :to="{ name: 'listEducationMaterial' }"
+          :icon="icons.mdiNoteTextOutline"
+          :nested="true"
+        ></nav-menu-link>
       </nav-menu-group>
       <!-- end -->
     </v-list>
@@ -197,6 +203,7 @@ import {
   mdiTableOfContents,
   mdiImageArea,
   mdiBookEducationOutline,
+  mdiNoteTextOutline,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -237,6 +244,7 @@ export default {
         mdiTableOfContents,
         mdiImageArea,
         mdiBookEducationOutline,
+        mdiNoteTextOutline,
       },
     }
   },
