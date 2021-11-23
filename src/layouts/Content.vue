@@ -16,7 +16,7 @@
             @click="isDrawerOpen = !isDrawerOpen"
           ></v-app-bar-nav-icon>
           <div>
-            <h2>Hallo Roger</h2>
+            <h2>Hallo Admin</h2>
           </div>
 
           <v-spacer></v-spacer>

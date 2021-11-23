@@ -144,7 +144,6 @@
                           v-model="form.image"
                           :multiple="false"
                           :drop="false"
-                          :size="10000"
                           accept="image/png,image/gif,image/jpeg,image/webp"
                           input-id="file-image"
                           @input-filter="inputFilter"
@@ -308,7 +307,7 @@ export default {
         }
 
         // max size
-        if (newFile.size > 100000) {
+        if (newFile.size > 2000000) {
           // eslint-disable-next-line no-param-reassign
           newFile.error = 'Error size gambar terlalu besar, Max 2MB'
         }

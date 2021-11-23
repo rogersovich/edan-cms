@@ -67,7 +67,7 @@
                             <v-icon class="d-sm-none">
                               {{ icons.mdiCloudUploadOutline }}
                             </v-icon>
-                            <span class="d-none d-sm-block">Upload</span>
+                            <span class="d-none d-sm-block">Pilih Gambar/GIF</span>
                           </label>
                         </v-btn>
                       </div>
@@ -78,7 +78,7 @@
                         width="100%"
                         height="300"
                         class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewThumbnail"
+                        @click="openDialogPreviewThumbnail(form.thumbnail[0].url)"
                       >
                         <v-img :src="form.thumbnail[0].url"></v-img>
                       </v-avatar>
@@ -123,6 +123,15 @@
                         >
                           {{ error_form.thumbnail }}
                         </div>
+                        <div
+                          v-else-if="form.thumbnail.length > 0"
+                          class="tw-text-red-500 tw-text-sm"
+                        >
+                          <span v-if="form.thumbnail[0].error !== ''">
+
+                            {{ form.thumbnail[0].error }}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <!-- input upload -->
@@ -136,6 +145,7 @@
                           v-model="form.thumbnail"
                           :multiple="false"
                           :drop="false"
+                          accept="image/png,image/gif,image/jpeg,image/webp"
                           input-id="file-thumbnail"
                           @input-filter="inputFilter"
                         >
@@ -199,7 +209,7 @@
                               <v-icon class="d-sm-none">
                                 {{ icons.mdiCloudUploadOutline }}
                               </v-icon>
-                              <span class="d-none d-sm-block">Upload</span>
+                              <span class="d-none d-sm-block">Pilih Gambar/GIF</span>
                             </label>
                           </v-btn>
                         </div>
@@ -210,7 +220,7 @@
                           width="100%"
                           height="300"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewThumbnailDetail"
+                          @click="openDialogPreviewThumbnail(form.thumbnail_detail[0].url)"
                         >
                           <v-img :src="form.thumbnail_detail[0].url"></v-img>
                         </v-avatar>
@@ -255,6 +265,15 @@
                           >
                             {{ error_form.thumbnail_detail }}
                           </div>
+                          <div
+                            v-else-if="form.thumbnail_detail.length > 0"
+                            class="tw-text-red-500 tw-text-sm"
+                          >
+                            <span v-if="form.thumbnail_detail[0].error !== ''">
+
+                              {{ form.thumbnail_detail[0].error }}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <!-- input upload -->
@@ -269,6 +288,7 @@
                             input-id="file-thumbnail-detail"
                             :multiple="false"
                             :drop="false"
+                            accept="image/png,image/gif,image/jpeg,image/webp"
                             @input-filter="inputFilter"
                           >
                             <i class="fa fa-plus"></i>
@@ -378,6 +398,12 @@
                         error_form.description !== '' ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
                       "
                     ></quill-editor>
+                    <div
+                      v-if="error_form.description !== ''"
+                      class="tw-text-red-500 tw-text-sm tw-mt-2"
+                    >
+                      {{ error_form.description }}
+                    </div>
                   </div>
                 </v-col>
                 <v-col
@@ -419,7 +445,6 @@
     </v-row>
 
     <v-dialog
-      v-if="form.thumbnail.length > 0"
       v-model="dialog.preview_thumbnail"
       max-width="480"
     >
@@ -443,38 +468,7 @@
         <v-card-text>
           <v-img
             contain
-            :src="form.thumbnail[0].url"
-          ></v-img>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog
-      v-if="form.thumbnail_detail.length > 0"
-      v-model="dialog.preview_thumbnail_detail"
-      max-width="480"
-    >
-      <v-card>
-        <v-card-title>
-          <div class="tw-text-true-gray-800">
-            Preview thumbnail gambar
-          </div>
-          <v-spacer></v-spacer>
-          <div>
-            <v-btn
-              icon
-              @click="dialog.preview_thumbnail_detail = !dialog.preview_thumbnail_detail"
-            >
-              <v-icon>
-                {{ icons.mdiWindowClose }}
-              </v-icon>
-            </v-btn>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <v-img
-            contain
-            :src="form.thumbnail_detail[0].url"
+            :src="preview_thumbnail"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -488,7 +482,7 @@ import { required } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
-import { mdiArrowLeft, mdiCloudUploadOutline } from '@mdi/js'
+import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
 import QuillEditor from '@/components/QuillEditor.vue'
 
 setInteractionMode('eager')
@@ -512,6 +506,7 @@ export default {
       icons: {
         mdiArrowLeft,
         mdiCloudUploadOutline,
+        mdiWindowClose,
 
       },
       error_form: {
@@ -519,9 +514,9 @@ export default {
         description: '',
         thumbnail_detail: '',
       },
+      preview_thumbnail: '',
       dialog: {
         preview_thumbnail: false,
-        preview_thumbnail_detail: false,
       },
       form: {
         title: '',
@@ -553,11 +548,9 @@ export default {
     this.handleSaveToDraft()
   },
   methods: {
-    openDialogPreviewThumbnail() {
+    openDialogPreviewThumbnail(image) {
+      this.preview_thumbnail = image
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
-    },
-    openDialogPreviewThumbnailDetail() {
-      this.dialog.preview_thumbnail_detail = !this.dialog.preview_thumbnail_detail
     },
     removeItem(file) {
       this.$refs.uploadThumbnail.remove(file)
@@ -569,21 +562,29 @@ export default {
     inputFilter(newFile, oldFile, prevent) {
       // Filter non-image file
       if (newFile && !oldFile) {
+        // eslint-disable-next-line no-param-reassign
+        newFile.error = ''
         if (!/\.(gif|jpg|jpeg|png|webp|svg)$/i.test(newFile.name)) {
           this.alert('Your choice is not a picture')
 
           return prevent()
         }
-      }
 
-      // Create a blob field
-      if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
-        // eslint-disable-next-line no-param-reassign
-        newFile.url = ''
-        const URL = window.URL || window.webkitURL
-        if (URL && URL.createObjectURL) {
+        // Create a blob field
+        if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
           // eslint-disable-next-line no-param-reassign
-          newFile.url = URL.createObjectURL(newFile.file)
+          newFile.url = ''
+          const URL = window.URL || window.webkitURL
+          if (URL && URL.createObjectURL) {
+            // eslint-disable-next-line no-param-reassign
+            newFile.url = URL.createObjectURL(newFile.file)
+          }
+        }
+
+        // max size
+        if (newFile.size > 2000000) {
+          // eslint-disable-next-line no-param-reassign
+          newFile.error = 'Error size gambar terlalu besar, Max 2MB'
         }
       }
     },
@@ -638,14 +639,22 @@ export default {
           return
         }
 
-        if (this.form.thumbnail.length === 0) {
+        if (this.form.thumbnail_detail.length === 0) {
           this.error_form.thumbnail_detail = 'Gambar Detail Harus di isi Dulu!'
 
           return
         }
 
+        if (this.form.thumbnail[0].error !== '' && this.form.thumbnail.length > 0) {
+          return
+        }
+
+        if (this.form.thumbnail_detail[0].error !== '' && this.form.thumbnail_detail.length > 0) {
+          return
+        }
+
         if (this.form.description === '') {
-          this.error_form.thumbnail = 'Isi Konten Harus di isi Dulu!'
+          this.error_form.description = 'Isi Konten Harus di isi Dulu!'
 
           return
         }

@@ -81,7 +81,10 @@
                     Image
                   </th>
                   <th class="text-uppercase">
-                    Judul
+                    Created By
+                  </th>
+                  <th class="text-uppercase">
+                    Is Trash
                   </th>
                   <th class="text-center">
                     Action

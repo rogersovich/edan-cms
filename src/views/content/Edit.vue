@@ -1,7 +1,5 @@
 <template>
-  <validation-observer
-    ref="formSubmit"
-  >
+  <validation-observer ref="formSubmit">
     <v-row
       class="match-height"
       align="center"
@@ -21,7 +19,7 @@
                 <div>
                   <v-btn
                     icon
-                    :to="{name: 'listContentEdan'}"
+                    :to="{ name: 'listContentEdan' }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -37,7 +35,6 @@
                     Published Konten
                   </span>
                   <span v-else>
-
                     Draft Konten
                   </span>
                 </div>
@@ -70,9 +67,7 @@
                     </div>
 
                     <div>
-                      <div
-                        v-if="form.thumbnail !== '' && form_new.thumbnail.length === 0"
-                      >
+                      <div v-if="form.thumbnail !== '' && form_new.thumbnail.length === 0">
                         <v-avatar
                           v-ripple
                           rounded
@@ -97,7 +92,7 @@
                       </v-avatar>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
-                      <div :class=" form_new.thumbnail.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
+                      <div :class="form_new.thumbnail.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
                         <v-btn
                           v-if="form.thumbnail !== ''"
                           color="warning"
@@ -120,7 +115,6 @@
                         class="tw-col-span-6"
                       >
                         <v-btn
-
                           color="error"
                           block
                           outlined
@@ -131,8 +125,16 @@
                       </div>
                       <div class="tw-col-span-12">
                         <p class="tw-text-xs mt-4 tw-mb-2">
-                          Allowed JPG, GIF or PNG. Max size of 800K
+                          Allowed JPG, GIF or PNG. Max size of 2MB
                         </p>
+                        <div
+                          v-if="form_new.thumbnail.length > 0"
+                          class="tw-text-red-500 tw-text-sm"
+                        >
+                          <span v-if="form_new.thumbnail[0].error !== ''">
+                            {{ form_new.thumbnail[0].error }}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <!-- input upload -->
@@ -147,6 +149,7 @@
                           :multiple="false"
                           :drop="false"
                           input-id="file-thumbnail"
+                          accept="image/png,image/gif,image/jpeg,image/webp"
                           @input-filter="inputFilter"
                         >
                           <i class="fa fa-plus"></i>
@@ -178,8 +181,7 @@
                           <span
                             v-if="form.type_thumbnail_detail === 'Photo'"
                             class="tw-ml-0.5"
-                          >
-                            Video </span>
+                          > Video </span>
                           <span
                             v-else
                             class="tw-ml-0.5"
@@ -192,16 +194,14 @@
 
                     <template v-if="form.type_thumbnail_detail === 'Photo'">
                       <div>
-                        <div
-                          v-if="form.thumbnail_detail !== '' && form_new.thumbnail_detail.length === 0"
-                        >
+                        <div v-if="form.thumbnail_detail !== '' && form_new.thumbnail_detail.length === 0">
                           <v-avatar
                             v-ripple
                             rounded
                             width="100%"
                             height="300"
                             class="me-6 tw-cursor-pointer"
-                            @click="openDialogPreviewThumbnailDetail(form.thumbnail_detail)"
+                            @click="openDialogPreviewThumbnail(form.thumbnail_detail)"
                           >
                             <v-img :src="form.thumbnail_detail"></v-img>
                           </v-avatar>
@@ -213,13 +213,13 @@
                           width="100%"
                           height="300"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewThumbnailDetail(form_new.thumbnail_detail[0].url)"
+                          @click="openDialogPreviewThumbnail(form_new.thumbnail_detail[0].url)"
                         >
                           <v-img :src="form_new.thumbnail_detail[0].url"></v-img>
                         </v-avatar>
                       </div>
                       <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
-                        <div :class=" form_new.thumbnail.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
+                        <div :class="form_new.thumbnail_detail.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
                           <v-btn
                             v-if="form.thumbnail_detail !== ''"
                             color="warning"
@@ -238,7 +238,7 @@
                           </v-btn>
                         </div>
                         <div
-                          v-if="form_new.thumbnail.length > 0"
+                          v-if="form_new.thumbnail_detail.length > 0"
                           class="tw-col-span-6"
                         >
                           <v-btn
@@ -252,8 +252,16 @@
                         </div>
                         <div class="tw-col-span-12">
                           <p class="tw-text-xs mt-4 tw-mb-2">
-                            Allowed JPG, GIF or PNG. Max size of 800K
+                            Allowed JPG, GIF or PNG. Max size of 2MB
                           </p>
+                          <div
+                            v-if="form_new.thumbnail_detail.length > 0"
+                            class="tw-text-red-500 tw-text-sm"
+                          >
+                            <span v-if="form_new.thumbnail_detail[0].error !== ''">
+                              {{ form_new.thumbnail_detail[0].error }}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <!-- input upload -->
@@ -268,6 +276,7 @@
                             input-id="file-thumbnail-detail"
                             :multiple="false"
                             :drop="false"
+                            accept="image/png,image/gif,image/jpeg,image/webp"
                             @input-filter="inputFilter"
                           >
                             <i class="fa fa-plus"></i>
@@ -275,7 +284,7 @@
                           </file-upload>
                         </div>
                       </div>
-                    <!-- end -->
+                      <!-- end -->
                     </template>
                     <template v-else>
                       <div class="tw-mt-6">
@@ -298,9 +307,7 @@
                     </template>
                   </div>
                 </v-col>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
                       Feature
@@ -363,9 +370,7 @@
                     </div>
                   </validation-provider>
                 </v-col>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5">
                       Deskripsi
@@ -374,9 +379,17 @@
                     <quill-editor
                       :title.sync="form.description"
                       :class="
-                        error_form.description !== '' ? 'tw-border-solid tw-border tw-border-red-500' : 'border-default-editor'
+                        error_form.description !== ''
+                          ? 'tw-border-solid tw-border tw-border-red-500'
+                          : 'border-default-editor'
                       "
                     ></quill-editor>
+                    <div
+                      v-if="error_form.description !== ''"
+                      class="tw-text-red-500 tw-text-sm tw-mt-2"
+                    >
+                      {{ error_form.description }}
+                    </div>
                   </div>
                 </v-col>
                 <v-col
@@ -447,36 +460,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
-    <v-dialog
-      v-model="dialog.preview_thumbnail_detail"
-      max-width="480"
-    >
-      <v-card>
-        <v-card-title>
-          <div class="tw-text-true-gray-800">
-            Preview thumbnail gambar
-          </div>
-          <v-spacer></v-spacer>
-          <div>
-            <v-btn
-              icon
-              @click="dialog.preview_thumbnail_detail = !dialog.preview_thumbnail_detail"
-            >
-              <v-icon>
-                {{ icons.mdiWindowClose }}
-              </v-icon>
-            </v-btn>
-          </div>
-        </v-card-title>
-        <v-card-text>
-          <v-img
-            contain
-            :src="preview.thumbnail_detail"
-          ></v-img>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </validation-observer>
 </template>
 
@@ -487,7 +470,11 @@ import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import {
-  mdiArrowLeft, mdiCloudUploadOutline, mdiSquareEditOutline, mdiArchiveEditOutline,
+  mdiArrowLeft,
+  mdiCloudUploadOutline,
+  mdiSquareEditOutline,
+  mdiArchiveEditOutline,
+  mdiWindowClose,
 } from '@mdi/js'
 import QuillEditor from '@/components/QuillEditor.vue'
 
@@ -514,17 +501,16 @@ export default {
         mdiCloudUploadOutline,
         mdiSquareEditOutline,
         mdiArchiveEditOutline,
+        mdiWindowClose,
       },
       error_form: {
         description: '',
       },
       preview: {
         thumbnail: '',
-        thumbnail_detail: '',
       },
       dialog: {
         preview_thumbnail: false,
-        preview_thumbnail_detail: false,
       },
       form_new: {
         thumbnail_detail: [],
@@ -566,19 +552,10 @@ export default {
       },
     },
   },
-  destroyed() {
-    console.log('test')
-
-    this.handleSaveToDraft()
-  },
   methods: {
     openDialogPreviewThumbnail(image) {
       this.preview.thumbnail = image
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
-    },
-    openDialogPreviewThumbnailDetail(image) {
-      this.preview.thumbnail_detail = image
-      this.dialog.preview_thumbnail_detail = !this.dialog.preview_thumbnail_detail
     },
     removeItem(file) {
       this.$refs.uploadThumbnail.remove(file)
@@ -590,21 +567,29 @@ export default {
     inputFilter(newFile, oldFile, prevent) {
       // Filter non-image file
       if (newFile && !oldFile) {
+        // eslint-disable-next-line no-param-reassign
+        newFile.error = ''
         if (!/\.(gif|jpg|jpeg|png|webp|svg)$/i.test(newFile.name)) {
           this.alert('Your choice is not a picture')
 
           return prevent()
         }
-      }
 
-      // Create a blob field
-      if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
-        // eslint-disable-next-line no-param-reassign
-        newFile.url = ''
-        const URL = window.URL || window.webkitURL
-        if (URL && URL.createObjectURL) {
+        // Create a blob field
+        if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
           // eslint-disable-next-line no-param-reassign
-          newFile.url = URL.createObjectURL(newFile.file)
+          newFile.url = ''
+          const URL = window.URL || window.webkitURL
+          if (URL && URL.createObjectURL) {
+            // eslint-disable-next-line no-param-reassign
+            newFile.url = URL.createObjectURL(newFile.file)
+          }
+        }
+
+        // max size
+        if (newFile.size > 2000000) {
+          // eslint-disable-next-line no-param-reassign
+          newFile.error = 'Error size gambar terlalu besar, Max 2MB'
         }
       }
     },
@@ -635,21 +620,6 @@ export default {
 
       return check
     },
-    handleSaveToDraft(button) {
-      const check = this.checkIfFormFilledAtLeastOne()
-      if (check) {
-        if (typeof button === 'undefined') {
-          this.form.is_published = 0
-
-          console.log(this.form)
-        } else {
-          this.$router.push({ name: 'listContentEdan' })
-          this.form.is_published = 0
-
-          console.log(this.form)
-        }
-      }
-    },
     handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         this.error_form.description = ''
@@ -657,6 +627,13 @@ export default {
         if (this.form.description === '') {
           this.error_form.thumbnail = 'Isi Konten Harus di isi Dulu!'
 
+          return
+        }
+        if (this.form_new.thumbnail[0].error !== '' && this.form_new.thumbnail.length > 0) {
+          return
+        }
+
+        if (this.form_new.thumbnail_detail[0].error !== '' && this.form_new.thumbnail_detail.length > 0) {
           return
         }
         if (!success) {
@@ -694,7 +671,6 @@ export default {
 </script>
 
 <style scoped>
-
 .border-default-editor {
   border: 1px #d1d5db solid;
 }
