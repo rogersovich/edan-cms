@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if="Object.keys(list.users).length === 0"
+        v-if="Object.keys(list.users).length > 0 && !loading.get_data"
         cols="12"
       >
         <v-card>
@@ -134,13 +134,22 @@
                     Photo
                   </th>
                   <th class="text-uppercase">
-                    Nama Lengkap & Username
+                    Nama & Username
                   </th>
                   <th class="text-uppercase">
                     Email
                   </th>
                   <th class="text-uppercase">
-                    Register Date & Account Type
+                    Tipe
+                  </th>
+                  <th class="text-uppercase">
+                    Register Date
+                  </th>
+                  <th class="text-uppercase">
+                    Point
+                  </th>
+                  <th class="text-uppercase">
+                    Koin
                   </th>
                   <th class="text-center">
                     Action
@@ -152,7 +161,48 @@
                   v-for="(item, i) in list.users"
                   :key="i"
                 >
-                  <td>{{ item.title }}</td>
+                  <td class="tw-py-4">
+                    <template v-if="item.profile_img === '' || item.profile_img === null">
+                      <v-avatar
+                        tile
+                        size="40"
+                      >
+                        <v-img
+                          :src="require(`@/assets/images/avatars/spiderman.png`)"
+                        ></v-img>
+                      </v-avatar>
+                    </template>
+                    <template v-else>
+                      {{ item.profile_img }}
+                    </template>
+                  </td>
+                  <td>
+                    <div class="tw-font-bold tw-mb-0.5 tw-capitalize">
+                      {{ item.full_name }}
+                    </div>
+                    <div>
+                      {{ item.username }}
+                    </div>
+                  </td>
+                  <td>{{ item.email }}</td>
+                  <td>Null</td>
+                  <td>{{ formatDate(item.createdAt) }}</td>
+                  <td class="tw-text-center">
+                    <span v-if="item.my_point === null || item.my_point === ''">
+                      0
+                    </span>
+                    <span v-else>
+                      {{ item.my_point }}
+                    </span>
+                  </td>
+                  <td class="tw-text-center">
+                    <span v-if="item.my_koin === null || item.my_koin === ''">
+                      0
+                    </span>
+                    <span v-else>
+                      {{ item.my_koin }}
+                    </span>
+                  </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
@@ -293,11 +343,11 @@
 </template>
 
 <script>
+import moment from 'moment'
 import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
-
-// import { allData, deleteData } from '@/api/subCategory'
+import { listUser } from '@/api/user'
 
 export default {
   data() {
@@ -310,6 +360,9 @@ export default {
       },
       current_page: 1,
       total_page: 0,
+      loading: {
+        get_data: false,
+      },
       form: {
         want_to_delete: '',
         query_search: '',
@@ -347,9 +400,15 @@ export default {
     }
   },
   mounted() {
-    // this.getAllData()
+    this.getListUser()
   },
   methods: {
+    formatDate(params) {
+      // const date = moment(params).utc().format('YYYY-MMM-DD hh:mm:ss')
+      const date = moment(params).utc().format('YYYY-MMM-DD')
+
+      return date
+    },
     openDialogDelete(params) {
       console.log(params)
 
@@ -366,22 +425,24 @@ export default {
 
     // async handleDeleteItem(id) {
     //   await deleteData({ id })
-    //   await this.getAllData()
+    //   await this.getListUser()
     //   this.dialog.delete = !this.dialog.delete
     // },
-    // async getAllData() {
-    //   const data = await allData({ page: this.current_page })
-    //   if (data.status === 401) {
-    //     await this.$store.dispatch('auth/removeCurrentUser')
-    //     this.$router.push({ name: 'pages-login' })
-    //   } else {
-    //     this.current_page = data.data.current_page
-    //     this.total_page = data.data.last_page
-    //     this.list.users = data.data.data
-    //   }
-    // },
+    async getListUser() {
+      this.loading.get_data = true
+      const res = await listUser({ page: this.current_page })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.list.users = data.data
+
+        console.log(this.list.users)
+      } else {
+        this.loading.get_data = false
+      }
+    },
     async handlePagination() {
-      // await this.getAllData()
+      await this.getListUser()
     },
   },
 }
