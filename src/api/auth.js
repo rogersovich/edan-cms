@@ -29,7 +29,18 @@ export const deleteAdmin = payload => api
   .then(response => response)
   .catch(error => error.response)
 
-export const currentUser = () => api
-  .get('/users/current-user')
+export const updateAdmin = payload => api
+  .put(`admin/edit/${payload.id}`, {
+    name: payload.name,
+    email: payload.email,
+    username: payload.username,
+    status: payload.status,
+    role: payload.role,
+  })
   .then(response => response)
   .catch(error => error.response)
+
+// export const currentUser = () => api
+//   .get('/users/current-user')
+//   .then(response => response)
+//   .catch(error => error.response)
