@@ -283,6 +283,11 @@ export default {
         const { data } = res
         if (data.status) {
           this.loading.create = false
+          await this.$swal({
+            title: 'Berhasil Menghapus',
+            icon: 'success',
+            timer: 1000,
+          })
           this.$router.push({ name: 'listAdminEdan' })
         } else {
           this.loading.create = false

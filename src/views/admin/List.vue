@@ -285,7 +285,7 @@ import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
 
-import { listAdmin } from '@/api/auth'
+import { listAdmin, deleteAdmin } from '@/api/auth'
 
 export default {
   data() {
@@ -318,8 +318,6 @@ export default {
   },
   methods: {
     openDialogDelete(params) {
-      console.log(params)
-
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
     },
@@ -328,11 +326,18 @@ export default {
       console.log(this.form.query_search)
     },
 
-    // async handleDeleteItem(id) {
-    //   await deleteData({ id })
-    //   await this.getListAdmin()
-    //   this.dialog.delete = !this.dialog.delete
-    // },
+    async handleDeleteItem(id) {
+      this.dialog.delete = !this.dialog.delete
+      this.loading.get_data = true
+      await deleteAdmin({ id })
+      this.$swal({
+        title: 'Berhasil Menghapus',
+        icon: 'success',
+        timer: 1000,
+      })
+      await this.getListAdmin()
+      this.loading.get_data = false
+    },
     async getListAdmin() {
       this.loading.get_data = true
       const res = await listAdmin({ page: this.current_page })
@@ -340,7 +345,8 @@ export default {
       if (data.status) {
         this.loading.get_data = false
         this.list.admins = data.data
-        console.log(this.list.admins)
+
+        // console.log(this.list.admins)
       } else {
         this.loading.get_data = false
       }

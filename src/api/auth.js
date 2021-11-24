@@ -24,6 +24,11 @@ export const addAdmin = payload => api
   .then(response => response)
   .catch(error => error.response)
 
+export const deleteAdmin = payload => api
+  .put(`admin/delete/${payload.id}`, {})
+  .then(response => response)
+  .catch(error => error.response)
+
 export const currentUser = () => api
   .get('/users/current-user')
   .then(response => response)
