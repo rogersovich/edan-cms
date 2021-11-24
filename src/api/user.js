@@ -17,7 +17,7 @@ export const addUser = payload => api
   .catch(error => error.response)
 
 export const deleteUser = payload => api
-  .put(`admin/delete/${payload.id}`, {})
+  .put(`admin/user/delete/${payload.id}`, {})
   .then(response => response)
   .catch(error => error.response)
 

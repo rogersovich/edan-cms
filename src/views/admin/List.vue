@@ -87,9 +87,6 @@
                     Email
                   </th>
                   <th class="text-uppercase">
-                    Status
-                  </th>
-                  <th class="text-uppercase">
                     Di hapus
                   </th>
                   <th class="text-center">
@@ -105,23 +102,6 @@
                   <td>{{ item.name }}</td>
                   <td>{{ item.username }}</td>
                   <td>{{ item.email }}</td>
-                  <td>
-                    <v-chip
-                      v-if="item.status === 1"
-                      class="tw-mx-2 tw-font-medium"
-                      color="primary"
-                      text-color="white"
-                    >
-                      Aktif
-                    </v-chip>
-                    <v-chip
-                      v-else
-                      class="tw-mx-2 tw-font-medium"
-                      color="#A1A1AA"
-                    >
-                      Non Aktif
-                    </v-chip>
-                  </td>
                   <td>
                     <v-chip
                       v-if="item.is_trash === 0"
@@ -151,7 +131,7 @@
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
                       </v-btn>
                       <v-btn
-                        v-if="item.is_trash === 0"
+                        v-if="item.is_trash === 0 || item.is_trash === '0'"
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
@@ -195,7 +175,7 @@
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
-                          <v-list-item v-if="item.is_trash === 0">
+                          <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
                             <v-list-item-content>
                               <v-btn
                                 text

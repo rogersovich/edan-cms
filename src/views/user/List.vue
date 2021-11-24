@@ -151,6 +151,9 @@
                   <th class="text-uppercase">
                     Koin
                   </th>
+                  <th class="text-uppercase">
+                    Di hapus
+                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -167,9 +170,7 @@
                         tile
                         size="40"
                       >
-                        <v-img
-                          :src="require(`@/assets/images/avatars/spiderman.png`)"
-                        ></v-img>
+                        <v-img :src="require(`@/assets/images/avatars/spiderman.png`)"></v-img>
                       </v-avatar>
                     </template>
                     <template v-else>
@@ -203,6 +204,24 @@
                       {{ item.my_koin }}
                     </span>
                   </td>
+                  <td>
+                    <v-chip
+                      v-if="item.is_trash === 0 || item.is_trash === '0'"
+                      class="tw-mx-2 tw-font-medium"
+                      color="#22C55E"
+                      text-color="white"
+                    >
+                      Tidak
+                    </v-chip>
+                    <v-chip
+                      v-else
+                      class="tw-mx-2 tw-font-medium"
+                      color="#E11D48"
+                      text-color="white"
+                    >
+                      Yaa
+                    </v-chip>
+                  </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
@@ -213,10 +232,11 @@
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
                       </v-btn>
                       <v-btn
+                        v-if="item.is_trash === 0 || item.is_trash === '0'"
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete({ id: item.id, name: item.title })"
+                        @click="openDialogDelete({ id: item.id, name: item.email })"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -256,12 +276,12 @@
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
-                          <v-list-item>
+                          <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
                             <v-list-item-content>
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete({ id: item.id, name: item.title })"
+                                @click="openDialogDelete({ id: item.id, name: item.email })"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -278,7 +298,7 @@
               </tbody>
             </template>
           </v-simple-table>
-          <v-card-text class="tw-mt-4">
+          <!-- <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -286,7 +306,7 @@
                 @input="handlePagination"
               ></v-pagination>
             </div>
-          </v-card-text>
+          </v-card-text> -->
         </v-card>
       </v-col>
       <v-col
@@ -347,7 +367,7 @@ import moment from 'moment'
 import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
-import { listUser } from '@/api/user'
+import { listUser, deleteUser } from '@/api/user'
 
 export default {
   data() {
@@ -394,7 +414,6 @@ export default {
             text: 'Filter: By Domisi Kota/Kab',
             key: 'domisi-city',
           },
-
         ],
       },
     }
@@ -405,15 +424,17 @@ export default {
   methods: {
     formatDate(params) {
       // const date = moment(params).utc().format('YYYY-MMM-DD hh:mm:ss')
-      const date = moment(params).utc().format('YYYY-MMM-DD')
+      const date = moment(params)
+        .utc()
+        .format('YYYY-MMM-DD')
 
       return date
     },
     openDialogDelete(params) {
-      console.log(params)
+      // console.log(params)
 
-      // this.form.want_to_delete = params
-      // this.dialog.delete = !this.dialog.delete
+      this.form.want_to_delete = params
+      this.dialog.delete = !this.dialog.delete
     },
     handleFilter(filterType) {
       console.log(filterType)
@@ -422,12 +443,18 @@ export default {
       event.preventDefault()
       console.log(this.form.query_search)
     },
-
-    // async handleDeleteItem(id) {
-    //   await deleteData({ id })
-    //   await this.getListUser()
-    //   this.dialog.delete = !this.dialog.delete
-    // },
+    async handleDeleteItem(id) {
+      this.dialog.delete = !this.dialog.delete
+      this.loading.get_data = true
+      await deleteUser({ id })
+      this.$swal({
+        title: 'Berhasil Menghapus',
+        icon: 'success',
+        timer: 1000,
+      })
+      await this.getListUser()
+      this.loading.get_data = false
+    },
     async getListUser() {
       this.loading.get_data = true
       const res = await listUser({ page: this.current_page })
