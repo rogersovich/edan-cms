@@ -1,5 +1,9 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -35,7 +39,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
               <v-row>
                 <v-col
@@ -50,7 +54,7 @@
                       <v-avatar
                         v-if="form.profile_img.length === 0"
                         rounded
-                        size="120"
+                        size="160"
                         class="me-6"
                       >
                         <v-img :src="require('@/assets/images/avatars/1.png')"></v-img>
@@ -59,9 +63,9 @@
                         v-else
                         v-ripple
                         rounded
-                        size="120"
+                        size="160"
                         class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewThumbnail"
+                        @click="openDialogPreviewThumbnail(form.profile_img[0].url)"
                       >
                         <v-img :src="form.profile_img[0].url"></v-img>
                       </v-avatar>
@@ -74,12 +78,12 @@
                       >
                         <label
                           for="file"
-                          class="tw-cursor-pointer"
+                          class="tw-cursor-pointer tw-w-full"
                         >
                           <v-icon class="d-sm-none">
                             {{ icons.mdiCloudUploadOutline }}
                           </v-icon>
-                          <span class="d-none d-sm-block">Upload</span>
+                          <span class="d-none d-sm-block">Pilih Gambar/gif</span>
                         </label>
                       </v-btn>
 
@@ -105,13 +109,21 @@
                         Reset
                       </v-btn>
                       <p class="tw-text-xs mt-4 tw-mb-2">
-                        Allowed JPG, GIF or PNG. Max size of 800K
+                        Allowed JPG, GIF or PNG. Max size of 2MB
                       </p>
                       <div
                         v-if="error_form.profile_img !== ''"
                         class="tw-text-red-500 tw-text-sm"
                       >
                         {{ error_form.profile_img }}
+                      </div>
+                      <div
+                        v-else-if="form.profile_img.length > 0"
+                        class="tw-text-red-500 tw-text-sm"
+                      >
+                        <span v-if="form.profile_img[0].error !== ''">
+                          {{ form.profile_img[0].error }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -126,6 +138,7 @@
                         v-model="form.profile_img"
                         :multiple="false"
                         :drop="false"
+                        accept="image/png,image/gif,image/jpeg,image/webp"
                         @input-filter="inputFilter"
                       >
                         <i class="fa fa-plus"></i>
@@ -152,7 +165,6 @@
                     </div>
                   </validation-provider>
                 </v-col>
-
                 <v-col
                   cols="12"
                   md="6"
@@ -196,7 +208,6 @@
                     </div>
                   </validation-provider>
                 </v-col>
-
                 <v-col
                   cols="12"
                   md="6"
@@ -204,7 +215,7 @@
                   <validation-provider
                     v-slot="{ errors }"
                     name="Email"
-                    rules="required"
+                    rules="required|email"
                   >
                     <div>
                       <v-text-field
@@ -311,15 +322,16 @@
                     rules="required"
                   >
                     <div>
-                      <v-select
+                      <v-autocomplete
                         v-model="form.province_id"
                         :items="list.provinces"
-                        item-text="text"
-                        item-value="value"
+                        item-text="prov_name"
+                        item-value="prov_id"
                         label="Provinsi"
                         outlined
                         :error-messages="errors"
-                      ></v-select>
+                        @change="getListCityByProvince(form.province_id)"
+                      ></v-autocomplete>
                     </div>
                   </validation-provider>
                 </v-col>
@@ -333,15 +345,17 @@
                     rules="required"
                   >
                     <div>
-                      <v-select
+                      <v-autocomplete
                         v-model="form.city_id"
+                        :disabled="form.province_id === ''"
                         :items="list.cities"
-                        item-text="text"
-                        item-value="value"
+                        item-text="city_name"
+                        item-value="city_id"
                         label="Kota/Kab"
                         outlined
                         :error-messages="errors"
-                      ></v-select>
+                        @change="getListDistrictByCity(form.city_id)"
+                      ></v-autocomplete>
                     </div>
                   </validation-provider>
                 </v-col>
@@ -355,15 +369,16 @@
                     rules="required"
                   >
                     <div>
-                      <v-select
+                      <v-autocomplete
                         v-model="form.district_id"
+                        :disabled="form.city_id === ''"
                         :items="list.districts"
-                        item-text="text"
-                        item-value="value"
+                        item-text="dis_name"
+                        item-value="dis_id"
                         label="Kecamatan"
                         outlined
                         :error-messages="errors"
-                      ></v-select>
+                      ></v-autocomplete>
                     </div>
                   </validation-provider>
                 </v-col>
@@ -410,10 +425,12 @@
                 <v-col cols="12">
                   <div class="text-right">
                     <v-btn
+                      :width="$vuetify.breakpoint.mobile ? 'auto' : 180"
+                      :block="$vuetify.breakpoint.mobile"
                       type="submit"
                       color="primary"
                     >
-                      Submit
+                      Tambah User
                     </v-btn>
                   </div>
                 </v-col>
@@ -425,7 +442,6 @@
     </v-row>
 
     <v-dialog
-      v-if="form.profile_img.length > 0"
       v-model="dialog.preview_thumbnail"
       max-width="480"
     >
@@ -449,7 +465,7 @@
         <v-card-text>
           <v-img
             contain
-            :src="form.profile_img[0].url"
+            :src="preview_image"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -459,13 +475,17 @@
 
 <script>
 import FileUpload from 'vue-upload-component'
-import { required } from 'vee-validate/dist/rules'
+import { required, email } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import {
   mdiArrowLeft, mdiEyeOutline, mdiEyeOffOutline, mdiCloudUploadOutline, mdiWindowClose,
 } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+
+import { addUser } from '@/api/user'
+import { listProvince, listCityByProvince, listDistrictByCity } from '@/api/regional'
 
 setInteractionMode('eager')
 
@@ -474,13 +494,17 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
+extend('email', {
+  ...email,
+  message: '{_field_} must email format',
+})
 
 export default {
   components: {
     FileUpload,
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -494,12 +518,14 @@ export default {
       error_form: {
         profile_img: '',
       },
+      preview_image: '',
       visible_pass: {
         password: false,
       },
       dialog: {
         preview_thumbnail: false,
       },
+      loading: { create: false },
       form: {
         fullname: '',
         username: '',
@@ -509,9 +535,9 @@ export default {
         tempat_lahir: '',
         tgl_lahir: '',
         profile_img: [],
-        province_id: 1,
-        city_id: 1,
-        district_id: 1,
+        province_id: '',
+        city_id: '',
+        district_id: '',
         my_koin: 0,
         my_point: 0,
         ver_email: 0,
@@ -524,46 +550,19 @@ export default {
             text: 'Redirect',
             value: 'redirect',
           },
-          {
-            text: 'SSO',
-            value: 'sso',
-          },
         ],
-        provinces: [
-          {
-            text: 'Jawa Barat',
-            value: 1,
-          },
-          {
-            text: 'Jawa Timur',
-            value: 2,
-          },
-        ],
-        cities: [
-          {
-            text: 'Kota Bogor',
-            value: 1,
-          },
-          {
-            text: 'Kab Bogor',
-            value: 2,
-          },
-        ],
-        districts: [
-          {
-            text: 'Caringin',
-            value: 1,
-          },
-          {
-            text: 'Ciawi',
-            value: 2,
-          },
-        ],
+        provinces: [],
+        cities: [],
+        districts: [],
       },
     }
   },
+  mounted() {
+    this.getListProvince()
+  },
   methods: {
-    openDialogPreviewThumbnail() {
+    openDialogPreviewThumbnail(image) {
+      this.preview_image = image
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
     },
     removeItem(file) {
@@ -573,22 +572,54 @@ export default {
     inputFilter(newFile, oldFile, prevent) {
       // Filter non-image file
       if (newFile && !oldFile) {
+        // eslint-disable-next-line no-param-reassign
+        newFile.error = ''
         if (!/\.(gif|jpg|jpeg|png|webp|svg)$/i.test(newFile.name)) {
           this.alert('Your choice is not a picture')
 
           return prevent()
         }
-      }
 
-      // Create a blob field
-      if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
-        // eslint-disable-next-line no-param-reassign
-        newFile.url = ''
-        const URL = window.URL || window.webkitURL
-        if (URL && URL.createObjectURL) {
+        // Create a blob field
+        if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
           // eslint-disable-next-line no-param-reassign
-          newFile.url = URL.createObjectURL(newFile.file)
+          newFile.url = ''
+          const URL = window.URL || window.webkitURL
+          if (URL && URL.createObjectURL) {
+            // eslint-disable-next-line no-param-reassign
+            newFile.url = URL.createObjectURL(newFile.file)
+          }
         }
+
+        // max size
+        if (newFile.size > 2000000) {
+          // eslint-disable-next-line no-param-reassign
+          newFile.error = 'Error size gambar terlalu besar, Max 2MB'
+        }
+      }
+    },
+    async getListProvince() {
+      const { data } = await listProvince()
+      if (data.status) {
+        this.list.provinces = data.data
+      }
+    },
+    async getListCityByProvince(provinceId) {
+      this.list.cities = []
+      this.form.city_id = ''
+      this.list.districts = []
+      this.form.district_id = ''
+      const { data } = await listCityByProvince({ province_id: provinceId })
+      if (data.status) {
+        this.list.cities = data.data
+      }
+    },
+    async getListDistrictByCity(cityId) {
+      this.list.districts = []
+      this.form.district_id = ''
+      const { data } = await listDistrictByCity({ city_id: cityId })
+      if (data.status) {
+        this.list.districts = data.data
       }
     },
     async handleSubmit() {
@@ -599,18 +630,51 @@ export default {
 
           return
         }
+
+        if (this.form.profile_img.length > 0) {
+          if (this.form.profile_img[0].error !== '' && this.form.profile_img.length > 0) {
+            return
+          }
+        }
+
         if (!success) {
           return
         }
 
-        console.log(this.form)
+        // console.log(this.form)
 
+        const res = await addUser({
+          full_name: this.form.fullname,
+          email: this.form.email,
+          no_wa: this.form.no_wa,
+          password: this.form.password,
+          profile_img: this.form.profile_img[0].file,
+          username: this.form.username,
+          tempat_lahir: this.form.tempat_lahir,
+          tgl_lahir: this.form.tgl_lahir,
+          province_id: this.form.province_id,
+          city_id: this.form.city_id,
+          district_id: this.form.district_id,
+          my_koin: this.form.my_koin,
+          my_point: this.form.my_point,
+          ver_email: this.form.ver_email,
+          ver_wa: this.form.ver_wa,
+          oauth_type: this.form.oauth_type,
+        })
+
+        const { data } = res
+        if (data.status) {
+          this.loading.create = false
+          await this.$swal({
+            title: 'Berhasil Menghapus',
+            icon: 'success',
+            timer: 1000,
+          })
+          this.$router.push({ name: 'listUserEdan' })
+        } else {
+          this.loading.create = false
+        }
         this.$router.push({ name: 'listUserEdan' })
-
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
       })
     },
   },
