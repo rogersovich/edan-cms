@@ -157,6 +157,7 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie'
 import {
   mdiAccountOutline,
   mdiEmailOutline,
@@ -167,14 +168,13 @@ import {
   mdiHelpCircleOutline,
   mdiLogoutVariant,
 } from '@mdi/js'
-import { logout } from '@/api/auth'
 
 export default {
   setup() {
     async function handleLogout() {
-      await logout()
       await this.$store.dispatch('auth/removeCurrentUser')
-      this.$router.push({ name: 'pages-login' })
+      Cookies.remove('aksaraww')
+      this.$router.push({ name: 'Login' })
     }
 
     return {

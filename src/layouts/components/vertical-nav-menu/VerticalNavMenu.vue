@@ -40,7 +40,7 @@
       <!-- dashboard  -->
       <nav-menu-link
         title="Dashboard"
-        :to="{ name: 'dashboard' }"
+        :to="{ name: 'Dashboard' }"
         :icon="icons.mdiHomeOutline"
         :nested="false"
       ></nav-menu-link>
@@ -48,6 +48,7 @@
 
       <!-- admin  -->
       <nav-menu-group
+        v-if="$store.state.auth.profile.role === 1 || $store.state.auth.profile.role === '1' "
         title="Admin Edan"
         :icon="icons.mdiAccountCogOutline"
         :active="$route.meta.key === 'admin-edan' ? true : false"

@@ -15,8 +15,13 @@ const routes = [
     component: () => import('@/views/dashboard/Dashboard.vue'),
   },
   {
-    path: '/admin-edan',
+    path: '/admin',
     component: () => import('@/views/admin/Index.vue'),
+    beforeEnter: (to, from, next) => {
+      if (store.state.auth.profile.role !== '' && store.state.auth.profile.role === 2) next({ name: 'Dashboard' })
+      else if (store.state.auth.profile.role === '') next({ name: 'Login' })
+      else next()
+    },
     children: [
       {
         path: '',

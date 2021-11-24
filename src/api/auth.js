@@ -8,8 +8,8 @@ export const login = payload => api
   .then(response => response)
   .catch(error => error.response)
 
-export const logout = () => api
-  .post('/logout')
+export const listAdmin = () => api
+  .get('admin')
   .then(response => response)
   .catch(error => error.response)
 
