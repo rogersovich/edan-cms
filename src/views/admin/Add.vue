@@ -2,6 +2,10 @@
   <validation-observer
     ref="formSubmit"
   >
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -9,7 +13,6 @@
     >
       <v-col
         cols="12"
-        md="6"
       >
         <v-card>
           <v-card-title>
@@ -37,73 +40,156 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
-              <validation-provider
-                v-slot="{ errors }"
-                name="Username"
-                rules="required"
-              >
-                <div class="tw-mb-5">
-                  <v-text-field
-                    v-model="form.username"
-                    label="Username"
-                    outlined
-
-                    :error-messages="errors"
-
-                    placeholder="Your Username"
-                  ></v-text-field>
-                </div>
-              </validation-provider>
-
-              <validation-provider
-                v-slot="{ errors }"
-                name="Password"
-                rules="required"
-                vid="password"
-              >
-                <div class="tw-mb-5">
-                  <v-text-field
-                    v-model="form.password"
-                    label="Password"
-                    outlined
-                    :error-messages="errors"
-                    placeholder="Your Password"
-                    :type="visible_pass.password ? 'text' : 'password'"
-                    :append-icon="visible_pass.password ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-                    @click:append="visible_pass.password = !visible_pass.password"
-                  ></v-text-field>
-                </div>
-              </validation-provider>
-
-              <validation-provider
-                v-slot="{ errors }"
-                name="Confirm Password"
-                rules="required|confirmed:password"
-              >
-                <div class="tw-mb-5">
-                  <v-text-field
-                    v-model="form.confirm_password"
-                    label="Confirm Password"
-                    outlined
-                    :error-messages="errors"
-                    placeholder="Your Confirm Password"
-                    :type="visible_pass.confirm ? 'text' : 'password'"
-                    :append-icon="visible_pass.confirm ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-                    @click:append="visible_pass.confirm = !visible_pass.confirm"
-                  ></v-text-field>
-                </div>
-              </validation-provider>
-
-              <div class="text-right">
-                <v-btn
-                  type="submit"
-                  color="primary"
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="6"
                 >
-                  Submit
-                </v-btn>
-              </div>
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Nama"
+                    rules="required"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.name"
+                        label="Nama"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Your Nama"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Email"
+                    rules="required|email"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.email"
+                        label="Email"
+                        outlined
+                        type="email"
+                        :error-messages="errors"
+
+                        placeholder="Your Email"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Username"
+                    rules="required"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.username"
+                        label="Username"
+                        outlined
+
+                        :error-messages="errors"
+
+                        placeholder="Your Username"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Role"
+                    rules="required"
+                  >
+                    <div class="tw-mb-5">
+                      <v-select
+                        v-model="form.role"
+                        label="Role"
+                        outlined
+                        :items="list.roles"
+                        item-text="text"
+                        item-value="value"
+                        :error-messages="errors"
+                        placeholder="Your Role"
+                      ></v-select>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Password"
+                    rules="required"
+                    vid="password"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.password"
+                        label="Password"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Your Password"
+                        :type="visible_pass.password ? 'text' : 'password'"
+                        :append-icon="visible_pass.password ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                        @click:append="visible_pass.password = !visible_pass.password"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Confirm Password"
+                    rules="required|confirmed:password"
+                  >
+                    <div class="tw-mb-5">
+                      <v-text-field
+                        v-model="form.confirm_password"
+                        label="Confirm Password"
+                        outlined
+                        :error-messages="errors"
+                        placeholder="Your Confirm Password"
+                        :type="visible_pass.confirm ? 'text' : 'password'"
+                        :append-icon="visible_pass.confirm ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                        @click:append="visible_pass.confirm = !visible_pass.confirm"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col cols="12">
+                  <div class="text-right">
+                    <v-btn
+                      :width="$vuetify.breakpoint.mobile ? 'auto' : 180"
+                      :block="$vuetify.breakpoint.mobile"
+                      type="submit"
+                      color="primary"
+                    >
+                      Tambah Admin
+                    </v-btn>
+                  </div>
+                </v-col>
+              </v-row>
             </v-form>
           </v-card-text>
         </v-card>
@@ -113,11 +199,14 @@
 </template>
 
 <script>
-import { required, confirmed } from 'vee-validate/dist/rules'
+import { required, confirmed, email } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import { mdiArrowLeft, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
+
+import { addAdmin } from '@/api/auth'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
 
 setInteractionMode('eager')
 
@@ -131,12 +220,16 @@ extend('confirmed', {
   message: '{_field_} harus sama',
 })
 
-// import { storeData } from '@/api/subCategory'
+extend('email', {
+  ...email,
+  message: '{_field_} must email format',
+})
 
 export default {
   components: {
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -145,18 +238,30 @@ export default {
         mdiEyeOutline,
         mdiEyeOffOutline,
       },
-      error_form: {
-        current_password: '',
-      },
       visible_pass: {
         password: false,
         confirm: false,
       },
+      loading: { create: false },
       form: {
         username: '',
         password: '',
+        name: '',
+        email: '',
         confirm_password: '',
-        role: 'admin',
+        role: 2,
+      },
+      list: {
+        roles: [
+          {
+            value: 1,
+            text: 'Super Admin',
+          },
+          {
+            value: 2,
+            text: 'Admin',
+          },
+        ],
       },
     }
   },
@@ -167,13 +272,21 @@ export default {
           return
         }
 
-        console.log(this.form)
-        this.$router.push({ name: 'listAdminEdan' })
-
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        this.loading.create = true
+        const res = await addAdmin({
+          username: this.form.username,
+          email: this.form.email,
+          name: this.form.name,
+          role: this.form.role,
+          password: this.form.password,
+        })
+        const { data } = res
+        if (data.status) {
+          this.loading.create = false
+          this.$router.push({ name: 'listAdminEdan' })
+        } else {
+          this.loading.create = false
+        }
       })
     },
   },
