@@ -44,3 +44,13 @@ export const detailAdmin = payload => api
   .get(`/admin/${payload.id}`)
   .then(response => response)
   .catch(error => error.response)
+
+export const changePassAdmin = payload => api
+  .post('admin/change-password', {
+    id: payload.id,
+    current_password: payload.current_password,
+    new_password: payload.new_password,
+    confirm_password: payload.confirm_password,
+  })
+  .then(response => response)
+  .catch(error => error.response)

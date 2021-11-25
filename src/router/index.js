@@ -51,6 +51,14 @@ const routes = [
           key: 'admin-edan',
         },
       },
+      {
+        path: 'change-password/:id',
+        name: 'changePasswordAdmin',
+        component: () => import('@/views/admin/ChangePassword.vue'),
+        meta: {
+          key: 'admin-edan',
+        },
+      },
     ],
   },
   {

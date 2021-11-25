@@ -141,6 +141,14 @@
                           {{ icons.mdiTrashCan }}
                         </v-icon>
                       </v-btn>
+                      <v-btn
+                        v-if="item.is_trash === 0 || item.is_trash === '0'"
+                        icon
+                        :to="{ name: 'changePasswordAdmin', params: { id: item.id } }"
+                        color="#6B7280"
+                      >
+                        <v-icon>{{ icons.mdiLock }}</v-icon>
+                      </v-btn>
                     </div>
                     <div v-else>
                       <v-menu
@@ -171,7 +179,7 @@
                                 <v-icon left>
                                   {{ icons.mdiPencilBoxMultiple }}
                                 </v-icon>
-                                Ubah
+                                Ubah Data
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
@@ -188,6 +196,20 @@
                                 Hapus
                               </v-btn>
                             </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
+                            <v-list-item-action>
+                              <v-btn
+                                text
+                                :to="{ name: 'changePasswordAdmin', params: { id: item.id } }"
+                                color="#6B7280"
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiLock }}
+                                </v-icon>
+                                Ubah Sandi
+                              </v-btn>
+                            </v-list-item-action>
                           </v-list-item>
                         </v-list>
                       </v-menu>
@@ -263,7 +285,7 @@
 <script>
 
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiLock,
 } from '@mdi/js'
 
 import { listAdmin, deleteAdmin } from '@/api/auth'
@@ -277,6 +299,7 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+        mdiLock,
       },
       loading: {
         get_data: false,
