@@ -65,6 +65,15 @@
       ></nav-menu-link>
       <!-- end -->
 
+      <!-- banner  -->
+      <nav-menu-link
+        title="Banner"
+        :to="{ name: 'listBanner' }"
+        :icon="icons.mdiImageArea"
+        :nested="false"
+      ></nav-menu-link>
+      <!-- end -->
+
       <!-- content  -->
       <nav-menu-group
         title="Artikel"
@@ -84,15 +93,6 @@
           :nested="true"
         ></nav-menu-link>
       </nav-menu-group>
-      <!-- end -->
-
-      <!-- banner  -->
-      <nav-menu-link
-        title="Banner"
-        :to="{ name: 'listBanner' }"
-        :icon="icons.mdiImageArea"
-        :nested="false"
-      ></nav-menu-link>
       <!-- end -->
 
       <!-- education  -->

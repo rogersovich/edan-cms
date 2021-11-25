@@ -349,14 +349,11 @@ export default {
       const res = await listAdmin({ page: this.current_page, limit: this.limit })
       const { data } = res
       if (data.status) {
-        console.log(data)
         this.loading.get_data = false
         this.total_page = data.total_page
         // eslint-disable-next-line radix
         this.current_page = parseInt(data.curent_page)
         this.list.admins = data.data
-
-        console.log(this.list.admins)
       } else {
         this.loading.get_data = false
       }
