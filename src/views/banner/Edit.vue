@@ -1,11 +1,16 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.update"
+      :loading="loading.update"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
       justify="center"
     >
       <v-col
+        v-if="Object.keys(banner).length > 0 && !loading.get_data"
         cols="12"
         md="8"
       >
@@ -56,7 +61,7 @@
                           class="me-6 tw-cursor-pointer"
                           @click="openDialogPreviewImage(form.image)"
                         >
-                          <v-img :src="form.image"></v-img>
+                          <v-img :src="base_url_image + form.image"></v-img>
                         </v-avatar>
                       </div>
                       <v-avatar
@@ -129,7 +134,7 @@
                           v-model="form_new.image"
                           :multiple="false"
                           :drop="false"
-                          accept="image/png,image/gif,image/jpeg,image/webp"
+                          accept="image/png,image/gif,image/jpeg,image/jpg"
                           input-id="file-image"
                           @input-filter="inputFilter"
                         >
@@ -152,7 +157,7 @@
                   >
                     <div>
                       <v-text-field
-                        v-model="form.url_target"
+                        v-model="form.target_url"
                         label="Url Target"
                         outlined
                         :error-messages="errors"
@@ -173,7 +178,7 @@
                       type="submit"
                       color="primary"
                     >
-                      Submit
+                      Update Banner
                     </v-btn>
                   </div>
                 </v-col>
@@ -181,6 +186,18 @@
             </v-form>
           </v-card-text>
         </v-card>
+      </v-col>
+      <v-col
+        v-else
+        cols="12"
+        md="8"
+      >
+        <v-skeleton-loader
+          v-for="item in 6"
+          :key="item"
+          class="mx-auto"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
       </v-col>
     </v-row>
 
@@ -223,6 +240,8 @@ import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { detailBanner, updateBanner } from '@/api/banner'
 
 setInteractionMode('eager')
 
@@ -231,11 +250,10 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
+    LoadingOverlay,
     ValidationProvider,
     ValidationObserver,
   },
@@ -246,6 +264,10 @@ export default {
         mdiCloudUploadOutline,
         mdiWindowClose,
       },
+      loading: {
+        get_data: false,
+        update: false,
+      },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -253,12 +275,7 @@ export default {
       form_new: {
         image: [],
       },
-      banner: {
-        url_target: 'https://www.youtube.com/watch?v=sz2SAH8lRDg&list=RDMM&index=11',
-        image: 'https://ik.imagekit.io/1akf8cdsyg/default-image.jpg?updatedAt=1603090451561',
-        create_by: 'Ikan Barang',
-      },
-      list: {},
+      banner: {},
     }
   },
   computed: {
@@ -267,6 +284,15 @@ export default {
         return this.banner
       },
     },
+    params_id() {
+      return this.$route.params.id
+    },
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
+  },
+  mounted() {
+    this.getDetailBanner()
   },
   methods: {
     openDialogPreviewImage(image) {
@@ -306,6 +332,17 @@ export default {
         }
       }
     },
+    async getDetailBanner() {
+      this.loading.get_data = false
+      const res = await detailBanner({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.banner = data.data
+      } else {
+        this.loading.get_data = false
+      }
+    },
     handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         if (this.form_new.image.length > 0) {
@@ -318,15 +355,33 @@ export default {
           return
         }
 
-        // this.form.create_by = this.$store.state.dummy.user
-        console.log(this.form)
+        this.loading.update = true
 
-        this.$router.push({ name: 'listBanner' })
+        try {
+          let image
+          if (this.form_new.image.length > 0) image = this.form_new.image[0].file
+          else image = []
+          const res = await updateBanner({
+            image,
+            id: this.params_id,
+            target_url: this.form.target_url,
+          })
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+          const { data } = res
+          if (data.status) {
+            this.loading.update = false
+            await this.$swal({
+              title: 'Berhasil Merubah Banner',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listBanner' })
+          } else {
+            this.loading.update = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },
