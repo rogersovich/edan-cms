@@ -43,9 +43,7 @@
           <v-card-text>
             <v-form @submit.prevent="handleSubmit">
               <v-row>
-                <v-col
-                  cols="12"
-                >
+                <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
                       Gambar Banner

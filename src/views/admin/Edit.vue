@@ -1,21 +1,16 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.update"
+      :loading="loading.update"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
       justify="center"
     >
       <v-col
-        v-if="Object.keys(admin).length === 0"
-        cols="12"
-      >
-        <v-skeleton-loader
-          class="mx-auto"
-          type="card"
-        ></v-skeleton-loader>
-      </v-col>
-      <v-col
-        v-else
+        v-if="Object.keys(admin).length > 0 && !loading.get_data"
         cols="12"
       >
         <v-card>
@@ -151,6 +146,18 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+        md="8"
+      >
+        <v-skeleton-loader
+          v-for="item in 6"
+          :key="item"
+          class="mx-auto"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
   </validation-observer>
 </template>
@@ -161,6 +168,8 @@ import { required, email } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { detailAdmin, updateAdmin } from '@/api/auth'
 
 setInteractionMode('eager')
 
@@ -174,10 +183,9 @@ extend('email', {
   message: '{_field_} must email format',
 })
 
-// import { detailAdmin, updateAdmin } from '@/api/auth'
-
 export default {
   components: {
+    LoadingOverlay,
     ValidationProvider,
     ValidationObserver,
   },
@@ -188,13 +196,11 @@ export default {
         mdiEyeOutline,
         mdiEyeOffOutline,
       },
-      admin: {
-        username: 'rogersovich',
-        name: 'dimas roger',
-        email: 'dimas@gmail.com',
-        status: 1,
-        role: 2,
+      loading: {
+        get_data: false,
+        update: false,
       },
+      admin: {},
       list: {
         roles: [
           {
@@ -215,31 +221,52 @@ export default {
         return this.admin
       },
     },
+    params_id() {
+      return this.$route.params.id
+    },
   },
   mounted() {
-    // this.getDetailAdmin()
+    this.getDetailAdmin()
   },
   methods: {
-    // async getDetailAdmin() {
-    //   const data = await detailAdmin({ id: this.$route.params.id })
-
-    //   if (Object.keys(data.data).length > 0) this.subCategory = data.data
-    //   else this.$router.push({ name: 'listAdminEdan' })
-    // },
+    async getDetailAdmin() {
+      this.loading.get_data = false
+      const res = await detailAdmin({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.admin = data.data
+      } else {
+        this.loading.get_data = false
+      }
+    },
     async handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         if (!success) {
           return
         }
 
-        console.log(this.form)
-        console.log(this.form_new)
-        this.$router.push({ name: 'listAdminEdan' })
-
-        // const data = await updateAdmin({
-        //   title: this.form.title,
-        //   id: this.form.id,
-        // })
+        this.loading.update = true
+        const res = await updateAdmin({
+          username: this.form.username,
+          email: this.form.email,
+          name: this.form.name,
+          role: this.form.role,
+          status: 1,
+          id: this.params_id,
+        })
+        const { data } = res
+        if (data.status) {
+          this.loading.update = false
+          await this.$swal({
+            title: 'Berhasil Mengubah Admin',
+            icon: 'success',
+            timer: 1000,
+          })
+          this.$router.push({ name: 'listAdminEdan' })
+        } else {
+          this.loading.update = false
+        }
       })
     },
   },

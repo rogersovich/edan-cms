@@ -197,7 +197,7 @@
               </tbody>
             </template>
           </v-simple-table>
-          <!-- <v-card-text class="tw-mt-4">
+          <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -205,7 +205,7 @@
                 @input="handlePagination"
               ></v-pagination>
             </div>
-          </v-card-text> -->
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col
@@ -261,6 +261,7 @@
 </template>
 
 <script>
+
 import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
@@ -268,6 +269,7 @@ import {
 import { listAdmin, deleteAdmin } from '@/api/auth'
 
 export default {
+  name: 'ListBanner',
   data() {
     return {
       icons: {
@@ -281,6 +283,7 @@ export default {
       },
       current_page: 1,
       total_page: 0,
+      limit: 5,
       form: {
         want_to_delete: '',
         query_search: '',
@@ -320,13 +323,17 @@ export default {
     },
     async getListAdmin() {
       this.loading.get_data = true
-      const res = await listAdmin({ page: this.current_page })
+      const res = await listAdmin({ page: this.current_page, limit: this.limit })
       const { data } = res
       if (data.status) {
+        console.log(data)
         this.loading.get_data = false
+        this.total_page = data.total_page
+        // eslint-disable-next-line radix
+        this.current_page = parseInt(data.curent_page)
         this.list.admins = data.data
 
-        // console.log(this.list.admins)
+        console.log(this.list.admins)
       } else {
         this.loading.get_data = false
       }

@@ -8,8 +8,8 @@ export const login = payload => api
   .then(response => response)
   .catch(error => error.response)
 
-export const listAdmin = () => api
-  .get('admin')
+export const listAdmin = payload => api
+  .get(`admin?page=${payload.page}&limit=${payload.limit}`)
   .then(response => response)
   .catch(error => error.response)
 
@@ -40,7 +40,7 @@ export const updateAdmin = payload => api
   .then(response => response)
   .catch(error => error.response)
 
-// export const currentUser = () => api
-//   .get('/users/current-user')
-//   .then(response => response)
-//   .catch(error => error.response)
+export const detailAdmin = payload => api
+  .get(`/admin/${payload.id}`)
+  .then(response => response)
+  .catch(error => error.response)

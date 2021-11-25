@@ -195,18 +195,18 @@ export default {
 
         loading.value = true
         const res = await login(form)
+        const { data } = res
 
-        if (res.status === 200) {
+        if (data.status) {
           loading.value = false
-          const { data: { data } } = res
           await this.$store.dispatch('auth/saveAuth', {
-            token: data.accessToken,
+            token: data.data.accessToken,
           })
 
           await this.$store.dispatch('auth/saveProfile', {
-            email: data.email,
-            name: data.name,
-            role: data.role,
+            email: data.data.email,
+            name: data.data.name,
+            role: data.data.role,
           })
 
           this.$router.push({ name: 'Dashboard' })

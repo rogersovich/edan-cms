@@ -47,46 +47,22 @@
       <!-- end -->
 
       <!-- admin  -->
-      <nav-menu-group
+      <nav-menu-link
         v-if="$store.state.auth.profile.role === 1 || $store.state.auth.profile.role === '1' "
-        title="Admin Edan"
+        title="Admin"
+        :to="{ name: 'listAdminEdan' }"
         :icon="icons.mdiAccountCogOutline"
-        :active="$route.meta.key === 'admin-edan' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'listAdminEdan' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'addAdminEdan' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
+        :nested="false"
+      ></nav-menu-link>
       <!-- end -->
 
       <!-- user -->
-      <nav-menu-group
-        title="User Edan"
+      <nav-menu-link
+        title="User"
+        :to="{ name: 'listUserEdan' }"
         :icon="icons.mdiAccountGroupOutline"
-        :active="$route.meta.key === 'user-edan' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'listUserEdan' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'addUserEdan' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
+        :nested="false"
+      ></nav-menu-link>
       <!-- end -->
 
       <!-- content  -->
@@ -111,24 +87,12 @@
       <!-- end -->
 
       <!-- banner  -->
-      <nav-menu-group
+      <nav-menu-link
         title="Banner"
+        :to="{ name: 'listBanner' }"
         :icon="icons.mdiImageArea"
-        :active="$route.meta.key === 'banner' ? true : false"
-      >
-        <nav-menu-link
-          title="List"
-          :to="{ name: 'listBanner' }"
-          :icon="icons.mdiTable"
-          :nested="true"
-        ></nav-menu-link>
-        <nav-menu-link
-          title="Add"
-          :to="{ name: 'addBanner' }"
-          :icon="icons.mdiPlus"
-          :nested="true"
-        ></nav-menu-link>
-      </nav-menu-group>
+        :nested="false"
+      ></nav-menu-link>
       <!-- end -->
 
       <!-- education  -->
