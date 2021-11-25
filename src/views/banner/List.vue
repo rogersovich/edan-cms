@@ -147,7 +147,7 @@
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete({id: item.id, name: item.title})"
+                        @click="openDialogDelete({id: item.id, name: item.image})"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -192,7 +192,7 @@
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete({id: item.id, name: item.title})"
+                                @click="openDialogDelete({id: item.id, name: item.image})"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -278,7 +278,7 @@ import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
 
-import { listBanner } from '@/api/banner'
+import { listBanner, deleteBanner } from '@/api/banner'
 
 export default {
   data() {
@@ -347,10 +347,8 @@ export default {
   },
   methods: {
     openDialogDelete(params) {
-      this.form.filter_by = params
-
-      // this.form.want_to_delete = params
-      // this.dialog.delete = !this.dialog.delete
+      this.form.want_to_delete = params
+      this.dialog.delete = !this.dialog.delete
     },
     showMenuFilter(e) {
       e.preventDefault()
@@ -373,11 +371,11 @@ export default {
       this.menu.filter = !this.menu.filter
     },
 
-    // async handleDeleteItem(id) {
-    //   await deleteData({ id })
-    //   await this.getListBanner()
-    //   this.dialog.delete = !this.dialog.delete
-    // },
+    async handleDeleteItem(id) {
+      await deleteBanner({ id })
+      await this.getListBanner()
+      this.dialog.delete = !this.dialog.delete
+    },
     async getListBanner() {
       this.loading.get_data = true
       const res = await listBanner({ page: this.current_page })

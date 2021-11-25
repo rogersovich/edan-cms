@@ -26,10 +26,10 @@ export const addBanner = async payload => {
   }
 }
 
-// export const deleteUser = payload => api
-//   .put(`admin/user/delete/${payload.id}`, {})
-//   .then(response => response)
-//   .catch(error => error.response)
+export const deleteBanner = payload => api
+  .put(`banner/cms/delete/${payload.id}`, {})
+  .then(response => response)
+  .catch(error => error.response)
 
 // export const updateUser = payload => api
 //   .put(`admin/edit/${payload.id}`, {
