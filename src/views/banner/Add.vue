@@ -1,5 +1,9 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -143,7 +147,7 @@
                           v-model="form.image"
                           :multiple="false"
                           :drop="false"
-                          accept="image/png,image/gif,image/jpeg,image/webp"
+                          accept="image/png,image/gif,image/jpeg, image/jpg"
                           input-id="file-image"
                           @input-filter="inputFilter"
                         >
@@ -166,7 +170,7 @@
                   >
                     <div>
                       <v-text-field
-                        v-model="form.url_target"
+                        v-model="form.target_url"
                         label="Url Target"
                         outlined
                         :error-messages="errors"
@@ -238,6 +242,8 @@ import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { addBanner } from '@/api/banner'
 
 setInteractionMode('eager')
 
@@ -246,11 +252,10 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
+    LoadingOverlay,
     ValidationProvider,
     ValidationObserver,
   },
@@ -261,6 +266,7 @@ export default {
         mdiCloudUploadOutline,
         mdiWindowClose,
       },
+      loading: { create: false },
       error_form: {
         image: '',
       },
@@ -268,9 +274,9 @@ export default {
         preview_image: false,
       },
       form: {
-        url_target: '',
+        target_url: '',
         image: [],
-        create_by: '',
+        created_by: '',
       },
       list: {},
     }
@@ -332,15 +338,32 @@ export default {
           return
         }
 
-        this.form.create_by = this.$store.state.dummy.user
-        console.log(this.form)
+        this.form.created_by = this.$store.state.auth.profile.email
 
-        this.$router.push({ name: 'listBanner' })
+        this.loading.create = true
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        try {
+          const res = await addBanner({
+            image: this.form.image[0].file,
+            created_by: this.form.created_by,
+            target_url: this.form.target_url,
+          })
+
+          const { data } = res
+          if (data.status) {
+            this.loading.create = false
+            await this.$swal({
+              title: 'Berhasil Menambah Banner',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listBanner' })
+          } else {
+            this.loading.create = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },

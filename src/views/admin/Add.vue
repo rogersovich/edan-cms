@@ -284,7 +284,7 @@ export default {
         if (data.status) {
           this.loading.create = false
           await this.$swal({
-            title: 'Berhasil Menghapus',
+            title: 'Berhasil Menambah Admin',
             icon: 'success',
             timer: 1000,
           })

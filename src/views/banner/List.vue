@@ -97,12 +97,20 @@
                   :key="i"
                 >
                   <td class="tw-py-4">
-                    <v-avatar
-                      tile
-                      size="40"
-                    >
-                      <v-img :src="require(`@/assets/images/avatars/spiderman.png`)"></v-img>
-                    </v-avatar>
+                    <template v-if="item.image === '' || item.image === null">
+                      <v-avatar
+                        tile
+                        size="40"
+                      >
+                        <v-img :src="require(`@/assets/images/avatars/spiderman.png`)"></v-img>
+                      </v-avatar>
+                    </template>
+                    <template v-else>
+                      <v-img
+                        :aspect-ratio="16/9"
+                        :src="base_url_image + item.image"
+                      ></v-img>
+                    </template>
                   </td>
                   <td>
                     {{ item.created_by }}
@@ -328,6 +336,11 @@ export default {
         ],
       },
     }
+  },
+  computed: {
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
   },
   mounted() {
     this.getListBanner()

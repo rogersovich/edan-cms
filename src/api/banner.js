@@ -6,24 +6,25 @@ export const listBanner = () => api
   .then(response => response)
   .catch(error => error.response)
 
-// export const addUser = async payload => {
-//   const bodyFormData = new FormData()
-//   bodyFormData.append('full_name', payload.full_name)
-//   bodyFormData.append('email', payload.email)
-//   bodyFormData.append('no_wa', payload.no_wa)
-//   bodyFormData.append('password', payload.password)
-//   bodyFormData.append('image', payload.profile_img)
-//   bodyFormData.append('username', payload.username)
-//   bodyFormData.append('tempat_lahir', payload.tempat_lahir)
-//   bodyFormData.append('tgl_lahir', payload.tgl_lahir)
-//   bodyFormData.append('province_id', payload.province_id)
-//   bodyFormData.append('city_id', payload.city_id)
-//   bodyFormData.append('district_id', payload.district_id)
-//   await api
-//     .post('admin/user', bodyFormData)
-//     .then(response => response)
-//     .catch(error => error.response)
-// }
+export const addBanner = async payload => {
+  const bodyFormData = new FormData()
+  bodyFormData.append('target_url', payload.target_url)
+  bodyFormData.append('created_by', payload.created_by)
+  bodyFormData.append('image', payload.image)
+
+  try {
+    const response = await api
+      .post('banner/cms/add', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+    return response
+  } catch (error) {
+    return error.response
+  }
+}
 
 // export const deleteUser = payload => api
 //   .put(`admin/user/delete/${payload.id}`, {})
