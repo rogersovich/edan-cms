@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if=" Object.keys(list.banners).length === 0"
+        v-if=" Object.keys(list.banners).length > 0 && !loading.get_data"
         cols="12"
       >
         <v-card>
@@ -84,7 +84,7 @@
                     Created By
                   </th>
                   <th class="text-uppercase">
-                    Is Trash
+                    Di hapus
                   </th>
                   <th class="text-center">
                     Action
@@ -96,7 +96,35 @@
                   v-for="(item, i) in list.banners"
                   :key="i"
                 >
-                  <td>{{ item.title }}</td>
+                  <td class="tw-py-4">
+                    <v-avatar
+                      tile
+                      size="40"
+                    >
+                      <v-img :src="require(`@/assets/images/avatars/spiderman.png`)"></v-img>
+                    </v-avatar>
+                  </td>
+                  <td>
+                    {{ item.created_by }}
+                  </td>
+                  <td>
+                    <v-chip
+                      v-if="item.is_trash === 0 || item.is_trash === '0'"
+                      class="tw-mx-2 tw-font-medium"
+                      color="#22C55E"
+                      text-color="white"
+                    >
+                      Tidak
+                    </v-chip>
+                    <v-chip
+                      v-else
+                      class="tw-mx-2 tw-font-medium"
+                      color="#E11D48"
+                      text-color="white"
+                    >
+                      Yaa
+                    </v-chip>
+                  </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
@@ -107,6 +135,7 @@
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
                       </v-btn>
                       <v-btn
+                        v-if="item.is_trash === 0 || item.is_trash === '0'"
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
@@ -150,7 +179,7 @@
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
-                          <v-list-item>
+                          <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
                             <v-list-item-content>
                               <v-btn
                                 text
@@ -172,7 +201,7 @@
               </tbody>
             </template>
           </v-simple-table>
-          <v-card-text class="tw-mt-4">
+          <!-- <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -180,7 +209,7 @@
                 @input="handlePagination"
               ></v-pagination>
             </div>
-          </v-card-text>
+          </v-card-text> -->
         </v-card>
       </v-col>
       <v-col
@@ -241,7 +270,7 @@ import {
   mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
 } from '@mdi/js'
 
-// import { allData, deleteData } from '@/api/subCategory'
+import { listBanner } from '@/api/banner'
 
 export default {
   data() {
@@ -251,6 +280,9 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+      },
+      loading: {
+        get_data: false,
       },
       current_page: 1,
       total_page: 0,
@@ -298,7 +330,7 @@ export default {
     }
   },
   mounted() {
-    // this.getAllData()
+    this.getListBanner()
   },
   methods: {
     openDialogDelete(params) {
@@ -330,22 +362,24 @@ export default {
 
     // async handleDeleteItem(id) {
     //   await deleteData({ id })
-    //   await this.getAllData()
+    //   await this.getListBanner()
     //   this.dialog.delete = !this.dialog.delete
     // },
-    // async getAllData() {
-    //   const data = await allData({ page: this.current_page })
-    //   if (data.status === 401) {
-    //     await this.$store.dispatch('auth/removeCurrentUser')
-    //     this.$router.push({ name: 'pages-login' })
-    //   } else {
-    //     this.current_page = data.data.current_page
-    //     this.total_page = data.data.last_page
-    //     this.list.banners = data.data.data
-    //   }
-    // },
+    async getListBanner() {
+      this.loading.get_data = true
+      const res = await listBanner({ page: this.current_page })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.list.banners = data.data
+
+        // console.log(this.list.banners)
+      } else {
+        this.loading.get_data = false
+      }
+    },
     async handlePagination() {
-      // await this.getAllData()
+      // await this.getListBanner()
     },
   },
 }
