@@ -331,15 +331,17 @@ const routes = [
     component: () => import('@/views/pages/Login.vue'),
     meta: {
       layout: 'blank',
-      checkLogin: true,
+
+      // typePage: 'pages',
     },
   },
   {
-    path: '/pages/register',
-    name: 'pages-register',
-    component: () => import('@/views/pages/Register.vue'),
+    path: '/form-contact/:id',
+    name: 'FormContact',
+    component: () => import('@/views/pages/FormContact.vue'),
     meta: {
       layout: 'blank',
+      typePage: 'pages',
     },
   },
   {
@@ -370,15 +372,19 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  // console.log(to.meta.typePage === 'pages')
   const { token } = store.state.auth
 
-  if (to.name !== 'Login' && token === '') {
-    next({ name: 'Login' })
-  } else if (to.name === 'Login' && token !== '') {
-    next({ name: 'Dashboard' })
-  } else {
-    next()
+  if (to.meta.typePage !== 'pages') {
+    if (to.name !== 'Login' && token === '') {
+      next({ name: 'Login' })
+    } else if (to.name === 'Login' && token !== '') {
+      next({ name: 'Dashboard' })
+    } else {
+      next()
+    }
   }
+
   next()
 })
 

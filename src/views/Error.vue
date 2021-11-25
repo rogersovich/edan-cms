@@ -24,7 +24,9 @@
 
       <div class="misc-character d-flex justify-center">
         <v-img
+          contain
           max-width="700"
+          height="250"
           src="@/assets/images/3d-characters/error.png"
         ></v-img>
       </div>
