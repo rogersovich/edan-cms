@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if=" Object.keys(list.admins).length > 0 && !loading.get_data"
+        v-if="!loading.get_data"
         cols="12"
       >
         <v-card>
@@ -21,7 +21,10 @@
                     hide-details=""
                     dense
                     placeholder="Search By Name"
+                    clearable
+                    :clear-icon="icons.mdiCloseCircle"
                     @keydown.enter="handleSearch"
+                    @click:clear="handleClearPage"
                   ></v-text-field>
                 </div>
                 <v-btn
@@ -71,6 +74,7 @@
             </template>
           </v-card-title>
           <v-simple-table
+            v-if="Object.keys(list.admins).length > 0"
             height="auto"
             :fixed-header="$vuetify.breakpoint.smAndUp"
           >
@@ -219,6 +223,14 @@
               </tbody>
             </template>
           </v-simple-table>
+          <v-card-text
+            v-if="Object.keys(list.admins).length === 0"
+            class="tw-mt-6"
+          >
+            <div class="tw-text-center tw-text-lg">
+              Data Not Found
+            </div>
+          </v-card-text>
           <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
@@ -285,7 +297,7 @@
 <script>
 
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiLock,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiLock, mdiCloseCircle,
 } from '@mdi/js'
 
 import { listAdmin, deleteAdmin } from '@/api/auth'
@@ -300,6 +312,7 @@ export default {
         mdiPlus,
         mdiDotsHorizontalCircle,
         mdiLock,
+        mdiCloseCircle,
       },
       loading: {
         get_data: false,
@@ -327,11 +340,14 @@ export default {
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
     },
-    handleSearch(event) {
-      event.preventDefault()
-      console.log(this.form.query_search)
+    async handleSearch() {
+      await this.getListAdmin()
     },
-
+    async handleClearPage() {
+      this.current_page = 1
+      this.form.query_search = ''
+      await this.getListAdmin()
+    },
     async handleDeleteItem(id) {
       this.dialog.delete = !this.dialog.delete
       this.loading.get_data = true
@@ -346,9 +362,9 @@ export default {
     },
     async getListAdmin() {
       this.loading.get_data = true
-      const res = await listAdmin({ page: this.current_page, limit: this.limit })
+      const res = await listAdmin({ page: this.current_page, limit: this.limit, query: this.form.query_search })
       const { data } = res
-      if (data.status) {
+      if (data.status || data.success) {
         this.loading.get_data = false
         this.total_page = data.total_page
         // eslint-disable-next-line radix

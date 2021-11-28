@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if="Object.keys(list.users).length > 0 && !loading.get_data"
+        v-if="!loading.get_data"
         cols="12"
       >
         <v-card>
@@ -21,7 +21,10 @@
                     hide-details=""
                     dense
                     placeholder="Search By Name"
+                    clearable
+                    :clear-icon="icons.mdiCloseCircle"
                     @keydown.enter="handleSearch"
+                    @click:clear="handleClearPage"
                   ></v-text-field>
                 </div>
                 <v-menu offset-y>
@@ -124,6 +127,7 @@
             </template>
           </v-card-title>
           <v-simple-table
+            v-if="Object.keys(list.users).length > 0"
             height="auto"
             :fixed-header="$vuetify.breakpoint.smAndUp"
           >
@@ -174,7 +178,10 @@
                       </v-avatar>
                     </template>
                     <template v-else>
-                      {{ item.profile_img }}
+                      <v-img
+                        :aspect-ratio="1 / 1"
+                        :src="base_url_image + item.profile_img"
+                      ></v-img>
                     </template>
                   </td>
                   <td>
@@ -298,7 +305,15 @@
               </tbody>
             </template>
           </v-simple-table>
-          <!-- <v-card-text class="tw-mt-4">
+          <v-card-text
+            v-if="Object.keys(list.users).length === 0"
+            class="tw-mt-6"
+          >
+            <div class="tw-text-center tw-text-lg">
+              Data Not Found
+            </div>
+          </v-card-text>
+          <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -306,7 +321,7 @@
                 @input="handlePagination"
               ></v-pagination>
             </div>
-          </v-card-text> -->
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col
@@ -365,7 +380,7 @@
 <script>
 import moment from 'moment'
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiCloseCircle,
 } from '@mdi/js'
 import { listUser, deleteUser } from '@/api/user'
 
@@ -377,9 +392,11 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+        mdiCloseCircle,
       },
       current_page: 1,
       total_page: 0,
+      limit: 5,
       loading: {
         get_data: false,
       },
@@ -418,6 +435,11 @@ export default {
       },
     }
   },
+  computed: {
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
+  },
   mounted() {
     this.getListUser()
   },
@@ -431,23 +453,25 @@ export default {
       return date
     },
     openDialogDelete(params) {
-      // console.log(params)
-
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
     },
     handleFilter(filterType) {
       console.log(filterType)
     },
-    handleSearch(event) {
-      event.preventDefault()
-      console.log(this.form.query_search)
+    async handleSearch() {
+      await this.getListUser()
+    },
+    async handleClearPage() {
+      this.current_page = 1
+      this.form.query_search = ''
+      await this.getListUser()
     },
     async handleDeleteItem(id) {
       this.dialog.delete = !this.dialog.delete
       this.loading.get_data = true
       await deleteUser({ id })
-      this.$swal({
+      await this.$swal({
         title: 'Berhasil Menghapus',
         icon: 'success',
         timer: 1000,
@@ -457,13 +481,14 @@ export default {
     },
     async getListUser() {
       this.loading.get_data = true
-      const res = await listUser({ page: this.current_page })
+      const res = await listUser({ page: this.current_page, limit: this.limit, query: this.form.query_search })
       const { data } = res
-      if (data.status) {
+      if (data.status || data.success) {
         this.loading.get_data = false
+        this.total_page = data.total_page
+        // eslint-disable-next-line radix
+        this.current_page = parseInt(data.curent_page)
         this.list.users = data.data
-
-        console.log(this.list.users)
       } else {
         this.loading.get_data = false
       }

@@ -9,7 +9,7 @@ export const login = payload => api
   .catch(error => error.response)
 
 export const listAdmin = payload => api
-  .get(`admin?page=${payload.page}&limit=${payload.limit}`)
+  .get(`admin?page=${payload.page}&limit=${payload.limit}&query=${payload.query}`)
   .then(response => response)
   .catch(error => error.response)
 

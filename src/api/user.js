@@ -1,7 +1,7 @@
 import api from './api'
 
-export const listUser = () => api
-  .get('admin/user')
+export const listUser = payload => api
+  .get(`cms/user?page=${payload.page}&limit=${payload.limit}&query=${payload.query}`)
   .then(response => response)
   .catch(error => error.response)
 
@@ -19,18 +19,18 @@ export const addUser = async payload => {
   bodyFormData.append('city_id', payload.city_id)
   bodyFormData.append('district_id', payload.district_id)
   await api
-    .post('admin/user', bodyFormData)
+    .post('user', bodyFormData)
     .then(response => response)
     .catch(error => error.response)
 }
 
 export const deleteUser = payload => api
-  .put(`admin/user/delete/${payload.id}`, {})
+  .put(`user/delete/${payload.id}`, {})
   .then(response => response)
   .catch(error => error.response)
 
 export const updateUser = payload => api
-  .put(`admin/edit/${payload.id}`, {
+  .put(`edit/${payload.id}`, {
     name: payload.name,
     email: payload.email,
     username: payload.username,

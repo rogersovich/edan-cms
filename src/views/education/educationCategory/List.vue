@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if=" Object.keys(list.education_categories).length === 0"
+        v-if="!loading.get_data"
         cols="12"
       >
         <v-card>
@@ -20,7 +20,10 @@
                     outlined
                     hide-details=""
                     dense
+                    clearable
                     placeholder="Search By Name"
+                    :clear-icon="icons.mdiCloseCircle"
+                    @click:clear="handleClearPage"
                     @keydown.enter="handleSearch"
                   ></v-text-field>
                 </div>
@@ -71,6 +74,7 @@
             </template>
           </v-card-title>
           <v-simple-table
+            v-if="Object.keys(list.education_categories).length > 0"
             height="auto"
             :fixed-header="$vuetify.breakpoint.smAndUp"
           >
@@ -86,6 +90,9 @@
                   <th class="text-uppercase">
                     Create By
                   </th>
+                  <th class="text-uppercase">
+                    Di hapus
+                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -96,7 +103,42 @@
                   v-for="(item, i) in list.education_categories"
                   :key="i"
                 >
-                  <td>{{ item.title }}</td>
+                  <td class="tw-py-4">
+                    <template v-if="item.image === '' || item.image === null">
+                      <v-avatar
+                        tile
+                        size="40"
+                      >
+                        <v-img :src="require(`@/assets/images/avatars/spiderman.png`)"></v-img>
+                      </v-avatar>
+                    </template>
+                    <template v-else>
+                      <v-img
+                        :aspect-ratio="16 / 9"
+                        :src="base_url_image + item.image"
+                      ></v-img>
+                    </template>
+                  </td>
+                  <td>{{ item.category_name }}</td>
+                  <td>{{ item.user }}</td>
+                  <td>
+                    <v-chip
+                      v-if="item.is_trash === 0 || item.is_trash === '0'"
+                      class="tw-mx-2 tw-font-medium"
+                      color="#22C55E"
+                      text-color="white"
+                    >
+                      Tidak
+                    </v-chip>
+                    <v-chip
+                      v-else
+                      class="tw-mx-2 tw-font-medium"
+                      color="#E11D48"
+                      text-color="white"
+                    >
+                      Yaa
+                    </v-chip>
+                  </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
@@ -107,10 +149,11 @@
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
                       </v-btn>
                       <v-btn
+                        v-if="item.is_trash === 0 || item.is_trash === '0'"
                         class="tw-ml-2"
                         icon
                         color="#E11D48"
-                        @click="openDialogDelete({id: item.id, name: item.title})"
+                        @click="openDialogDelete({ id: item.id, name: item.category_name })"
                       >
                         <v-icon>
                           {{ icons.mdiTrashCan }}
@@ -150,12 +193,12 @@
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
-                          <v-list-item>
+                          <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
                             <v-list-item-content>
                               <v-btn
                                 text
                                 color="#E11D48"
-                                @click="openDialogDelete({id: item.id, name: item.title})"
+                                @click="openDialogDelete({ id: item.id, name: item.category_name })"
                               >
                                 <v-icon left>
                                   {{ icons.mdiTrashCan }}
@@ -172,7 +215,17 @@
               </tbody>
             </template>
           </v-simple-table>
-          <v-card-text class="tw-mt-4">
+          <v-card-text
+            v-if="Object.keys(list.education_categories).length === 0"
+            class="tw-mt-6"
+          >
+            <div class="tw-text-center tw-text-lg">
+              Data Not Found
+            </div>
+          </v-card-text>
+          <v-card-text
+            class="tw-mt-4"
+          >
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -192,7 +245,7 @@
           type="table"
           :types="{
             'table-row': 'table-cell@4',
-            'table-tbody': 'table-row-divider@4'
+            'table-tbody': 'table-row-divider@4',
           }"
         ></v-skeleton-loader>
       </v-col>
@@ -238,10 +291,10 @@
 
 <script>
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiCloseCircle,
 } from '@mdi/js'
 
-// import { allData, deleteData } from '@/api/subCategory'
+import { listEducationCategory, deleteEducationCategory } from '@/api/educationCategory'
 
 export default {
   data() {
@@ -251,9 +304,14 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+        mdiCloseCircle,
       },
+      limit: 5,
       current_page: 1,
       total_page: 0,
+      loading: {
+        get_data: false,
+      },
       form: {
         want_to_delete: '',
         query_search: '',
@@ -266,39 +324,60 @@ export default {
       },
     }
   },
+  computed: {
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
+  },
   mounted() {
-    // this.getAllData()
+    this.getListEducationCategories()
   },
   methods: {
     openDialogDelete(params) {
-      console.log(params)
-
-      // this.form.want_to_delete = params
-      // this.dialog.delete = !this.dialog.delete
+      this.form.want_to_delete = params
+      this.dialog.delete = !this.dialog.delete
     },
-    handleSearch(event) {
-      event.preventDefault()
-      console.log(this.form.query_search)
+    async handleSearch() {
+      await this.getListEducationCategories()
     },
+    async handleClearPage() {
+      this.current_page = 1
+      this.form.query_search = ''
+      await this.getListEducationCategories()
+    },
+    async handleDeleteItem(id) {
+      this.dialog.delete = !this.dialog.delete
+      this.loading.get_data = true
+      await deleteEducationCategory({ id })
+      await this.$swal({
+        title: 'Berhasil Menghapus',
+        icon: 'success',
+        timer: 1000,
+      })
+      await this.getListEducationCategories()
+      this.loading.get_data = false
+    },
+    async getListEducationCategories() {
+      this.loading.get_data = true
+      const res = await listEducationCategory({
+        page: this.current_page,
+        limit: this.limit,
+        query: this.form.query_search,
+      })
+      const { data } = res
 
-    // async handleDeleteItem(id) {
-    //   await deleteData({ id })
-    //   await this.getAllData()
-    //   this.dialog.delete = !this.dialog.delete
-    // },
-    // async getAllData() {
-    //   const data = await allData({ page: this.current_page })
-    //   if (data.status === 401) {
-    //     await this.$store.dispatch('auth/removeCurrentUser')
-    //     this.$router.push({ name: 'pages-login' })
-    //   } else {
-    //     this.current_page = data.data.current_page
-    //     this.total_page = data.data.last_page
-    //     this.list.education_categories = data.data.data
-    //   }
-    // },
+      if (data.status || data.success) {
+        this.loading.get_data = false
+        this.total_page = data.total_page
+        // eslint-disable-next-line radix
+        this.current_page = parseInt(data.curent_page)
+        this.list.education_categories = data.data
+      } else {
+        this.loading.get_data = false
+      }
+    },
     async handlePagination() {
-      // await this.getAllData()
+      await this.getListEducationCategories()
     },
   },
 }

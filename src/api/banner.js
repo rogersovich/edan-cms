@@ -1,13 +1,13 @@
 import api from './api'
 
 // eslint-disable-next-line import/prefer-default-export
-export const listBanner = () => api
-  .get('banner/cms/list')
+export const listBanner = payload => api
+  .get(`cms/banner/list?page=${payload.page}&limit=${payload.limit}&query=${payload.query}`)
   .then(response => response)
   .catch(error => error.response)
 
 export const detailBanner = payload => api
-  .get(`banner/cms/detail/${payload.id}`)
+  .get(`cms/banner/detail/${payload.id}`)
   .then(response => response)
   .catch(error => error.response)
 
@@ -19,7 +19,7 @@ export const addBanner = async payload => {
 
   try {
     const response = await api
-      .post('banner/cms/add', bodyFormData, {
+      .post('cms/banner/add', bodyFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -32,7 +32,7 @@ export const addBanner = async payload => {
 }
 
 export const deleteBanner = payload => api
-  .put(`banner/cms/delete/${payload.id}`, {})
+  .put(`cms/banner/delete/${payload.id}`, {})
   .then(response => response)
   .catch(error => error.response)
 
@@ -44,7 +44,7 @@ export const updateBanner = async payload => {
 
   try {
     const response = await api
-      .put(`banner/cms/update/${payload.id}`, bodyFormData, {
+      .put(`cms/banner/update/${payload.id}`, bodyFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

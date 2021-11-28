@@ -75,7 +75,7 @@
       <!-- end -->
 
       <!-- content  -->
-      <nav-menu-group
+      <!-- <nav-menu-group
         title="Artikel"
         :icon="icons.mdiNewspaper"
         :active="$route.meta.key === 'article' ? true : false"
@@ -92,7 +92,7 @@
           :icon="icons.mdiTableOfContents"
           :nested="true"
         ></nav-menu-link>
-      </nav-menu-group>
+      </nav-menu-group> -->
       <!-- end -->
 
       <!-- education  -->

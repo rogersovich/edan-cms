@@ -2,7 +2,7 @@
   <div>
     <v-row class="match-height">
       <v-col
-        v-if=" Object.keys(list.banners).length > 0 && !loading.get_data"
+        v-if="!loading.get_data"
         cols="12"
       >
         <v-card>
@@ -21,7 +21,10 @@
                     hide-details=""
                     dense
                     placeholder="Search By Name"
+                    clearable
+                    :clear-icon="icons.mdiCloseCircle"
                     @keydown.enter="handleSearch"
+                    @click:clear="handleClearPage"
                   ></v-text-field>
                 </div>
                 <v-btn
@@ -71,6 +74,7 @@
             </template>
           </v-card-title>
           <v-simple-table
+            v-if="Object.keys(list.banners).length > 0"
             height="auto"
             :fixed-header="$vuetify.breakpoint.smAndUp"
           >
@@ -209,7 +213,15 @@
               </tbody>
             </template>
           </v-simple-table>
-          <!-- <v-card-text class="tw-mt-4">
+          <v-card-text
+            v-if="Object.keys(list.banners).length === 0"
+            class="tw-mt-6"
+          >
+            <div class="tw-text-center tw-text-lg">
+              Data Not Found
+            </div>
+          </v-card-text>
+          <v-card-text class="tw-mt-4">
             <div class="text-center">
               <v-pagination
                 v-model="current_page"
@@ -217,7 +229,7 @@
                 @input="handlePagination"
               ></v-pagination>
             </div>
-          </v-card-text> -->
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col
@@ -275,7 +287,7 @@
 
 <script>
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiCloseCircle,
 } from '@mdi/js'
 
 import { listBanner, deleteBanner } from '@/api/banner'
@@ -288,10 +300,12 @@ export default {
         mdiPencilBoxMultiple,
         mdiPlus,
         mdiDotsHorizontalCircle,
+        mdiCloseCircle,
       },
       loading: {
         get_data: false,
       },
+      limit: 5,
       current_page: 1,
       total_page: 0,
       menu: {
@@ -324,16 +338,6 @@ export default {
           },
 
         ],
-        categories: [
-          {
-            text: 'Info',
-            key: 'info',
-          },
-          {
-            text: 'Edukasi',
-            key: 'edukasi',
-          },
-        ],
       },
     }
   },
@@ -350,6 +354,14 @@ export default {
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
     },
+    async handleSearch() {
+      await this.getListBanner()
+    },
+    async handleClearPage() {
+      this.current_page = 1
+      this.form.query_search = ''
+      await this.getListBanner()
+    },
     showMenuFilter(e) {
       e.preventDefault()
       this.menu.filter = false
@@ -361,10 +373,6 @@ export default {
     },
     handleFilter(filterType) {
       this.form.filter_by = filterType
-    },
-    handleSearch(event) {
-      event.preventDefault()
-      console.log(this.form.query_search)
     },
     handleSubmitFilter() {
       console.log(this.form.filter_by)
@@ -378,19 +386,20 @@ export default {
     },
     async getListBanner() {
       this.loading.get_data = true
-      const res = await listBanner({ page: this.current_page })
+      const res = await listBanner({ page: this.current_page, limit: this.limit, query: this.form.query_search })
       const { data } = res
-      if (data.status) {
+      if (data.status || data.success) {
         this.loading.get_data = false
+        this.total_page = data.total_page
+        // eslint-disable-next-line radix
+        this.current_page = parseInt(data.curent_page)
         this.list.banners = data.data
-
-        // console.log(this.list.banners)
       } else {
         this.loading.get_data = false
       }
     },
     async handlePagination() {
-      // await this.getListBanner()
+      await this.getListBanner()
     },
   },
 }
