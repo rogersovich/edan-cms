@@ -146,9 +146,9 @@
                   <th class="text-uppercase">
                     Tipe
                   </th>
-                  <th class="text-uppercase">
+                  <!-- <th class="text-uppercase">
                     Register Date
-                  </th>
+                  </th> -->
                   <th class="text-uppercase">
                     Point
                   </th>
@@ -194,7 +194,7 @@
                   </td>
                   <td>{{ item.email }}</td>
                   <td>Null</td>
-                  <td>{{ formatDate(item.createdAt) }}</td>
+                  <!-- <td>{{ formatDate(item.createdAt) }}</td> -->
                   <td class="tw-text-center">
                     <span v-if="item.my_point === null || item.my_point === ''">
                       0
@@ -212,6 +212,7 @@
                     </span>
                   </td>
                   <td>
+                    {{ item.is_trash }}
                     <v-chip
                       v-if="item.is_trash === 0 || item.is_trash === '0'"
                       class="tw-mx-2 tw-font-medium"

@@ -641,8 +641,6 @@ export default {
           return
         }
 
-        // console.log(this.form)
-
         const res = await addUser({
           full_name: this.form.fullname,
           email: this.form.email,
@@ -661,7 +659,7 @@ export default {
           ver_wa: this.form.ver_wa,
           oauth_type: this.form.oauth_type,
         })
-
+        console.log(res)
         const { data } = res
         if (data.status) {
           this.loading.create = false

@@ -49,7 +49,7 @@
                       Gambar Banner
                     </div>
 
-                    <div>
+                    <div class="tw-block">
                       <div v-if="form_new.image.length === 0">
                         <v-avatar
                           v-ripple
@@ -77,7 +77,7 @@
                     <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
                       <div :class="form_new.image.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
                         <v-btn
-                          v-if="form.image.length !== ''"
+                          v-if="form.image !== ''"
                           color="warning"
                           block
                           class="me-3"

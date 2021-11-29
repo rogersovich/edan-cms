@@ -230,7 +230,7 @@ export default {
   },
   methods: {
     async getDetailAdmin() {
-      this.loading.get_data = false
+      this.loading.get_data = true
       const res = await detailAdmin({ id: this.params_id })
       const { data } = res
       if (data.status) {
