@@ -288,18 +288,18 @@ const routes = [
   },
 
   // end
-  // education material
+  // education materi
   {
-    path: '/education-material',
+    path: '/education-materi',
     component: () => import('@/views/education/educationMaterial/Index.vue'),
     children: [
       {
         path: '',
-        redirect: { name: 'listEducationMaterial' },
+        redirect: { name: 'listEducationMateri' },
       },
       {
         path: 'list',
-        name: 'listEducationMaterial',
+        name: 'listEducationMateri',
         component: () => import('@/views/education/educationMaterial/List.vue'),
         meta: {
           key: 'education',
@@ -307,7 +307,7 @@ const routes = [
       },
       {
         path: 'add',
-        name: 'addEducationMaterial',
+        name: 'addEducationMateri',
         component: () => import('@/views/education/educationMaterial/Add.vue'),
         meta: {
           key: 'education',
@@ -315,7 +315,7 @@ const routes = [
       },
       {
         path: 'edit/:id',
-        name: 'editEducationMaterial',
+        name: 'editEducationMateri',
         component: () => import('@/views/education/educationMaterial/Edit.vue'),
         meta: {
           key: 'education',

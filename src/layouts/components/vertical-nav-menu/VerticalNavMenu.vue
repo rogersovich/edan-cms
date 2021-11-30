@@ -124,7 +124,7 @@
         ></nav-menu-link>
         <nav-menu-link
           title="Materi"
-          :to="{ name: 'listEducationMaterial' }"
+          :to="{ name: 'listEducationMateri' }"
           :icon="icons.mdiNoteTextOutline"
           :nested="true"
         ></nav-menu-link>
