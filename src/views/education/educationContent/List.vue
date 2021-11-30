@@ -320,7 +320,7 @@ export default {
         mdiDotsHorizontalCircle,
         mdiCloseCircle,
       },
-      limit: 5,
+      limit: 10,
       current_page: 1,
       total_page: 0,
       loading: {

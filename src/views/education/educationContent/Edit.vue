@@ -10,7 +10,7 @@
       justify="center"
     >
       <v-col
-        v-if="Object.keys(educationContent).length > 0 && !loading.get_data"
+        v-if="Object.keys(educationContent).length > 0 && Object.keys(list.categories).length > 0 && !loading.get_data"
         cols="12"
         md="12"
       >
@@ -79,8 +79,8 @@
                         outlined
                         :error-messages="errors"
                         :items="list.categories"
-                        item-value="value"
-                        item-text="text"
+                        item-value="id"
+                        item-text="category_name"
                       ></v-select>
                     </div>
                   </validation-provider>
@@ -461,8 +461,7 @@ import {
   mdiArrowLeft, mdiWindowClose, mdiPaperclip, mdiCloudUploadOutline,
 } from '@mdi/js'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
-
-// eslint-disable-next-line no-unused-vars
+import { listEducationCategory } from '@/api/educationCategory'
 import { detailEducationContent, updateEducationContent } from '@/api/educationContent'
 
 setInteractionMode('eager')
@@ -505,16 +504,7 @@ export default {
       },
       educationContent: {},
       list: {
-        categories: [
-          {
-            value: 1,
-            text: 'Kebudayaan Nusantara',
-          },
-          {
-            value: 2,
-            text: 'Aksara Sunda',
-          },
-        ],
+        categories: [],
         edu_types: ['Materi Pembelajaran', 'Tipe Lain 1', 'Tipe Lain 2'],
         status: [
           {
@@ -542,8 +532,9 @@ export default {
       return process.env.VUE_APP_API
     },
   },
-  mounted() {
-    this.getDetailEducationContent()
+  async mounted() {
+    await this.getListEducationCategories()
+    await this.getDetailEducationContent()
   },
   methods: {
     validationSertifikat(e) {
@@ -591,6 +582,22 @@ export default {
           // eslint-disable-next-line no-param-reassign
           newFile.error = 'Error size gambar terlalu besar, Max 2MB'
         }
+      }
+    },
+    async getListEducationCategories() {
+      this.loading.get_data = true
+      const res = await listEducationCategory({
+        page: 1,
+        limit: 100,
+        query: '',
+      })
+      const { data } = res
+
+      if (data.status) {
+        this.loading.get_data = false
+        this.list.categories = data.data
+      } else {
+        this.loading.get_data = false
       }
     },
     async getDetailEducationContent() {

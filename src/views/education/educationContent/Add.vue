@@ -10,6 +10,7 @@
       justify="center"
     >
       <v-col
+        v-if="Object.keys(list.categories).length > 0 && !loading.get_data"
         cols="12"
         md="12"
       >
@@ -78,8 +79,8 @@
                         outlined
                         :error-messages="errors"
                         :items="list.categories"
-                        item-value="value"
-                        item-text="text"
+                        item-value="id"
+                        item-text="category_name"
                       ></v-select>
                     </div>
                   </validation-provider>
@@ -151,16 +152,23 @@
                   cols="12"
                   md="6"
                 >
-                  <div>
-                    <v-text-field
-                      v-model="form.amount"
-                      label="Harga"
-                      outlined
-                      hint="Bila harga gratis tidak usah di isi, jika berbayar maka isi form ini"
-                      persistent-hint
-                      placeholder="Masukan Harga"
-                    ></v-text-field>
-                  </div>
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Harga"
+                    rules="required"
+                  >
+                    <div>
+                      <v-text-field
+                        v-model="form.amount"
+                        label="Harga"
+                        outlined
+                        :error-messages="errors"
+                        hint="Bila harga gratis isi 0, jika berbayar maka isi sesuai nominal"
+                        persistent-hint
+                        placeholder="Masukan Harga"
+                      ></v-text-field>
+                    </div>
+                  </validation-provider>
                 </v-col>
                 <v-col
                   cols="12"
@@ -351,6 +359,18 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+        md="8"
+      >
+        <v-skeleton-loader
+          v-for="item in 6"
+          :key="item"
+          class="mx-auto"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
 
     <v-dialog
@@ -396,6 +416,7 @@ import {
 } from '@mdi/js'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import { addEducationContent } from '@/api/educationContent'
+import { listEducationCategory } from '@/api/educationCategory'
 
 setInteractionMode('eager')
 
@@ -423,7 +444,7 @@ export default {
         image: '',
         sertifikat: '',
       },
-      loading: { create: false },
+      loading: { get_data: false, create: false },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -432,25 +453,16 @@ export default {
         content_name: '',
         description: '',
         image: [],
-        category_edu: 1,
+        category_edu: '',
         durasi: '',
         edu_type: 'Materi Pembelajaran',
         point: 2,
-        amount: '',
+        amount: 0,
         sertifikat: [],
         status: 1,
       },
       list: {
-        categories: [
-          {
-            value: 1,
-            text: 'Kebudayaan Nusantara',
-          },
-          {
-            value: 2,
-            text: 'Aksara Sunda',
-          },
-        ],
+        categories: [],
         edu_types: ['Materi Pembelajaran', 'Tipe Lain 1', 'Tipe Lain 2'],
         status: [
           {
@@ -464,6 +476,9 @@ export default {
         ],
       },
     }
+  },
+  mounted() {
+    this.getListEducationCategories()
   },
   methods: {
     validationSertifikat(e) {
@@ -511,6 +526,22 @@ export default {
           // eslint-disable-next-line no-param-reassign
           newFile.error = 'Error size gambar terlalu besar, Max 2MB'
         }
+      }
+    },
+    async getListEducationCategories() {
+      this.loading.get_data = true
+      const res = await listEducationCategory({
+        page: 1,
+        limit: 100,
+        query: '',
+      })
+      const { data } = res
+
+      if (data.status) {
+        this.loading.get_data = false
+        this.list.categories = data.data
+      } else {
+        this.loading.get_data = false
       }
     },
     async handleSubmit() {
