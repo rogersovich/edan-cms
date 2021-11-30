@@ -325,6 +325,43 @@ const routes = [
   },
 
   // end
+  // banner ads
+  {
+    path: '/banner-ads',
+    component: () => import('@/views/bannerAds/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listBannerAds' },
+      },
+      {
+        path: 'list',
+        name: 'listBannerAds',
+        component: () => import('@/views/bannerAds/List.vue'),
+        meta: {
+          key: 'banner-ads',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addBannerAds',
+        component: () => import('@/views/bannerAds/Add.vue'),
+        meta: {
+          key: 'banner-ads',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editBannerAds',
+        component: () => import('@/views/bannerAds/Edit.vue'),
+        meta: {
+          key: 'banner-ads',
+        },
+      },
+    ],
+  },
+
+  // end
   {
     path: '/login',
     name: 'Login',

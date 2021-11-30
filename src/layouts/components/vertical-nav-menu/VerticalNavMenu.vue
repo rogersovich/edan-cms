@@ -74,6 +74,15 @@
       ></nav-menu-link>
       <!-- end -->
 
+      <!-- banner ads  -->
+      <nav-menu-link
+        title="Banner Ads"
+        :to="{ name: 'listBannerAds' }"
+        :icon="icons.mdiImageArea"
+        :nested="false"
+      ></nav-menu-link>
+      <!-- end -->
+
       <!-- content  -->
       <!-- <nav-menu-group
         title="Artikel"

@@ -1,6 +1,5 @@
 import api from './api'
 
-// eslint-disable-next-line import/prefer-default-export
 export const listBanner = payload => api
   .get(`cms/banner/list?page=${payload.page}&limit=${payload.limit}&query=${payload.query}`)
   .then(response => response)
