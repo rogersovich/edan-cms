@@ -207,6 +207,7 @@ export default {
             email: data.data.email,
             name: data.data.name,
             role: data.data.role,
+            user_id: data.data.id,
           })
 
           this.$router.push({ name: 'Dashboard' })

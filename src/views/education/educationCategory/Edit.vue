@@ -1,21 +1,16 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.update"
+      :loading="loading.update"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
       justify="center"
     >
       <v-col
-        v-if="Object.keys(educationCategory).length === 0"
-        cols="12"
-      >
-        <v-skeleton-loader
-          class="mx-auto"
-          type="card"
-        ></v-skeleton-loader>
-      </v-col>
-      <v-col
-        v-else
+        v-if="Object.keys(educationCategory).length > 0 && !loading.get_data"
         cols="12"
         md="8"
       >
@@ -66,7 +61,7 @@
                     </div>
                   </validation-provider>
                 </v-col>
-                <v-col cols="12">
+                <!-- <v-col cols="12">
                   <validation-provider
                     v-slot="{ errors }"
                     name="Urutan"
@@ -84,7 +79,7 @@
                       ></v-select>
                     </div>
                   </validation-provider>
-                </v-col>
+                </v-col> -->
                 <v-col cols="12">
                   <validation-provider
                     v-slot="{ errors }"
@@ -105,7 +100,7 @@
                 <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
-                      Gambar Banner
+                      Gambar
                     </div>
                     <div>
                       <div
@@ -117,9 +112,9 @@
                           width="100%"
                           height="300"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewImage(form.image)"
+                          @click="openDialogPreviewImage(base_url_image + form.image)"
                         >
-                          <v-img :src="form.image"></v-img>
+                          <v-img :src="base_url_image + form.image"></v-img>
                         </v-avatar>
                       </div>
                       <v-avatar
@@ -222,6 +217,18 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+        md="8"
+      >
+        <v-skeleton-loader
+          v-for="item in 6"
+          :key="item"
+          class="mx-auto"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
 
     <v-dialog
@@ -263,6 +270,8 @@ import { required } from 'vee-validate/dist/rules'
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { detailEducationCategory, updateEducationCategory } from '@/api/educationCategory'
 
 setInteractionMode('eager')
 
@@ -271,13 +280,12 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { detailData, updateData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -286,6 +294,10 @@ export default {
         mdiWindowClose,
         mdiCloudUploadOutline,
       },
+      loading: {
+        get_data: false,
+        update: false,
+      },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -293,32 +305,7 @@ export default {
       form_new: {
         image: [],
       },
-      educationCategory: {
-        category_name: 'edukasi',
-        description: 'blablabla deskripsi dehh',
-        image: 'https://ik.imagekit.io/1akf8cdsyg/default-image.jpg?updatedAt=1603090451561',
-        order: 1,
-        create_by: 'dimas roger',
-      },
-      list: {
-        orders: [
-          {
-            id: 1,
-            order: 1,
-            category_name: 'A',
-          },
-          {
-            id: 2,
-            order: 2,
-            category_name: 'B',
-          },
-          {
-            id: 3,
-            order: 3,
-            category_name: 'C',
-          },
-        ],
-      },
+      educationCategory: {},
     }
   },
   computed: {
@@ -327,17 +314,28 @@ export default {
         return this.educationCategory
       },
     },
+    params_id() {
+      return this.$route.params.id
+    },
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
   },
   mounted() {
-    // this.getDetailData()
+    this.getDetailBanner()
   },
   methods: {
-    // async getDetailData() {
-    //   const data = await detailData({ id: this.$route.params.id })
-
-    //   if (Object.keys(data.data).length > 0) this.subCategory = data.data
-    //   else this.$router.push({ name: 'subCategory' })
-    // },
+    async getDetailBanner() {
+      this.loading.get_data = false
+      const res = await detailEducationCategory({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.educationCategory = data.data
+      } else {
+        this.loading.get_data = false
+      }
+    },
     openDialogPreviewImage(image) {
       this.preview_image = image
       this.dialog.preview_image = !this.dialog.preview_image
@@ -387,15 +385,34 @@ export default {
           return
         }
 
-        console.log(this.form)
-        console.log(this.form_new)
-        this.$router.push({ name: 'listEducationCategory' })
+        this.loading.update = true
 
-      // const data = await updateData({
-      //   title: this.form.title,
-      //   id: this.form.id,
-      // })
-      // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        try {
+          let image
+          if (this.form_new.image.length > 0) image = this.form_new.image[0].file
+          else image = []
+          const res = await updateEducationCategory({
+            image,
+            id: this.params_id,
+            category_name: this.form.category_name,
+            description: this.form.description,
+          })
+
+          const { data } = res
+          if (data.status) {
+            this.loading.update = false
+            await this.$swal({
+              title: 'Berhasil Merubah Data',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listEducationCategory' })
+          } else {
+            this.loading.update = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },

@@ -338,7 +338,7 @@ export default {
           return
         }
 
-        this.form.created_by = this.$store.state.auth.profile.email
+        this.form.created_by = this.$store.state.auth.profile.user_id
 
         this.loading.create = true
 

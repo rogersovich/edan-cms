@@ -155,9 +155,6 @@
                   <th class="text-uppercase">
                     Koin
                   </th>
-                  <th class="text-uppercase">
-                    Di hapus
-                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -193,7 +190,7 @@
                     </div>
                   </td>
                   <td>{{ item.email }}</td>
-                  <td>Null</td>
+                  <td>{{ item.oauth_type }}</td>
                   <!-- <td>{{ formatDate(item.createdAt) }}</td> -->
                   <td class="tw-text-center">
                     <span v-if="item.my_point === null || item.my_point === ''">
@@ -210,25 +207,6 @@
                     <span v-else>
                       {{ item.my_koin }}
                     </span>
-                  </td>
-                  <td>
-                    {{ item.is_trash }}
-                    <v-chip
-                      v-if="item.is_trash === 0 || item.is_trash === '0'"
-                      class="tw-mx-2 tw-font-medium"
-                      color="#22C55E"
-                      text-color="white"
-                    >
-                      Tidak
-                    </v-chip>
-                    <v-chip
-                      v-else
-                      class="tw-mx-2 tw-font-medium"
-                      color="#E11D48"
-                      text-color="white"
-                    >
-                      Yaa
-                    </v-chip>
                   </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">

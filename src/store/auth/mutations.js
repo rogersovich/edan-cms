@@ -6,6 +6,7 @@ export const SET_PROFILE = (state, payload) => {
   state.profile.name = payload.name
   state.profile.email = payload.email
   state.profile.role = payload.role
+  state.profile.user_id = payload.user_id
   state.profile.username = ''
 }
 
@@ -17,5 +18,6 @@ export const REMOVE_PROFILE = state => {
   state.profile.name = ''
   state.profile.email = ''
   state.profile.role = ''
+  state.profile.user_id = ''
   state.profile.username = ''
 }

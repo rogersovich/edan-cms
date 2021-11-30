@@ -5,5 +5,6 @@ export default () => ({
     email: '',
     role: '',
     username: '',
+    user_id: '',
   },
 })

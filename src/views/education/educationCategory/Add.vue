@@ -1,5 +1,9 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -75,7 +79,7 @@
                 <v-col cols="12">
                   <div>
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
-                      Gambar Banner
+                      Gambar
                     </div>
                     <div>
                       <div
@@ -245,6 +249,8 @@ import {
 import {
   mdiArrowLeft, mdiWindowClose, mdiCloudUploadOutline,
 } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { addEducationCategory } from '@/api/educationCategory'
 
 setInteractionMode('eager')
 
@@ -253,13 +259,12 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -271,6 +276,7 @@ export default {
       error_form: {
         image: '',
       },
+      loading: { create: false },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -280,7 +286,6 @@ export default {
         description: '',
         image: [],
         order: 1,
-        create_by: 'dimas roger',
       },
     }
   },
@@ -342,14 +347,30 @@ export default {
           return
         }
 
-        this.form.create_by = this.$store.state.dummy.user
-        console.log(this.form)
-        this.$router.push({ name: 'listEducationCategory' })
+        this.loading.create = true
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        try {
+          const res = await addEducationCategory({
+            image: this.form.image[0].file,
+            category_name: this.form.category_name,
+            description: this.form.description,
+          })
+
+          const { data } = res
+          if (data.status) {
+            this.loading.create = false
+            await this.$swal({
+              title: 'Berhasil Menambah Data',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listEducationCategory' })
+          } else {
+            this.loading.create = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },
