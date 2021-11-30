@@ -1,11 +1,16 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.update"
+      :loading="loading.update"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
       justify="center"
     >
       <v-col
+        v-if="Object.keys(educationContent).length > 0 && !loading.get_data"
         cols="12"
         md="12"
       >
@@ -49,7 +54,7 @@
                   >
                     <div>
                       <v-text-field
-                        v-model="form.content_name"
+                        v-model="form.title"
                         label="Nama Konten"
                         outlined
                         :error-messages="errors"
@@ -124,6 +129,27 @@
                 </v-col>
                 <v-col
                   cols="12"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Status"
+                    rules="required"
+                  >
+                    <div>
+                      <v-select
+                        v-model="form.status"
+                        label="Status"
+                        outlined
+                        :error-messages="errors"
+                        :items="list.status"
+                        item-value="value"
+                        item-text="text"
+                      ></v-select>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
                   md="6"
                 >
                   <div>
@@ -141,7 +167,7 @@
                   cols="12"
                   md="6"
                 >
-                  <div v-if="form.sertifikat === ''">
+                  <div v-if="form.sertifikat === '' || form.sertifikat === '-'">
                     <v-file-input
                       v-model="form_new.sertifikat"
                       placeholder="Upload Sertifikat"
@@ -272,9 +298,9 @@
                           width="100%"
                           height="230"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewImage(form.image)"
+                          @click="openDialogPreviewImage(base_url_image + form.image)"
                         >
-                          <v-img :src="form.image"></v-img>
+                          <v-img :src="base_url_image + form.image"></v-img>
                         </v-avatar>
                       </div>
                       <v-avatar
@@ -379,6 +405,18 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col
+        v-else
+        cols="12"
+        md="8"
+      >
+        <v-skeleton-loader
+          v-for="item in 6"
+          :key="item"
+          class="mx-auto"
+          type="list-item-two-line"
+        ></v-skeleton-loader>
+      </v-col>
     </v-row>
 
     <v-dialog
@@ -422,6 +460,10 @@ import {
 import {
   mdiArrowLeft, mdiWindowClose, mdiPaperclip, mdiCloudUploadOutline,
 } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+
+// eslint-disable-next-line no-unused-vars
+import { detailEducationContent, updateEducationContent } from '@/api/educationContent'
 
 setInteractionMode('eager')
 
@@ -430,13 +472,12 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -445,6 +486,10 @@ export default {
         mdiWindowClose,
         mdiPaperclip,
         mdiCloudUploadOutline,
+      },
+      loading: {
+        get_data: false,
+        update: false,
       },
       error_form: {
         sertifikat: '',
@@ -458,18 +503,7 @@ export default {
         image: [],
         sertifikat: [],
       },
-      form: {
-        content_name: 'Aksara Nusantara Bukan Hanya Dilestarikan',
-        description: 'Aksara Nusantara merupakan ragam aksara atau tulisan tradisional yang digunakan di wilayah Nusantara. Istilah ini umumnya digunakan untuk merujuk pada aksara-aksara abugida turunan Brahmi yang digunakan oleh masyarakat Indonesia pra-kemerdekaan',
-        image: 'https://ik.imagekit.io/1akf8cdsyg/default-image.jpg?updatedAt=1603090451561',
-        category_edu: 1,
-        durasi: '10 menit',
-        edu_type: 'Materi Pembelajaran',
-        point: 20,
-        amount: '',
-        sertifikat: 'sertifikat.jpg',
-        create_by: 'dimas roger',
-      },
+      educationContent: {},
       list: {
         categories: [
           {
@@ -482,8 +516,34 @@ export default {
           },
         ],
         edu_types: ['Materi Pembelajaran', 'Tipe Lain 1', 'Tipe Lain 2'],
+        status: [
+          {
+            value: 1,
+            text: 'Aktif',
+          },
+          {
+            value: 0,
+            text: 'Tidak Aktif',
+          },
+        ],
       },
     }
+  },
+  computed: {
+    form: {
+      get() {
+        return this.educationContent
+      },
+    },
+    params_id() {
+      return this.$route.params.id
+    },
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
+  },
+  mounted() {
+    this.getDetailEducationContent()
   },
   methods: {
     validationSertifikat(e) {
@@ -533,6 +593,19 @@ export default {
         }
       }
     },
+    async getDetailEducationContent() {
+      this.loading.get_data = false
+      const res = await detailEducationContent({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.educationContent = data.data
+        // eslint-disable-next-line radix
+        this.educationContent.status = parseInt(data.data.status)
+      } else {
+        this.loading.get_data = false
+      }
+    },
     async handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
         if (this.form_new.image.length > 0) {
@@ -549,16 +622,45 @@ export default {
           return
         }
 
-        this.form.create_by = this.$store.state.dummy.user
-        console.log(this.form)
-        console.log(this.form_new)
+        let sertifikat
+        if (this.form_new.sertifikat.length === 0) sertifikat = '-'
+        else sertifikat = this.form_new.sertifikat[0].file
 
-        // this.$router.push({ name: 'listEducationContent' })
+        let image
+        if (this.form_new.image.length > 0) image = this.form_new.image[0].file
+        else image = []
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        this.loading.update = true
+        try {
+          const res = await updateEducationContent({
+            image,
+            id: this.params_id,
+            title: this.form.title,
+            category_edu: this.form.category_edu,
+            description: this.form.description,
+            durasi: this.form.durasi,
+            edu_type: this.form.edu_type,
+            point: this.form.point,
+            sertifikat,
+            amount: this.form.amount,
+            status: this.form.status,
+          })
+
+          const { data } = res
+          if (data.status) {
+            this.loading.update = false
+            await this.$swal({
+              title: 'Berhasil Merubah Data',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listEducationContent' })
+          } else {
+            this.loading.update = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },

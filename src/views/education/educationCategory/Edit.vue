@@ -322,10 +322,10 @@ export default {
     },
   },
   mounted() {
-    this.getDetailBanner()
+    this.getDetailEducationCategory()
   },
   methods: {
-    async getDetailBanner() {
+    async getDetailEducationCategory() {
       this.loading.get_data = false
       const res = await detailEducationCategory({ id: this.params_id })
       const { data } = res

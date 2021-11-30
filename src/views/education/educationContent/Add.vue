@@ -1,5 +1,9 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -119,6 +123,27 @@
                         :error-messages="errors"
                         placeholder="Masukan Durasi"
                       ></v-text-field>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Status"
+                    rules="required"
+                  >
+                    <div>
+                      <v-select
+                        v-model="form.status"
+                        label="Status"
+                        outlined
+                        :error-messages="errors"
+                        :items="list.status"
+                        item-value="value"
+                        item-text="text"
+                      ></v-select>
                     </div>
                   </validation-provider>
                 </v-col>
@@ -369,6 +394,8 @@ import {
 import {
   mdiArrowLeft, mdiWindowClose, mdiPaperclip, mdiCloudUploadOutline,
 } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { addEducationContent } from '@/api/educationContent'
 
 setInteractionMode('eager')
 
@@ -377,13 +404,12 @@ extend('required', {
   message: '{_field_} can not be empty',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
     FileUpload,
     ValidationProvider,
     ValidationObserver,
+    LoadingOverlay,
   },
   data() {
     return {
@@ -397,6 +423,7 @@ export default {
         image: '',
         sertifikat: '',
       },
+      loading: { create: false },
       preview_image: '',
       dialog: {
         preview_image: false,
@@ -411,7 +438,7 @@ export default {
         point: 2,
         amount: '',
         sertifikat: [],
-        create_by: 'dimas roger',
+        status: 1,
       },
       list: {
         categories: [
@@ -425,6 +452,16 @@ export default {
           },
         ],
         edu_types: ['Materi Pembelajaran', 'Tipe Lain 1', 'Tipe Lain 2'],
+        status: [
+          {
+            value: 1,
+            text: 'Aktif',
+          },
+          {
+            value: 0,
+            text: 'Tidak Aktif',
+          },
+        ],
       },
     }
   },
@@ -500,14 +537,41 @@ export default {
           return
         }
 
-        this.form.create_by = this.$store.state.dummy.user
-        console.log(this.form)
-        this.$router.push({ name: 'listEducationContent' })
+        let sertifikat
+        if (this.form.sertifikat.length === 0) sertifikat = '-'
+        else sertifikat = this.form.sertifikat[0].file
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+        this.loading.create = true
+
+        try {
+          const res = await addEducationContent({
+            image: this.form.image[0].file,
+            title: this.form.content_name,
+            category_edu: this.form.category_edu,
+            description: this.form.description,
+            durasi: this.form.durasi,
+            edu_type: this.form.edu_type,
+            point: this.form.point,
+            sertifikat,
+            amount: this.form.amount,
+            status: this.form.status,
+          })
+
+          const { data } = res
+          if (data.status) {
+            this.loading.create = false
+            await this.$swal({
+              title: 'Berhasil Menambah Data',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listEducationContent' })
+          } else {
+            this.loading.create = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },
