@@ -362,6 +362,41 @@ const routes = [
   },
 
   // end
+  // banner ads
+  {
+    path: '/test-question',
+    component: () => import('@/views/testQuestion/Index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'listTestQuestion' },
+      },
+      {
+        path: 'list',
+        name: 'listTestQuestion',
+        component: () => import('@/views/testQuestion/List.vue'),
+        meta: {
+          key: 'test-question',
+        },
+      },
+      {
+        path: 'add',
+        name: 'addTestQuestion',
+        component: () => import('@/views/testQuestion/Add.vue'),
+        meta: {
+          key: 'test-question',
+        },
+      },
+      {
+        path: 'edit/:id',
+        name: 'editTestQuestion',
+        component: () => import('@/views/testQuestion/Edit.vue'),
+        meta: {
+          key: 'test-question',
+        },
+      },
+    ],
+  },
   {
     path: '/login',
     name: 'Login',

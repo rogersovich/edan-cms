@@ -69,7 +69,7 @@
       <nav-menu-link
         title="Banner"
         :to="{ name: 'listBanner' }"
-        :icon="icons.mdiImageArea"
+        :icon="icons.mdiImageOutline"
         :nested="false"
       ></nav-menu-link>
       <!-- end -->
@@ -78,7 +78,7 @@
       <nav-menu-link
         title="Banner Ads"
         :to="{ name: 'listBannerAds' }"
-        :icon="icons.mdiImageArea"
+        :icon="icons.mdiImageFrame"
         :nested="false"
       ></nav-menu-link>
       <!-- end -->
@@ -130,6 +130,15 @@
         ></nav-menu-link>
       </nav-menu-group>
       <!-- end -->
+
+      <!-- test question  -->
+      <nav-menu-link
+        title="Test Soal"
+        :to="{ name: 'listTestQuestion' }"
+        :icon="icons.mdiScriptTextOutline"
+        :nested="false"
+      ></nav-menu-link>
+      <!-- end -->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -154,10 +163,12 @@ import {
   mdiAccountGroupOutline,
   mdiShapeOutline,
   mdiTableOfContents,
-  mdiImageArea,
+  mdiImageOutline,
   mdiBookEducationOutline,
   mdiNoteTextOutline,
   mdiNewspaper,
+  mdiScriptTextOutline,
+  mdiImageFrame,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -196,10 +207,12 @@ export default {
         mdiAccountGroupOutline,
         mdiShapeOutline,
         mdiTableOfContents,
-        mdiImageArea,
+        mdiImageOutline,
         mdiBookEducationOutline,
         mdiNoteTextOutline,
         mdiNewspaper,
+        mdiScriptTextOutline,
+        mdiImageFrame,
       },
     }
   },
