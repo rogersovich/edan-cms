@@ -15,22 +15,46 @@ export const deleteEducationMateri = payload => api
   .then(response => response)
   .catch(error => error.response)
 
-export const addEducationMateri = payload => api
-  .post('cms/materi', {
-    title: payload.title,
-    edukasi_id: payload.edukasi_id,
-    description: payload.description,
-    summary: payload.summary,
-  })
-  .then(response => response)
-  .catch(error => error.response)
+export const addEducationMateri = async payload => {
+  const bodyFormData = new FormData()
+  bodyFormData.append('title', payload.title)
+  bodyFormData.append('edukasi_id', payload.edukasi_id)
+  bodyFormData.append('description', payload.description)
+  bodyFormData.append('summary', payload.summary)
+  bodyFormData.append('image', payload.image)
 
-export const updateEducationMateri = payload => api
-  .put(`cms/materi/${payload.id}`, {
-    title: payload.title,
-    edukasi_id: payload.edukasi_id,
-    description: payload.description,
-    summary: payload.summary,
-  })
-  .then(response => response)
-  .catch(error => error.response)
+  try {
+    const response = await api.post('cms/materi', bodyFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+
+    return response
+  } catch (error) {
+    return error.response
+  }
+}
+
+export const updateEducationMateri = async payload => {
+  const bodyFormData = new FormData()
+  bodyFormData.append('_method', 'post')
+  bodyFormData.append('title', payload.title)
+  bodyFormData.append('edukasi_id', payload.edukasi_id)
+  bodyFormData.append('description', payload.description)
+  bodyFormData.append('summary', payload.summary)
+  bodyFormData.append('image', payload.image)
+
+  try {
+    const response = await api
+      .put(`cms/materi/${payload.id}`, bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+    return response
+  } catch (error) {
+    return error.response
+  }
+}

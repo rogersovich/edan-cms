@@ -40,7 +40,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
               <v-row dense>
                 <v-col cols="12">
@@ -120,7 +120,6 @@
                   </div>
                 </v-col>
                 <v-col
-                  v-if="is_picture"
                   cols="12"
                 >
                   <div>
@@ -137,9 +136,9 @@
                           width="100%"
                           height="300"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewImage(form.image)"
+                          @click="openDialogPreviewImage(base_url_image + form.image)"
                         >
-                          <v-img :src="form.image"></v-img>
+                          <v-img :src="base_url_image + form.image"></v-img>
                         </v-avatar>
                       </div>
                       <v-avatar
@@ -449,6 +448,9 @@ export default {
         }
 
         try {
+          let image
+          if (this.form_new.image.length > 0) image = this.form_new.image[0].file
+          else image = []
           this.loading.update = true
           const res = await updateEducationMateri({
             id: this.params_id,
@@ -456,6 +458,7 @@ export default {
             edukasi_id: this.form.edukasi_id,
             description: this.form.description,
             summary: this.form.summary,
+            image,
           })
 
           const { data } = res

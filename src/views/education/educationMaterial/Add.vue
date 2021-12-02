@@ -40,7 +40,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
               <v-row dense>
                 <v-col cols="12">
@@ -414,11 +414,11 @@ export default {
         this.error_form.image = ''
         this.error_form.description = ''
 
-        // if (this.form.image.length === 0) {
-        //   this.error_form.image = 'Gambar Harus di isi Dulu!'
+        if (this.form.image.length === 0) {
+          this.error_form.image = 'Gambar Harus di isi Dulu!'
 
-        //   return
-        // }
+          return
+        }
 
         if (this.form.description === '') {
           this.error_form.description = 'Isi Konten Harus di isi Dulu!'
@@ -443,6 +443,7 @@ export default {
             edukasi_id: this.form.edukasi_id,
             description: this.form.description,
             summary: this.form.summary,
+            image: this.form.image[0].file,
           })
 
           const { data } = res

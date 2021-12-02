@@ -112,7 +112,7 @@
                   v-for="(item, i) in list.education_contents"
                   :key="i"
                 >
-                  <td class="tw-py-4">
+                  <td class="tw-py-4 tw-w-32">
                     <template v-if="item.image === '' || item.image === null">
                       <v-avatar
                         tile
@@ -123,8 +123,11 @@
                     </template>
                     <template v-else>
                       <v-img
+                        v-ripple
+                        class="tw-cursor-pointer"
                         :aspect-ratio="16 / 9"
                         :src="base_url_image + item.image"
+                        @click="openDialogPreviewImage(base_url_image + item.image)"
                       ></v-img>
                     </template>
                   </td>
@@ -281,6 +284,36 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="dialog.preview_image"
+      max-width="480"
+    >
+      <v-card>
+        <v-card-title>
+          <div class="tw-text-true-gray-800">
+            Preview image gambar
+          </div>
+          <v-spacer></v-spacer>
+          <div>
+            <v-btn
+              icon
+              @click="dialog.preview_image = !dialog.preview_image"
+            >
+              <v-icon>
+                {{ icons.mdiCloseCircle }}
+              </v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <v-img
+            contain
+            :src="preview_image"
+          ></v-img>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -313,10 +346,12 @@ export default {
       },
       dialog: {
         delete: false,
+        preview_image: false,
       },
       list: {
         education_contents: [],
       },
+      preview_image: '',
     }
   },
   computed: {
@@ -333,6 +368,10 @@ export default {
       const uang = parseInt(x)
 
       return uang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    openDialogPreviewImage(image) {
+      this.preview_image = image
+      this.dialog.preview_image = !this.dialog.preview_image
     },
     openDialogDelete(params) {
       this.form.want_to_delete = params

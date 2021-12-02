@@ -108,8 +108,11 @@
                     </template>
                     <template v-else>
                       <v-img
-                        :aspect-ratio="16/9"
+                        v-ripple
+                        class="tw-cursor-pointer"
+                        :aspect-ratio="16 / 9"
                         :src="base_url_image + item.image"
+                        @click="openDialogPreviewImage(base_url_image + item.image)"
                       ></v-img>
                     </template>
                   </td>
@@ -261,6 +264,36 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="dialog.preview_image"
+      max-width="480"
+    >
+      <v-card>
+        <v-card-title>
+          <div class="tw-text-true-gray-800">
+            Preview image gambar
+          </div>
+          <v-spacer></v-spacer>
+          <div>
+            <v-btn
+              icon
+              @click="dialog.preview_image = !dialog.preview_image"
+            >
+              <v-icon>
+                {{ icons.mdiCloseCircle }}
+              </v-icon>
+            </v-btn>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <v-img
+            contain
+            :src="preview_image"
+          ></v-img>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -297,9 +330,11 @@ export default {
       },
       dialog: {
         delete: false,
+        preview_image: false,
       },
       x: 0,
       y: 0,
+      preview_image: '',
       list: {
         banners: [],
         filters: [
@@ -329,6 +364,10 @@ export default {
     this.getListBanner()
   },
   methods: {
+    openDialogPreviewImage(image) {
+      this.preview_image = image
+      this.dialog.preview_image = !this.dialog.preview_image
+    },
     openDialogDelete(params) {
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete
