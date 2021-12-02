@@ -102,9 +102,6 @@
                   <th class="text-uppercase">
                     Harga
                   </th>
-                  <th class="text-uppercase">
-                    Di hapus
-                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -136,26 +133,10 @@
                   <td>{{ item.edu_type }}</td>
                   <td>{{ item.durasi }}</td>
                   <td>{{ item.point }}</td>
-                  <td>{{ item.amount }}</td>
                   <td>
-                    <v-chip
-                      v-if="item.is_trash === 0 || item.is_trash === '0'"
-                      class="tw-mx-2 tw-font-medium"
-                      color="#22C55E"
-                      text-color="white"
-                    >
-                      Tidak
-                    </v-chip>
-                    <v-chip
-                      v-else
-                      class="tw-mx-2 tw-font-medium"
-                      color="#E11D48"
-                      text-color="white"
-                    >
-                      Yaa
-                    </v-chip>
+                    Rp. {{ uang(item.amount) }}
                   </td>
-                  <td class="text-center">
+                  <td class="text-center tw-w-32">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
@@ -347,6 +328,12 @@ export default {
     this.getListEducationContent()
   },
   methods: {
+    uang(x) {
+      // eslint-disable-next-line radix
+      const uang = parseInt(x)
+
+      return uang.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
     openDialogDelete(params) {
       this.form.want_to_delete = params
       this.dialog.delete = !this.dialog.delete

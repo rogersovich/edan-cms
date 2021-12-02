@@ -1,8 +1,8 @@
 <template>
   <validation-observer ref="formSubmit">
     <loading-overlay
-      v-if="loading.update"
-      :loading="loading.update"
+      v-if="loading.create"
+      :loading="loading.create"
     ></loading-overlay>
     <v-row
       class="match-height"
@@ -10,9 +10,8 @@
       justify="center"
     >
       <v-col
-        v-if="Object.keys(banner).length > 0 && !loading.get_data"
         cols="12"
-        md="8"
+        md="10"
       >
         <v-card>
           <v-card-title>
@@ -35,31 +34,98 @@
                 md="7"
               >
                 <div class="tw-text-center tw-text-base md:tw-text-xl">
-                  Edit Banner
+                  Tambah Banner
                 </div>
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
               <v-row>
-                <v-col cols="12">
-                  <div>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Tipe Media 1"
+                    rules="required"
+                  >
+                    <div>
+                      <v-select
+                        v-model="form.type_one"
+                        label="Tipe Media 1"
+                        outlined
+                        :error-messages="errors"
+                        :items="list.types"
+                        item-value="value"
+                        item-text="text"
+                      ></v-select>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <validation-provider
+                    v-slot="{ errors }"
+                    name="Tipe Media 2"
+                    rules="required"
+                  >
+                    <div>
+                      <v-select
+                        v-model="form.type_two"
+                        label="Tipe Media 2"
+                        outlined
+                        :error-messages="errors"
+                        :items="list.types"
+                        item-value="value"
+                        item-text="text"
+                      ></v-select>
+                    </div>
+                  </validation-provider>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div v-if="form.type_one === 'image'">
                     <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
-                      Gambar Banner
+                      Media 1
                     </div>
 
-                    <div class="tw-block">
-                      <div v-if="form_new.image.length === 0">
+                    <div>
+                      <div
+                        v-if="form_new.media_one.length === 0 && form.target_url_one === ''"
+                        class="tw-w-full tw-bg-gray-100 tw-rounded-md tw-h-56 tw-flex tw-items-center tw-justify-center"
+                      >
+                        <v-btn
+                          color="primary"
+                          outlined
+                          class="me-3"
+                        >
+                          <label
+                            for="file-image-1"
+                            class="tw-cursor-pointer"
+                          >
+                            <v-icon class="d-sm-none">
+                              {{ icons.mdiCloudUploadOutline }}
+                            </v-icon>
+                            <span class="d-none d-sm-block">Pilih Gambar/GIF</span>
+                          </label>
+                        </v-btn>
+                      </div>
+                      <div v-else-if="form_new.media_one.length === 0">
                         <v-avatar
                           v-ripple
                           rounded
                           width="100%"
                           height="300"
                           class="me-6 tw-cursor-pointer"
-                          @click="openDialogPreviewImage(form.image)"
+                          @click="openDialogPreviewImage(base_url_image + form.media_one)"
                         >
-                          <v-img :src="base_url_image + form.image"></v-img>
+                          <v-img :src="base_url_image + form.media_one"></v-img>
                         </v-avatar>
                       </div>
                       <v-avatar
@@ -69,39 +135,180 @@
                         width="100%"
                         height="300"
                         class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewImage(form_new.image[0].url)"
+                        @click="openDialogPreviewImage(form_new.media_one[0].url)"
                       >
-                        <v-img :src="form_new.image[0].url"></v-img>
+                        <v-img :src="form_new.media_one[0].url"></v-img>
                       </v-avatar>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
-                      <div :class="form_new.image.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
+                      <div :class="form_new.media_one.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
                         <v-btn
-                          v-if="form.image !== ''"
+                          v-if="form_new.media_one.length > 0 || form.target_url_one !== ''"
                           color="warning"
                           block
                           class="me-3"
                         >
                           <label
-                            for="file-image"
+                            for="file-image-1"
                             class="tw-cursor-pointer tw-w-full"
                           >
                             <v-icon class="d-sm-none">
                               {{ icons.mdiCloudUploadOutline }}
                             </v-icon>
-                            <span class="d-none d-sm-block">Ubah Gambar/GIF</span>
+                            <span class="d-none d-sm-block">Ubah</span>
                           </label>
                         </v-btn>
                       </div>
-                      <div
-                        v-if="form_new.image.length > 0"
-                        class="tw-col-span-6"
-                      >
+                      <div class="tw-col-span-6">
                         <v-btn
+                          v-if="form_new.media_one.length > 0"
                           color="error"
                           block
                           outlined
-                          @click="removeItem(form_new.image[0])"
+                          @click="removeItem(form_new.media_one[0])"
+                        >
+                          Reset
+                        </v-btn>
+                      </div>
+                      <div class="tw-col-span-12">
+                        <p class="tw-text-xs mt-4 tw-mb-2">
+                          Allowed JPG, GIF or PNG. Max size of 2MB
+                        </p>
+                        <div
+                          v-if="form_new.media_one.length > 0"
+                          class="tw-text-red-500 tw-text-sm"
+                        >
+                          <span v-if="form_new.media_one[0].error !== ''">
+
+                            {{ form_new.media_one[0].error }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- input upload -->
+
+                    <div>
+                      <div
+                        depressed
+                        class="tw-shadow-md tw-hidden"
+                      >
+                        <file-upload
+                          ref="uploadImage"
+                          v-model="form_new.media_one"
+                          :multiple="false"
+                          :drop="false"
+                          accept="image/png,image/gif,image/jpeg, image/jpg"
+                          input-id="file-image-1"
+                          @input-filter="inputFilter"
+                        >
+                          <i class="fa fa-plus"></i>
+                          Select files
+                        </file-upload>
+                      </div>
+                    </div>
+                    <!-- end -->
+                  </div>
+                  <div
+                    v-else
+                    :class="form.type_one !== 'image' ? 'tw-mt-8' : ''"
+                  >
+                    <validation-provider
+                      v-slot="{ errors }"
+                      name="Url Ads 1"
+                      rules="required"
+                    >
+                      <div>
+                        <v-text-field
+                          v-model="form_new.ads_one"
+                          label="Url Ads 1"
+                          outlined
+                          :error-messages="errors"
+                          placeholder="Masukan Url Ads 1"
+                        ></v-text-field>
+                      </div>
+                    </validation-provider>
+                  </div>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <div v-if="form.type_two === 'image'">
+                    <div class="subtitle-1 tw-mb-1.5 tw-text-gray-600">
+                      Media 2
+                    </div>
+
+                    <div>
+                      <div
+                        v-if="form_new.media_two.length === 0 && form.target_url_two === ''"
+                        class="tw-w-full tw-bg-gray-100 tw-rounded-md tw-h-56 tw-flex tw-items-center tw-justify-center"
+                      >
+                        <v-btn
+                          color="primary"
+                          outlined
+                          class="me-3"
+                        >
+                          <label
+                            for="file-image-2"
+                            class="tw-cursor-pointer"
+                          >
+                            <v-icon class="d-sm-none">
+                              {{ icons.mdiCloudUploadOutline }}
+                            </v-icon>
+                            <span class="d-none d-sm-block">Pilih Gambar/GIF</span>
+                          </label>
+                        </v-btn>
+                      </div>
+                      <div v-else-if="form_new.media_two.length === 0">
+                        <v-avatar
+                          v-ripple
+                          rounded
+                          width="100%"
+                          height="300"
+                          class="me-6 tw-cursor-pointer"
+                          @click="openDialogPreviewImage(form.media_two)"
+                        >
+                          <v-img :src="base_url_image + form.media_two"></v-img>
+                        </v-avatar>
+                      </div>
+                      <v-avatar
+                        v-else
+                        v-ripple
+                        rounded
+                        width="100%"
+                        height="300"
+                        class="me-6 tw-cursor-pointer"
+                        @click="openDialogPreviewImage(form_new.media_two[0].url)"
+                      >
+                        <v-img :src="form_new.media_two[0].url"></v-img>
+                      </v-avatar>
+                    </div>
+                    <div class="tw-grid tw-grid-cols-12 tw-gap-x-3 tw-items-center tw-mt-3">
+                      <div :class="form_new.media_two.length > 0 ? 'tw-col-span-6' : 'tw-col-span-12'">
+                        <v-btn
+                          v-if="form_new.media_two.length > 0"
+                          color="warning"
+                          block
+                          class="me-3"
+                        >
+                          <label
+                            for="file-image-2"
+                            class="tw-cursor-pointer tw-w-full"
+                          >
+                            <v-icon class="d-sm-none">
+                              {{ icons.mdiCloudUploadOutline }}
+                            </v-icon>
+                            <span class="d-none d-sm-block">Ubah</span>
+                          </label>
+                        </v-btn>
+                      </div>
+                      <div class="tw-col-span-6">
+                        <v-btn
+                          v-if="form_new.media_two.length > 0"
+                          color="error"
+                          block
+                          outlined
+                          @click="removeItem(form_new.media_two[0])"
                         >
                           Reset
                         </v-btn>
@@ -112,16 +319,18 @@
                         </p>
 
                         <div
-                          v-if="form_new.image.length > 0"
+                          v-if="form_new.media_two.length > 0"
                           class="tw-text-red-500 tw-text-sm"
                         >
-                          <span v-if="form_new.image[0].error !== ''">
-                            {{ form_new.image[0].error }}
+                          <span v-if="form_new.media_two[0].error !== ''">
+
+                            {{ form_new.media_two[0].error }}
                           </span>
                         </div>
                       </div>
                     </div>
                     <!-- input upload -->
+
                     <div>
                       <div
                         depressed
@@ -129,11 +338,11 @@
                       >
                         <file-upload
                           ref="uploadImage"
-                          v-model="form_new.image"
+                          v-model="form_new.media_two"
                           :multiple="false"
                           :drop="false"
-                          accept="image/png,image/gif,image/jpeg,image/jpg"
-                          input-id="file-image"
+                          accept="image/png,image/gif,image/jpeg, image/jpg"
+                          input-id="file-image-2"
                           @input-filter="inputFilter"
                         >
                           <i class="fa fa-plus"></i>
@@ -143,28 +352,101 @@
                     </div>
                     <!-- end -->
                   </div>
+                  <div
+                    v-else
+                    :class="form.type_two !== 'image' ? 'tw-mt-8' : ''"
+                  >
+                    <validation-provider
+                      v-slot="{ errors }"
+                      name="Url Ads 2"
+                      rules="required"
+                    >
+                      <div>
+                        <v-text-field
+                          v-model="form_new.ads_two"
+                          label="Url Ads 2"
+                          outlined
+                          :error-messages="errors"
+                          placeholder="Masukan Url Ads 2"
+                        ></v-text-field>
+                      </div>
+                    </validation-provider>
+                  </div>
                 </v-col>
                 <v-col
                   cols="12"
-                  md="12"
+                  md="6"
                 >
-                  <validation-provider
-                    v-slot="{ errors }"
-                    name="Url Target"
-                    rules="required"
-                  >
+                  <template v-if="form.type_one === 'script'">
                     <div>
                       <v-text-field
-                        v-model="form.target_url"
-                        label="Url Target"
+                        v-model="form.target_url_one"
+                        label="Target Url 1"
                         outlined
-                        :error-messages="errors"
-                        placeholder="Your Url Target"
+                        persistent-hint
+                        :disabled="form.type_one === 'script'"
+                        hint="bila tipe medianya script form ini kosongkan saja"
+                        placeholder="Masukan Target Url 1"
                       ></v-text-field>
                     </div>
-                  </validation-provider>
+                  </template>
+                  <template v-else>
+                    <validation-provider
+                      v-slot="{ errors }"
+                      name="Target Url 1"
+                      rules="required"
+                    >
+                      <div>
+                        <v-text-field
+                          v-model="form.target_url_one"
+                          label="Target Url 1"
+                          outlined
+                          persistent-hint
+                          hint="bila tipe medianya script form ini kosongkan saja"
+                          :error-messages="errors"
+                          placeholder="Masukan Target Url 1"
+                        ></v-text-field>
+                      </div>
+                    </validation-provider>
+                  </template>
                 </v-col>
-
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <template v-if="form.type_two === 'script'">
+                    <div>
+                      <v-text-field
+                        v-model="form.target_url_two"
+                        label="Target Url 2"
+                        outlined
+                        persistent-hint
+                        :disabled="form.type_two === 'script'"
+                        hint="bila tipe medianya script form ini kosongkan saja"
+                        placeholder="Masukan Target Url 2"
+                      ></v-text-field>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <validation-provider
+                      v-slot="{ errors }"
+                      name="Target Url 2"
+                      rules="required"
+                    >
+                      <div>
+                        <v-text-field
+                          v-model="form.target_url_two"
+                          label="Target Url 2"
+                          outlined
+                          persistent-hint
+                          hint="bila tipe medianya script form ini kosongkan saja"
+                          :error-messages="errors"
+                          placeholder="Masukan Target Url 2"
+                        ></v-text-field>
+                      </div>
+                    </validation-provider>
+                  </template>
+                </v-col>
                 <v-col
                   cols="12"
                   md="12"
@@ -176,7 +458,7 @@
                       type="submit"
                       color="primary"
                     >
-                      Update Banner
+                      Submit
                     </v-btn>
                   </div>
                 </v-col>
@@ -184,18 +466,6 @@
             </v-form>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col
-        v-else
-        cols="12"
-        md="8"
-      >
-        <v-skeleton-loader
-          v-for="item in 6"
-          :key="item"
-          class="mx-auto"
-          type="list-item-two-line"
-        ></v-skeleton-loader>
       </v-col>
     </v-row>
 
@@ -239,7 +509,8 @@ import {
 } from 'vee-validate'
 import { mdiArrowLeft, mdiCloudUploadOutline, mdiWindowClose } from '@mdi/js'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
-import { detailBanner, updateBanner } from '@/api/banner'
+// eslint-disable-next-line no-unused-vars
+import { addBannerAds, detailBannerAds } from '@/api/bannerAds'
 
 setInteractionMode('eager')
 
@@ -262,24 +533,40 @@ export default {
         mdiCloudUploadOutline,
         mdiWindowClose,
       },
-      loading: {
-        get_data: false,
-        update: false,
+      loading: { create: false, updata: false, get_data: false },
+      error_form: {
+        media_one: '',
+        media_two: '',
       },
       preview_image: '',
       dialog: {
         preview_image: false,
       },
       form_new: {
-        image: [],
+        media_one: [],
+        media_two: [],
+        ads_one: '',
+        ads_two: '',
       },
-      banner: {},
+      banner_ads: {},
+      list: {
+        types: [
+          {
+            value: 'image',
+            text: 'Image',
+          },
+          {
+            value: 'script',
+            text: 'Script Ads',
+          },
+        ],
+      },
     }
   },
   computed: {
     form: {
       get() {
-        return this.banner
+        return this.banner_ads
       },
     },
     params_id() {
@@ -290,9 +577,20 @@ export default {
     },
   },
   mounted() {
-    this.getDetailBanner()
+    this.getDetailBannerAds()
   },
   methods: {
+    async getDetailBannerAds() {
+      this.loading.get_data = false
+      const res = await detailBannerAds({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.banner_ads = data.data
+      } else {
+        this.loading.get_data = false
+      }
+    },
     openDialogPreviewImage(image) {
       this.preview_image = image
       this.dialog.preview_image = !this.dialog.preview_image
@@ -330,22 +628,24 @@ export default {
         }
       }
     },
-    async getDetailBanner() {
-      this.loading.get_data = false
-      const res = await detailBanner({ id: this.params_id })
-      const { data } = res
-      if (data.status) {
-        this.loading.get_data = false
-        this.banner = data.data
-      } else {
-        this.loading.get_data = false
-      }
-    },
     handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
-        if (this.form_new.image.length > 0) {
-          if (this.form_new.image[0].error !== '' && this.form_new.image.length > 0) {
-            return
+        this.error_form.media_one = ''
+        this.error_form.media_two = ''
+
+        if (this.form.type_one === 'image') {
+          if (this.form_new.media_one.length > 0) {
+            if (this.form_new.media_one[0].error !== '' && this.form_new.media_one.length > 0) {
+              return
+            }
+          }
+        }
+
+        if (this.form.type_two === 'image') {
+          if (this.form.media_two.length > 0) {
+            if (this.form_new.media_two[0].error !== '' && this.form_new.media_two.length > 0) {
+              return
+            }
           }
         }
 
@@ -353,33 +653,48 @@ export default {
           return
         }
 
-        this.loading.update = true
+        let mediaOne
+        if (this.form.type_one === 'script') {
+          mediaOne = this.form_new.ads_one
+        } else if (this.form_new.media_one.length > 0) mediaOne = this.form_new.media_one[0].file
+        else mediaOne = ''
 
-        try {
-          let image
-          if (this.form_new.image.length > 0) image = this.form_new.image[0].file
-          else image = []
-          const res = await updateBanner({
-            image,
-            id: this.params_id,
-            target_url: this.form.target_url,
-          })
-
-          const { data } = res
-          if (data.status) {
-            this.loading.update = false
-            await this.$swal({
-              title: 'Berhasil Merubah Banner',
-              icon: 'success',
-              timer: 1000,
-            })
-            this.$router.push({ name: 'listBanner' })
-          } else {
-            this.loading.update = false
-          }
-        } catch (error) {
-          console.log(error, 'ERR')
+        let mediaTwo
+        if (this.form.type_two === 'script') {
+          mediaTwo = this.form_new.ads_two
+        } else {
+          mediaTwo = this.form_new.media_two[0].file
         }
+
+        console.log(mediaOne, 'media one')
+        console.log(mediaTwo, 'media two')
+
+        // try {
+        //   this.loading.create = true
+        //   const res = await addBannerAds({
+        //     media_one: mediaOne,
+        //     media_two: mediaTwo,
+        //     target_url_one: this.form.target_url_one,
+        //     target_url_two: this.form.target_url_two,
+        //     type_one: this.form.type_one,
+        //     type_two: this.form.type_two,
+        //   })
+
+        //   const { data } = res
+        //   if (data.status) {
+        //     this.loading.create = false
+        //     await this.$swal({
+        //       title: 'Berhasil Menambah Data',
+        //       icon: 'success',
+        //       timer: 1000,
+        //     })
+        //     this.$router.push({ name: 'listBannerAds' })
+        //   } else {
+        //     this.loading.create = false
+        //   }
+        // } catch (error) {
+        //   console.log(error, 'ERR')
+        // }
       })
     },
   },

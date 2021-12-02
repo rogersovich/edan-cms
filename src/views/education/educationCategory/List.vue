@@ -90,9 +90,6 @@
                   <th class="text-uppercase">
                     Create By
                   </th>
-                  <th class="text-uppercase">
-                    Di hapus
-                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -121,24 +118,6 @@
                   </td>
                   <td>{{ item.category_name }}</td>
                   <td>{{ item.user }}</td>
-                  <td>
-                    <v-chip
-                      v-if="item.is_trash === 0 || item.is_trash === '0'"
-                      class="tw-mx-2 tw-font-medium"
-                      color="#22C55E"
-                      text-color="white"
-                    >
-                      Tidak
-                    </v-chip>
-                    <v-chip
-                      v-else
-                      class="tw-mx-2 tw-font-medium"
-                      color="#E11D48"
-                      text-color="white"
-                    >
-                      Yaa
-                    </v-chip>
-                  </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn

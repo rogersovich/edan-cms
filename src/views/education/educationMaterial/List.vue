@@ -108,9 +108,11 @@
                 >
                   <td>{{ item.edukasi_id }}</td>
                   <td>{{ item.title }}</td>
-                  <td>{{ item.summary }}</td>
+                  <td class="tw-w-72">
+                    {{ item.summary }}
+                  </td>
                   <td>{{ item.user }}</td>
-                  <td class="text-center">
+                  <td class="text-center tw-w-32">
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon

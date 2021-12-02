@@ -87,9 +87,6 @@
                   <th class="text-uppercase">
                     Created By
                   </th>
-                  <th class="text-uppercase">
-                    Di hapus
-                  </th>
                   <th class="text-center">
                     Action
                   </th>
@@ -118,24 +115,6 @@
                   </td>
                   <td>
                     {{ item.created_by }}
-                  </td>
-                  <td>
-                    <v-chip
-                      v-if="item.is_trash === 0 || item.is_trash === '0'"
-                      class="tw-mx-2 tw-font-medium"
-                      color="#22C55E"
-                      text-color="white"
-                    >
-                      Tidak
-                    </v-chip>
-                    <v-chip
-                      v-else
-                      class="tw-mx-2 tw-font-medium"
-                      color="#E11D48"
-                      text-color="white"
-                    >
-                      Yaa
-                    </v-chip>
                   </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
@@ -380,9 +359,16 @@ export default {
     },
 
     async handleDeleteItem(id) {
-      await deleteBanner({ id })
-      await this.getListBanner()
       this.dialog.delete = !this.dialog.delete
+      this.loading.get_data = true
+      await deleteBanner({ id })
+      this.$swal({
+        title: 'Berhasil Menghapus',
+        icon: 'success',
+        timer: 1000,
+      })
+      await this.getListBanner()
+      this.loading.get_data = false
     },
     async getListBanner() {
       this.loading.get_data = true

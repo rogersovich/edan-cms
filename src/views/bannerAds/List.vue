@@ -133,13 +133,13 @@
                   </td>
                   <td class="text-center">
                     <div v-if="$vuetify.breakpoint.smAndUp">
-                      <v-btn
+                      <!-- <v-btn
                         icon
                         :to="{ name: 'editBannerAds', params: { id: item.id } }"
                         color="#FBBF24"
                       >
                         <v-icon>{{ icons.mdiPencilBoxMultiple }}</v-icon>
-                      </v-btn>
+                      </v-btn> -->
                       <v-btn
                         v-if="item.is_trash === 0 || item.is_trash === '0'"
                         class="tw-ml-2"
@@ -171,7 +171,7 @@
                           </v-btn>
                         </template>
                         <v-list>
-                          <v-list-item>
+                          <!-- <v-list-item>
                             <v-list-item-action>
                               <v-btn
                                 text
@@ -184,7 +184,7 @@
                                 Ubah
                               </v-btn>
                             </v-list-item-action>
-                          </v-list-item>
+                          </v-list-item> -->
                           <v-list-item v-if="item.is_trash === 0 || item.is_trash === '0'">
                             <v-list-item-content>
                               <v-btn
@@ -374,9 +374,16 @@ export default {
     },
 
     async handleDeleteItem(id) {
-      await deleteBannerAds({ id })
-      await this.getListBannerAds()
       this.dialog.delete = !this.dialog.delete
+      this.loading.get_data = true
+      await deleteBannerAds({ id })
+      this.$swal({
+        title: 'Berhasil Menghapus',
+        icon: 'success',
+        timer: 1000,
+      })
+      await this.getListBannerAds()
+      this.loading.get_data = false
     },
     async getListBannerAds() {
       this.loading.get_data = true
