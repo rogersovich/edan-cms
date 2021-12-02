@@ -1,5 +1,9 @@
 <template>
   <validation-observer ref="formSubmit">
+    <loading-overlay
+      v-if="loading.create"
+      :loading="loading.create"
+    ></loading-overlay>
     <v-row
       class="match-height"
       align="center"
@@ -19,7 +23,7 @@
                 <div>
                   <v-btn
                     icon
-                    :to="{ name: 'listUserEdan' }"
+                    :to="{ name: 'detailUserEdan', params: {id: params_id} }"
                   >
                     <v-icon>{{ icons.mdiArrowLeft }}</v-icon>
                   </v-btn>
@@ -35,7 +39,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mt-5">
             <v-form @submit.prevent="handleSubmit">
               <validation-provider
                 v-slot="{ errors }"
@@ -117,6 +121,8 @@ import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate'
 import { mdiArrowLeft, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import { changePassUser } from '@/api/user'
 
 setInteractionMode('eager')
 
@@ -130,10 +136,9 @@ extend('confirmed', {
   message: '{_field_} harus sama',
 })
 
-// import { storeData } from '@/api/subCategory'
-
 export default {
   components: {
+    LoadingOverlay,
     ValidationProvider,
     ValidationObserver,
   },
@@ -144,6 +149,7 @@ export default {
         mdiEyeOutline,
         mdiEyeOffOutline,
       },
+      loading: { create: false },
       visible_pass: {
         current_password: false,
         new_password: false,
@@ -156,6 +162,11 @@ export default {
       },
     }
   },
+  computed: {
+    params_id() {
+      return this.$route.params.id
+    },
+  },
   methods: {
     async handleSubmit() {
       this.$refs.formSubmit.validate().then(async success => {
@@ -163,13 +174,30 @@ export default {
           return
         }
 
-        console.log(this.form)
-        this.$router.push({ name: 'listUserEdan' })
+        try {
+          this.loading.create = true
+          const res = await changePassUser({
+            id: this.params_id,
+            current_password: this.form.current_password,
+            new_password: this.form.new_password,
+            confirm_password: this.form.confirm_password,
+          })
 
-        // const data = await storeData({
-        //   username: this.form.username,
-        // })
-        // if (data.status === 200) this.$router.push({ name: 'subCategory' })
+          const { data } = res
+          if (data.status) {
+            this.loading.create = false
+            await this.$swal({
+              title: 'Berhasil Merubah Password',
+              icon: 'success',
+              timer: 1000,
+            })
+            this.$router.push({ name: 'listUserEdan' })
+          } else {
+            this.loading.create = false
+          }
+        } catch (error) {
+          console.log(error, 'ERR')
+        }
       })
     },
   },

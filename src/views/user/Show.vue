@@ -35,78 +35,94 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="tw-mb-4">
             <v-form @submit.prevent="handleSubmit">
               <v-row>
                 <v-col
-                  v-if="!$vuetify.breakpoint.mobile"
+                  v-if="$vuetify.breakpoint.smAndUp"
                   cols="12"
                 >
-                  <div class="tw-text-base tw-mb-2 tw-text-gray-600">
-                    Profile User
-                  </div>
                   <div class="tw-flex">
-                    <div>
+                    <div class="tw-mr-6">
                       <v-avatar
+                        v-if="form.profile_img === '' || form.profile_img === null"
                         v-ripple
                         rounded
                         size="250"
-                        class="me-6 tw-cursor-pointer"
-                        @click="openDialogPreviewThumbnail"
+                        class="tw-cursor-pointer"
+                        @click="
+                          openDialogPreviewThumbnail(
+                            'https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164',
+                          )
+                        "
                       >
                         <v-img
+                          lazy-src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
                           src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
                         ></v-img>
                       </v-avatar>
+                      <v-avatar
+                        v-else
+                        v-ripple
+                        rounded
+                        size="250"
+                        class="tw-cursor-pointer"
+                        @click="openDialogPreviewThumbnail(base_url_image + form.profile_img)"
+                      >
+                        <v-img
+                          :lazy-src="base_url_image + form.profile_img"
+                          :src="base_url_image + form.profile_img"
+                        ></v-img>
+                      </v-avatar>
+                      <div class="tw-mt-3">
+                        <div>
+                          <v-btn
+                            outlined
+                            block
+                            :to="{ name: 'changePassUserEdan', params: { id: params_id } }"
+                            color="#6B7280"
+                            class="text-none tw-tracking-wide tw-border-gray-400"
+                          >
+                            Ubah Password
+                            <v-icon right>
+                              {{ icons.mdiLock }}
+                            </v-icon>
+                          </v-btn>
+                        </div>
+                      </div>
                     </div>
                     <v-row>
                       <v-col
                         cols="12"
-                        class="tw-pb-2 tw-pt-0"
+                        class="tw-pb-2"
                       >
-                        <div class="tw-flex tw-items-center">
-                          <div class="tw-capitalize tw-text-2xl tw-font-semibold tw-text-gray-800 ">
-                            {{ form.fullname }}
+                        <div class="tw-items-center tw-grid tw-grid-cols-12 tw-gap-x-4">
+                          <div class="tw-capitalize tw-text-2xl tw-font-semibold tw-text-gray-800 tw-col-span-6">
+                            {{ form.full_name }}
                           </div>
-                          <div class="tw-ml-5">
+                          <div class="tw-col-span-3">
                             <v-chip
                               label
-                              class="ma-2 tw-font-medium"
-                              color="primary"
+                              class="tw-font-medium tw-w-full tw-justify-center"
+                              :color="(form.ver_wa === 0 || form.ver_wa === '') ? 'secondary' : 'primary'"
                             >
-                              Number Verified
+                              {{ `Number ${(form.ver_wa === 0 || form.ver_wa === '') ? 'Not Verified' : 'Verified'}` }}
                             </v-chip>
                           </div>
-                          <div>
+                          <div class="tw-col-span-3">
                             <v-chip
                               label
-                              class="ma-2 tw-font-medium"
-                              color="secondary"
+                              class="tw-font-medium tw-w-full tw-justify-center"
+                              :color="(form.ver_email === 0 || form.ver_email === '') ? 'secondary' : 'primary'"
                             >
-                              Email Not Verified
+                              {{ `Email ${(form.ver_email === 0 || form.ver_email === '') ? 'Not Verified' : 'Verified'}` }}
                             </v-chip>
-                          </div>
-                          <div>
-                            <v-btn
-                              text
-                              :to="{ name: 'changePassUserEdan', params: { id: '1' } }"
-                              color="#6B7280"
-                              class="text-none tw-tracking-wide"
-                            >
-                              Change Password
-                              <v-icon right>
-                                {{ icons.mdiLock }}
-                              </v-icon>
-                            </v-btn>
                           </div>
                         </div>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        class="tw-pt-0"
-                      >
-                        <div class="tw-flex tw-items-center">
-                          <div class="tw-flex tw-items-center tw-justify-left">
+                      <v-col cols="12">
+                        <div class="tw-grid tw-grid-cols-12 tw-gap-x-4 tw-items-center">
+                          <div class="tw-flex tw-items-center tw-justify-left tw-col-span-3">
                             <v-avatar
                               tile
                               size="35"
@@ -119,7 +135,7 @@
                               Point : {{ form.my_point }}
                             </div>
                           </div>
-                          <div class="tw-flex tw-items-center tw-justify-left tw-ml-6">
+                          <div class="tw-flex tw-items-center tw-justify-left tw-col-span-3">
                             <v-avatar
                               tile
                               size="35"
@@ -146,7 +162,7 @@
                         <div class="tw-flex tw-items-center ">
                           <div>Provinsi :</div>
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium">
-                            Jawa Barat
+                            {{ form.province_id }}
                           </div>
                         </div>
                       </v-col>
@@ -162,7 +178,7 @@
                         <div class="tw-flex tw-items-center ">
                           <div>Kota/Kabupaten :</div>
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium">
-                            Kota Bogor
+                            {{ form.city_id }}
                           </div>
                         </div>
                       </v-col>
@@ -178,7 +194,7 @@
                         <div class="tw-flex tw-items-center ">
                           <div>Kecamatan :</div>
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium">
-                            Ciawi
+                            {{ form.district_id }}
                           </div>
                         </div>
                       </v-col>
@@ -207,7 +223,6 @@
                         </div>
                       </v-col>
                     </v-row>
-                    <div></div>
                   </div>
                 </v-col>
                 <v-col
@@ -221,14 +236,35 @@
                       </div>
                       <div>
                         <v-avatar
+                          v-if="form.profile_img === '' || form.profile_img === null"
                           v-ripple
                           rounded
                           width="100%"
                           height="100%"
-                          class="me-6 tw-cursor-pointer"
+                          class="tw-cursor-pointer"
+                          @click="
+                            openDialogPreviewThumbnail(
+                              'https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164',
+                            )
+                          "
                         >
                           <v-img
+                            lazy-src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
                             src="https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164"
+                          ></v-img>
+                        </v-avatar>
+                        <v-avatar
+                          v-else
+                          v-ripple
+                          rounded
+                          width="100%"
+                          height="100%"
+                          class="tw-cursor-pointer"
+                          @click="openDialogPreviewThumbnail(base_url_image + form.profile_img)"
+                        >
+                          <v-img
+                            :lazy-src="base_url_image + form.profile_img"
+                            :src="base_url_image + form.profile_img"
                           ></v-img>
                         </v-avatar>
                       </div>
@@ -236,44 +272,44 @@
                     <v-col cols="12">
                       <div class="tw-flex tw-items-center">
                         <div class="tw-capitalize tw-text-2xl tw-font-semibold tw-text-gray-800 ">
-                          {{ form.fullname }}
+                          {{ form.full_name }}
                         </div>
                       </div>
                     </v-col>
                     <v-col cols="12">
-                      <div class="tw-flex tw-items-center">
-                        <div>
+                      <div class="tw-items-center tw-grid tw-grid-cols-12 tw-gap-x-4 tw-gap-y-4">
+                        <div class="tw-col-span-6">
                           <v-chip
                             label
-                            class="ma-2 tw-font-medium"
-                            color="primary"
+                            class="tw-font-medium tw-w-full tw-justify-center"
+                            :color="(form.ver_wa === 0 || form.ver_wa === '') ? 'secondary' : 'primary'"
                           >
-                            Number Verified
+                            {{ `Number ${(form.ver_wa === 0 || form.ver_wa) === '' ? 'Not Verified' : 'Verified'}` }}
                           </v-chip>
                         </div>
-                        <div>
+                        <div class="tw-col-span-6">
                           <v-chip
                             label
-                            class="ma-2 tw-font-medium"
-                            color="secondary"
+                            class="tw-font-medium tw-w-full tw-justify-center"
+                            :color="(form.ver_email === 0 || form.ver_email === '') ? 'secondary' : 'primary'"
                           >
-                            Email Not Verified
+                            {{ `Email ${(form.ver_email === 0 || form.ver_email === '') ? 'Not Verified' : 'Verified'}` }}
                           </v-chip>
                         </div>
-                      </div>
-                      <div class="tw-mt-2">
-                        <v-btn
-                          text
-                          block
-                          :to="{ name: 'changePassUserEdan', params: { id: '1' } }"
-                          color="#6B7280"
-                          class="text-none tw-tracking-wide"
-                        >
-                          Change Password
-                          <v-icon right>
-                            {{ icons.mdiLock }}
-                          </v-icon>
-                        </v-btn>
+                        <div class="tw-col-span-12">
+                          <v-btn
+                            outlined
+                            block
+                            :to="{ name: 'changePassUserEdan', params: { id: params_id } }"
+                            color="#6B7280"
+                            class="text-none tw-tracking-wide tw-border-gray-400"
+                          >
+                            Ubah Password
+                            <v-icon right>
+                              {{ icons.mdiLock }}
+                            </v-icon>
+                          </v-btn>
+                        </div>
                       </div>
                     </v-col>
                     <v-col cols="12">
@@ -299,7 +335,7 @@
                         </div>
                         <div class="tw-col-span-8">
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                            Jawa Barat
+                            {{ form.province_id }}
                           </div>
                         </div>
                       </div>
@@ -327,7 +363,7 @@
                         </div>
                         <div class="tw-col-span-8">
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                            Kota Bogor
+                            {{ form.city_id }}
                           </div>
                         </div>
                       </div>
@@ -355,54 +391,12 @@
                         </div>
                         <div class="tw-col-span-8">
                           <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                            Ciawi
+                            {{ form.district_id }}
                           </div>
                         </div>
                       </div>
                     </v-col>
                   </v-row>
-                </v-col>
-                <v-col cols="12">
-                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
-                    <div class="tw-col-span-4">
-                      <div class="tw-text-sm">
-                        Tanggal Lahir :
-                      </div>
-                    </div>
-                    <div class="tw-col-span-8">
-                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                        {{ form.tgl_lahir }}
-                      </div>
-                    </div>
-                  </div>
-                </v-col>
-                <v-col cols="12">
-                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
-                    <div class="tw-col-span-4">
-                      <div class="tw-text-sm">
-                        Tempat Lahir :
-                      </div>
-                    </div>
-                    <div class="tw-col-span-8">
-                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                        {{ form.tempat_lahir }}
-                      </div>
-                    </div>
-                  </div>
-                </v-col>
-                <v-col cols="12">
-                  <div class="tw-grid tw-grid-cols-12 tw-items-center">
-                    <div class="tw-col-span-4">
-                      <div class="tw-text-sm">
-                        Tipe Akun :
-                      </div>
-                    </div>
-                    <div class="tw-col-span-8">
-                      <div class="tw-ml-2 tw-text-gray-600 tw-font-medium tw-text-base">
-                        {{ form.oauth_type }}
-                      </div>
-                    </div>
-                  </div>
                 </v-col>
               </v-row>
             </v-form>
@@ -435,7 +429,7 @@
         <v-card-text>
           <v-img
             contain
-            :src="form.profile_img"
+            :src="preview_thumbnail"
           ></v-img>
         </v-card-text>
       </v-card>
@@ -448,7 +442,7 @@ import {
   mdiArrowLeft, mdiEyeOutline, mdiEyeOffOutline, mdiCloudUploadOutline, mdiWindowClose, mdiLock,
 } from '@mdi/js'
 
-// import { storeData } from '@/api/subCategory'
+import { detailUser } from '@/api/user'
 
 export default {
   data() {
@@ -464,28 +458,45 @@ export default {
       dialog: {
         preview_thumbnail: false,
       },
-      form: {
-        fullname: 'dimas roger',
-        username: 'rogersovich',
-        email: 'dimasroger89@gmail.com',
-        no_wa: '089627212312',
-        tempat_lahir: 'Bogor',
-        tgl_lahir: '2002-08-02',
-        profile_img: 'https://ik.imagekit.io/1akf8cdsyg/gengar_IvdAdWOFr.jpg?updatedAt=1608111140164',
-        province_id: 1,
-        city_id: 1,
-        district_id: 1,
-        my_koin: 0,
-        my_point: 0,
-        ver_email: 0,
-        ver_wa: 0,
-        oauth_type: 'redirect',
+      loading: {
+        get_data: false,
       },
+      user: {},
+      preview_thumbnail: '',
     }
   },
+  computed: {
+    form: {
+      get() {
+        return this.user
+      },
+    },
+    params_id() {
+      return this.$route.params.id
+    },
+    base_url_image() {
+      return process.env.VUE_APP_API
+    },
+  },
+  mounted() {
+    this.getDetailUser()
+  },
   methods: {
-    openDialogPreviewThumbnail() {
+    openDialogPreviewThumbnail(image) {
+      this.preview_thumbnail = image
       this.dialog.preview_thumbnail = !this.dialog.preview_thumbnail
+    },
+    async getDetailUser() {
+      this.loading.get_data = true
+      const res = await detailUser({ id: this.params_id })
+      const { data } = res
+      if (data.status) {
+        this.loading.get_data = false
+        this.user = data.data
+        console.log(this.user)
+      } else {
+        this.loading.get_data = false
+      }
     },
   },
 }

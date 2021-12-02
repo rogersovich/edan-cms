@@ -23,10 +23,19 @@ export const addUser = async payload => {
   bodyFormData.append('province_id', payload.province_id)
   bodyFormData.append('city_id', payload.city_id)
   bodyFormData.append('district_id', payload.district_id)
-  await api
-    .post('cms/user', bodyFormData)
-    .then(response => response)
-    .catch(error => error.response)
+
+  try {
+    const response = await api
+      .post('cms/user', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+    return response
+  } catch (error) {
+    return error.response
+  }
 }
 
 export const deleteUser = payload => api
@@ -50,15 +59,24 @@ export const updateUser = async payload => {
   bodyFormData.append('district_id', payload.district_id)
 
   try {
-    const response = await api
-      .put(`cms/user/${payload.id}`, bodyFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+    const response = await api.put(`cms/user/${payload.id}`, bodyFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 
     return response
   } catch (error) {
     return error.response
   }
 }
+
+export const changePassUser = payload => api
+  .post('cms/user/change-password', {
+    id: payload.id,
+    current_password: payload.current_password,
+    new_password: payload.new_password,
+    confirm_password: payload.confirm_password,
+  })
+  .then(response => response)
+  .catch(error => error.response)

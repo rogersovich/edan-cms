@@ -681,7 +681,7 @@ export default {
           if (data.status) {
             this.loading.update = false
             await this.$swal({
-              title: 'Berhasil Merubah Banner',
+              title: 'Berhasil Merubah Data',
               icon: 'success',
               timer: 1000,
             })

@@ -659,12 +659,12 @@ export default {
           ver_wa: this.form.ver_wa,
           oauth_type: this.form.oauth_type,
         })
-        console.log(res)
+
         const { data } = res
         if (data.status) {
           this.loading.create = false
           await this.$swal({
-            title: 'Berhasil Menghapus',
+            title: 'Berhasil Menambah Data',
             icon: 'success',
             timer: 1000,
           })
@@ -672,7 +672,6 @@ export default {
         } else {
           this.loading.create = false
         }
-        this.$router.push({ name: 'listUserEdan' })
       })
     },
   },

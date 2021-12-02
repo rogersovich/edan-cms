@@ -155,7 +155,7 @@
                   <th class="text-uppercase text-center">
                     Koin
                   </th>
-                  <th class="text-center">
+                  <th class="text-center tw-w-48">
                     Action
                   </th>
                 </tr>
@@ -165,7 +165,7 @@
                   v-for="(item, i) in list.users"
                   :key="i"
                 >
-                  <td class="tw-py-4">
+                  <td class="tw-py-4 tw-w-32">
                     <template v-if="item.profile_img === '' || item.profile_img === null">
                       <v-avatar
                         tile
@@ -215,6 +215,14 @@
                     <div v-if="$vuetify.breakpoint.smAndUp">
                       <v-btn
                         icon
+                        :to="{ name: 'detailUserEdan', params: { id: item.id } }"
+                        color="#10B981"
+                      >
+                        <v-icon>{{ icons.mdiCardAccountDetailsOutline }}</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        class="tw-mx-2"
                         :to="{ name: 'editUserEdan', params: { id: item.id } }"
                         color="#FBBF24"
                       >
@@ -222,7 +230,6 @@
                       </v-btn>
                       <v-btn
                         v-if="item.is_trash === 0 || item.is_trash === '0'"
-                        class="tw-ml-2"
                         icon
                         color="#E11D48"
                         @click="openDialogDelete({ id: item.id, name: item.email })"
@@ -251,6 +258,20 @@
                           </v-btn>
                         </template>
                         <v-list>
+                          <v-list-item>
+                            <v-list-item-action>
+                              <v-btn
+                                text
+                                :to="{ name: 'detailUserEdan', params: { id: item.id } }"
+                                color="#10B981"
+                              >
+                                <v-icon left>
+                                  {{ icons.mdiCardAccountDetailsOutline }}
+                                </v-icon>
+                                Detail
+                              </v-btn>
+                            </v-list-item-action>
+                          </v-list-item>
                           <v-list-item>
                             <v-list-item-action>
                               <v-btn
@@ -392,7 +413,7 @@
 <script>
 import moment from 'moment'
 import {
-  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiCloseCircle,
+  mdiTrashCan, mdiPencilBoxMultiple, mdiPlus, mdiDotsHorizontalCircle, mdiCloseCircle, mdiCardAccountDetailsOutline,
 } from '@mdi/js'
 import { listUser, deleteUser } from '@/api/user'
 
@@ -405,6 +426,7 @@ export default {
         mdiPlus,
         mdiDotsHorizontalCircle,
         mdiCloseCircle,
+        mdiCardAccountDetailsOutline,
       },
       current_page: 1,
       total_page: 0,
